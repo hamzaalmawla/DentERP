@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="520" viewBox="0 0 1000 520" font-family="Segoe UI, Calibri, Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#44546A"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="520" fill="#ffffff"/>
+
+  <text x="130" y="40" text-anchor="middle" font-size="15" font-weight="700" fill="#1F3A5F">Driving adapters</text>
+  <text x="130" y="60" text-anchor="middle" font-size="12" fill="#666">call into the module</text>
+  <text x="870" y="40" text-anchor="middle" font-size="15" font-weight="700" fill="#1F3A5F">Driven adapters</text>
+  <text x="870" y="60" text-anchor="middle" font-size="12" fill="#666">implement the ports</text>
+
+  <!-- hexagons -->
+  <polygon points="500,40 725,150 725,370 500,480 275,370 275,150" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="2"/>
+  <text x="500" y="92" text-anchor="middle" font-size="15" font-weight="700" fill="#1F3A5F">Application</text>
+  <text x="500" y="112" text-anchor="middle" font-size="12" fill="#444">Use-case services · DTOs · ports</text>
+  <polygon points="500,150 610,205 610,315 500,370 390,315 390,205" fill="#1F3A5F"/>
+  <text x="500" y="250" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">Domain</text>
+  <text x="500" y="272" text-anchor="middle" font-size="12" fill="#DDE6F1">Business rules</text>
+  <text x="500" y="290" text-anchor="middle" font-size="12" fill="#DDE6F1">State machines</text>
+  <text x="500" y="410" text-anchor="middle" font-size="11" fill="#444">No Django, database or HTTP code inside</text>
+
+  <!-- port labels on the right edge -->
+  <g font-size="12" font-weight="600" fill="#1F3A5F">
+    <rect x="660" y="160" width="130" height="26" rx="13" fill="#fff" stroke="#1F3A5F"/>
+    <text x="725" y="178" text-anchor="middle">StepRepository</text>
+    <rect x="660" y="222" width="130" height="26" rx="13" fill="#fff" stroke="#1F3A5F"/>
+    <text x="725" y="240" text-anchor="middle">FileStorage</text>
+    <rect x="660" y="284" width="130" height="26" rx="13" fill="#fff" stroke="#1F3A5F"/>
+    <text x="725" y="302" text-anchor="middle">Notifier</text>
+    <rect x="660" y="346" width="130" height="26" rx="13" fill="#fff" stroke="#1F3A5F"/>
+    <text x="725" y="364" text-anchor="middle">PdfRenderer</text>
+  </g>
+  <text x="725" y="140" text-anchor="middle" font-size="11" fill="#666">ports (interfaces)</text>
+
+  <!-- driving adapters -->
+  <g font-size="13">
+    <rect x="30" y="120" width="200" height="56" rx="8" fill="#fff" stroke="#44546A" stroke-width="1.5"/>
+    <text x="130" y="144" text-anchor="middle" font-weight="700" fill="#1F3A5F">REST API views</text>
+    <text x="130" y="163" text-anchor="middle" font-size="12" fill="#666">mobile app requests</text>
+    <rect x="30" y="232" width="200" height="56" rx="8" fill="#fff" stroke="#44546A" stroke-width="1.5"/>
+    <text x="130" y="256" text-anchor="middle" font-weight="700" fill="#1F3A5F">Unfold admin</text>
+    <text x="130" y="275" text-anchor="middle" font-size="12" fill="#666">dashboard screens</text>
+    <rect x="30" y="344" width="200" height="56" rx="8" fill="#fff" stroke="#44546A" stroke-width="1.5"/>
+    <text x="130" y="368" text-anchor="middle" font-weight="700" fill="#1F3A5F">Celery tasks</text>
+    <text x="130" y="387" text-anchor="middle" font-size="12" fill="#666">scheduled jobs</text>
+  </g>
+
+  <!-- driven adapters -->
+  <g font-size="13">
+    <rect x="810" y="146" width="170" height="54" rx="8" fill="#F3F6EA" stroke="#5B7B2A" stroke-width="1.5"/>
+    <text x="895" y="169" text-anchor="middle" font-weight="700" fill="#3E5A16">ORM repository</text>
+    <text x="895" y="188" text-anchor="middle" font-size="12" fill="#666">PostgreSQL</text>
+    <rect x="810" y="208" width="170" height="54" rx="8" fill="#F3F6EA" stroke="#5B7B2A" stroke-width="1.5"/>
+    <text x="895" y="231" text-anchor="middle" font-weight="700" fill="#3E5A16">S3 storage</text>
+    <text x="895" y="250" text-anchor="middle" font-size="12" fill="#666">MinIO</text>
+    <rect x="810" y="270" width="170" height="54" rx="8" fill="#F3F6EA" stroke="#5B7B2A" stroke-width="1.5"/>
+    <text x="895" y="293" text-anchor="middle" font-weight="700" fill="#3E5A16">Push notifier</text>
+    <text x="895" y="312" text-anchor="middle" font-size="12" fill="#666">Firebase</text>
+    <rect x="810" y="332" width="170" height="54" rx="8" fill="#F3F6EA" stroke="#5B7B2A" stroke-width="1.5"/>
+    <text x="895" y="355" text-anchor="middle" font-weight="700" fill="#3E5A16">PDF renderer</text>
+    <text x="895" y="374" text-anchor="middle" font-size="12" fill="#666">WeasyPrint</text>
+  </g>
+
+  <g stroke="#44546A" stroke-width="1.6" fill="none" marker-end="url(#a)">
+    <path d="M230,148 L300,175"/>
+    <path d="M230,260 L282,260"/>
+    <path d="M230,372 L300,345"/>
+  </g>
+  <g stroke="#5B7B2A" stroke-width="1.4" fill="none" stroke-dasharray="4 3">
+    <path d="M790,173 L810,173"/>
+    <path d="M790,235 L810,235"/>
+    <path d="M790,297 L810,297"/>
+    <path d="M790,359 L810,359"/>
+  </g>
+</svg>

@@ -335,6 +335,9 @@ def add_table(doc, rows, usable_width_cm):
             para = cell.paragraphs[0]
             para.paragraph_format.space_after = Pt(0)
             para.paragraph_format.line_spacing = 1.0
+            # never leave a header row alone at the foot of a page; keep small tables whole
+            if i == 0 or (len(rows) <= 8 and i < len(rows) - 1):
+                para.paragraph_format.keep_with_next = True
             if i == 0:
                 set_cell_shading(cell, "1F3A5F")
                 add_inline(para, val, size=font_size, bold=True, color=RGBColor(0xFF, 0xFF, 0xFF))
@@ -365,6 +368,21 @@ def add_code(doc, lines, usable_width_cm):
         if i < len(lines) - 1:
             run.add_break()
     doc.add_paragraph().paragraph_format.space_after = Pt(2)
+
+
+def add_figure(doc, image_path, caption, usable_width_cm):
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.paragraph_format.keep_with_next = True
+    p.paragraph_format.space_before = Pt(6)
+    p.add_run().add_picture(str(image_path), width=Cm(usable_width_cm))
+    cap = doc.add_paragraph()
+    cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    cap.paragraph_format.space_after = Pt(10)
+    run = cap.add_run(caption)
+    run.italic = True
+    run.font.size = Pt(9.5)
+    run.font.color.rgb = GREY
 
 
 def convert(md_path, out_path, title):
@@ -413,6 +431,12 @@ def convert(md_path, out_path, title):
                 code.append(lines[i])
                 i += 1
             add_code(doc, code, usable)
+            i += 1
+            continue
+
+        m = re.match(r"^!\[(.*)\]\((.+)\)$", stripped)
+        if m:
+            add_figure(doc, md_path.parent / m.group(2), m.group(1), usable)
             i += 1
             continue
 

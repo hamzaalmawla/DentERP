@@ -11,7 +11,7 @@ Today, patient diagnosis, referrals, student work cards, chair schedules and cha
 | Software Requirements Specification (SRS) | [SPU-Dental-SRS.pdf](docs/SPU-Dental-SRS.pdf) | [.docx](docs/SPU-Dental-SRS.docx) | [SRS.md](docs/SRS.md) |
 | System Design Document | [SPU-Dental-System-Design.pdf](docs/SPU-Dental-System-Design.pdf) | [.docx](docs/SPU-Dental-System-Design.docx) | [system-design.md](docs/system-design.md) |
 
-The Markdown files are the working source. The PDF and Word files are generated from them (see [Rebuilding the documents](#rebuilding-the-documents)).
+The Markdown files are the working source. The PDF and Word files are generated from them (see [Rebuilding the documents](#rebuilding-the-documents)). The diagrams are in [docs/figures](docs/figures).
 
 ## What the system does
 
@@ -31,15 +31,15 @@ Everything the clinic may change (clinics, chairs, sessions, courses, steps, gra
 | Mobile app — Student | Dental students: diagnosis, treatment steps with photos, work cards, schedule |
 | Mobile app — Supervisor | Clinical supervisors: approve and grade, refer, assign patients, attendance |
 | Mobile app — Maintenance | Maintenance technicians: chair rounds and fault tickets |
-| Web dashboard | Super admin (manages the system, registers patients) and management (dean, department heads; read-only) |
+| Web dashboard | Super admin (manages the system), reception (registers patients), supervisors (the same work as in the app, for their own clinics) and management (dean, department heads; read-only) |
 
 The app is Arabic first (right to left), with English as a second language.
 
 ## Architecture
 
-- **Backend:** Python 3.12, Django 5.2 LTS, Django REST Framework, PostgreSQL 16, Celery + Redis
+- **Backend:** Python 3.12, Django 5.2 LTS, Django REST Framework, PostgreSQL 16, Celery + Redis — a modular monolith with ports and adapters (hexagonal) inside each module, following SOLID
 - **Web dashboard:** Django Unfold, inside the same Django project
-- **Mobile app:** Flutter (iOS and Android), one app with three role-based interfaces
+- **Mobile app:** Flutter (iOS and Android), one app with three role-based interfaces, built with MVVM
 - **Storage:** S3-compatible object storage for clinical photos and X-rays
 - **Deployment:** Docker Compose on a cloud server with HTTPS; CI/CD with GitHub Actions
 
@@ -51,7 +51,7 @@ Full details are in the [System Design Document](docs/SPU-Dental-System-Design.p
 | --- | --- |
 | Planning, requirements and design | 24 Oct – 20 Nov 2026 |
 | Dean sign-off | 21 Nov 2026 |
-| Development (5 one-week sprints) | 21 Nov – 25 Dec 2026 |
+| Development: backend first, then mobile, then integration, in two parallel tracks; then hardening | 21 Nov – 25 Dec 2026 |
 | User acceptance testing | 26 Dec 2026 – 6 Jan 2027 |
 | Production deployment and training | 7 – 15 Jan 2027 |
 | Handover | 18 Jan 2027 |
@@ -59,8 +59,8 @@ Full details are in the [System Design Document](docs/SPU-Dental-System-Design.p
 ## Repository layout
 
 ```
-docs/      SRS and System Design (Markdown source, PDF, Word)
-tools/     scripts that generate the PDF and Word documents
+docs/      SRS and System Design (Markdown source, PDF, Word) and their figures
+tools/     scripts that generate the PDF and Word documents and the diagrams
 ```
 
 The `backend/`, `mobile/` and `deploy/` folders will be added during development, as described in section 4 of the System Design.
@@ -71,6 +71,7 @@ Requires Python with `python-docx` and Microsoft Word on Windows.
 
 ```bash
 pip install python-docx
+python tools/figures/make_figures.py
 python tools/build_docs.py
 powershell -ExecutionPolicy Bypass -File tools/export_pdf.ps1
 ```

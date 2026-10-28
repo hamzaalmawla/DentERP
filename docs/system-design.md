@@ -1,28 +1,37 @@
 # SPU Dental Clinic System — System Design
 
-Oct 26, 2026 · @Zainab
+Oct 28, 2026 · @Zainab
 
 This document describes how the system is built to meet the Software Requirements Specification: one Django backend with a REST API and an Unfold dashboard, one Flutter app with three role-based interfaces, deployed with Docker on a cloud server.
 
+**Document history**
+
+| Version | Date | Changes |
+| --- | --- | --- |
+| 1.0 | 26 Oct 2026 | First complete design |
+| 1.1 | 28 Oct 2026 | Architecture review: ports and adapters inside the modular monolith, SOLID rules, MVVM in the app; Reception role; supervisors on the dashboard; backend-first build plan in two parallel tracks; diagrams added |
+
 ## 1. Design overview and goals
 
-The design keeps the system small enough to build in one month: one backend, one database, one mobile codebase. Every clinic rule lives in configuration tables rather than in code.
+The design keeps the system small enough to build in one month: one backend, one database, one mobile codebase. Every clinic rule lives in configuration tables rather than in code. The backend is a modular monolith: one deployable application, split into modules with strict boundaries, so it can grow with the faculty without the cost of microservices.
 
 **Design goals, in priority order**
 
 1. **Correct clinical records.** Approved records are locked and versioned, every change is audited, and permissions are checked on the server.
 2. **Configurable, not coded.** Clinics, chairs, sessions, courses, steps, grading and lists are data the super admin edits (SRS section 4).
 3. **Fast at the chair.** Few taps to approve, photos that upload on a weak network, and drafts that survive closing the app.
-4. **Buildable by two people with Claude Code.** Standard, well-documented libraries; one way of doing each thing; conventions written down in the repository.
-5. **Cheap to run.** A single cloud server with Docker is enough for the expected load (SRS NFR-02).
+4. **Easy to change.** Each class has one responsibility, and modules depend on interfaces (ports), not on each other's internals, so a change stays in one place.
+5. **Buildable by two people in parallel with Claude Code.** Standard, well-documented libraries; one way of doing each thing; work split into two tracks that do not touch the same files (section 13).
+6. **Cheap to run.** A single cloud server with Docker is enough for the expected load (SRS NFR-02).
 
 **Key design decisions**
 
 | Decision | Choice | Why |
 | --- | --- | --- |
-| Backend shape | One Django project (a modular monolith), split into apps by domain | Simple to deploy and test; clear module boundaries without microservices overhead |
+| Backend shape | One Django project (a modular monolith), split into modules by domain | Simple to deploy and test; clear module boundaries without microservices overhead; a module can later be split out if the faculty needs it |
+| Code architecture | Ports and adapters (hexagonal) inside each module, following SOLID; not MVC | Business rules do not depend on Django, the database or outside services, so they are easy to test and to change (section 5) |
 | Dashboard | Django Unfold on the Django admin | No separate frontend or API for admin screens; saves about two weeks |
-| Mobile | One Flutter app; the role chooses the interface after login | One store listing, one codebase, shared widgets |
+| Mobile | One Flutter app; the role chooses the interface after login; MVVM inside | One store listing, one codebase, shared widgets |
 | Workflow | Explicit state machines in a service layer (section 9) | Rules are tested in one place and cannot be bypassed from the API or the dashboard |
 | Configuration | Template tables (courses, steps, lists) instead of hard-coded enums | Meets the "everything dynamic" requirement |
 | Background work | Celery workers with Redis | Push notifications, thumbnails, Excel imports and PDF exports run without blocking requests |
@@ -30,9 +39,9 @@ The design keeps the system small enough to build in one month: one backend, one
 
 ## 2. System architecture
 
-Two kinds of client reach one server. The Flutter app talks to the REST API, and the browser opens the Unfold dashboard. Both are served by the same Django process and follow the same service layer.
+Two kinds of client reach one server. The Flutter app talks to the REST API, and the browser opens the Unfold dashboard. Both are served by the same Django process and call the same application services.
 
-&#91;embedded content: system architecture · clients, server, data, external services\]
+![Figure 1. System architecture](figures/architecture.png)
 
 Django handles each request and hands slow work (push messages, thumbnails, imports, PDF exports) to the Celery worker through Redis. Photos go to private object storage; the database and storage are backed up off the server every night.
 
@@ -102,8 +111,8 @@ spu-dental/
 │   ├── manage.py
 │   ├── pyproject.toml
 │   ├── config/                # settings (base, dev, staging, prod), urls, celery, wsgi
-│   ├── apps/
-│   │   ├── core/              # base models, audit, permissions, utils
+│   ├── apps/                  # one folder per module, all with the layout in section 5
+│   │   ├── core/              # base models, audit, permissions, shared ports
 │   │   ├── accounts/
 │   │   ├── setup/             # terms, departments, clinics, chairs, sessions, lookup lists
 │   │   ├── academics/         # courses, templates, enrollments, supervisor scope
@@ -125,7 +134,7 @@ spu-dental/
 │   │   ├── main.dart
 │   │   ├── core/              # api client, auth, router, theme, l10n, offline queue
 │   │   ├── shared/            # widgets, models used by all roles
-│   │   └── features/
+│   │   └── features/          # each feature has model/, viewmodel/, view/ (MVVM)
 │   │       ├── auth/
 │   │       ├── student/       # home, patients, diagnosis, work cards, logbook
 │   │       ├── supervisor/    # approvals, referrals, assignment, clinic today
@@ -141,17 +150,48 @@ spu-dental/
 └── .github/workflows/         # backend tests, mobile build, deploy
 ```
 
-## 5. Backend modules
+## 5. Backend modules and architecture
 
-The backend is split into 13 Django apps. Each app owns its models, and other apps change those models only by calling the app's service functions, never by editing them directly.
+The backend is a modular monolith split into 13 modules (Django apps). Each module owns its tables. Another module reads or changes that data only through the module's application services, never by importing its models.
+
+### Ports and adapters inside each module
+
+Each module follows the ports and adapters (hexagonal) architecture. The business rules sit in the centre and know nothing about Django, the database, HTTP or outside services. They talk to the outside world only through ports, which are small interfaces. Adapters implement those ports, or call into the centre from outside. This is the only architectural pattern used, so every module looks the same.
+
+![Figure 2. Ports and adapters inside one module](figures/ports-adapters.png)
+
+| Layer | Folder | Holds | May import |
+| --- | --- | --- | --- |
+| Domain | `domain/` | State machines, business rules (BR-01 to BR-14), value objects such as an FDI tooth number, `DomainError` | Python only |
+| Application | `application/` | One service class per use case (for example `ApproveStep`); DTOs (frozen dataclasses) returned to callers; ports defined as `typing.Protocol` interfaces | `domain/` |
+| Driving adapters | `api/`, `admin.py` | DRF serializers, views and URLs for the app; Unfold admin screens for the dashboard. They turn a request into a service call | `application/` |
+| Driven adapters | `infrastructure/`, `models.py` | Django models and ORM repositories that implement the repository ports; adapters for S3 storage, FCM push, WeasyPrint PDF and Excel | `application/` (to implement its ports) |
+
+`models.py` stays at the root of the module because Django loads models from there. It is treated as part of the persistence adapter: services never import it directly.
+
+**How a request flows.** A DRF view (driving adapter) validates the input and calls `ApproveStep.execute(command)`. The service loads the step through the `StepRepository` port, applies the domain rules, saves it through the same port, and returns a `StepDTO`. The view serializes the DTO. The Unfold dashboard calls the same service, so the app and the dashboard can never apply different rules.
+
+**Dependency injection.** Each module has a `container.py` that builds its services and passes in the concrete adapters through the constructor. Tests pass in-memory fakes of the same ports, so business rules are tested without a database.
+
+**SOLID in practice**
+
+| Principle | How it is applied |
+| --- | --- |
+| Single responsibility | One service class per use case, one repository per aggregate, one adapter per outside service. A class that does two jobs is split |
+| Open / closed | New grading types, notification channels or report formats are added as new adapter or strategy classes, without editing existing ones |
+| Liskov substitution | Every adapter fully honours its port, so an in-memory fake, the ORM repository or a future service can replace each other |
+| Interface segregation | Ports are small and specific (`StepRepository`, `Notifier`, `FileStorage`, `PdfRenderer`), not one large data-access interface |
+| Dependency inversion | Services depend on ports (`Protocol` interfaces); concrete adapters are injected by the module's container |
+
+### Modules
 
 | App | Owns (models) | Main services | SRS |
 | --- | --- | --- | --- |
 | core | BaseModel (id, created/updated by and at, is\_active), AuditLog | Audit logging, soft delete, shared permission classes, error format | SYS-02, SYS-04, SYS-10 |
-| accounts | User, Role, UserRole, DeviceToken | Login, token refresh, account lock, password change, role switch | DB-01, DB-02, ST-01, SYS-01 |
+| accounts | User, Role, UserRole, DeviceToken | Login, token refresh, account lock, password change, role switch | DB-01, DB-02, DB-20, ST-01, SYS-01 |
 | setup | Term, Department, Clinic, Chair, Session, CaseType, ToothCode, MedicalHistoryItem, SoftTissueSite, IndexDefinition, TreatmentType, ChecklistItem, FaultCategory, SystemSetting | Configuration CRUD, default data loaded on install | DB-04, DB-06, DB-18 |
 | academics | Course, CourseClinic, CaseRequirement, StepTemplate, GradingScheme, Enrollment, SupervisorScope | Excel import of students and enrollments, eligibility checks, supervisor scope lookup | DB-03, DB-05, DB-07 |
-| patients | Patient, PatientAssignment, PatientTransfer, DiagnosisQueueEntry | Registration with duplicate check, file number generation, assignment, transfer | DB-08–DB-11, SV-03, SV-09 |
+| patients | Patient, PatientAssignment, PatientTransfer, DiagnosisQueueEntry | Registration with duplicate check, file number generation, assignment, transfer | DB-08–DB-11, DB-20, SV-03, SV-09 |
 | diagnosis | Diagnosis, MedicalHistoryAnswer, ToothFinding, SoftTissueFinding, IndexScore, PlanItem | Draft, submit, approve, return, version | ST-05, ST-06, SV-04 |
 | referrals | Referral, ReferralItem | Create, accept, reject, assign, complete | SV-05, SV-06, SV-08, DB-13 |
 | workcards | WorkCard, Case, StepRecord | Card creation on enrollment, case creation (from referral or lab), step submit, approve, return, progress | ST-07–ST-10, SV-07 |
@@ -161,13 +201,13 @@ The backend is split into 13 Django apps. Each app owns its models, and other ap
 | notifications | Notification | Create in-app notification, send push, mark read | SYS-03 |
 | reports | (no tables; read-only queries) | Daily reports F6/F8/F9/F18, logbook, statistics, Excel and PDF export | DB-15, DB-16, ST-13 |
 
-**Layers inside each app:** `models.py` holds the data, `services.py` holds the business rules and state changes, `selectors.py` holds read queries that apply permission scoping, `api/` holds the serializers, views and URLs, and `admin.py` holds the Unfold dashboard screens. Views and admin actions call services and never change models directly, so the API and the dashboard follow the same rules.
+Read queries that depend on the user (lists, searches, reports) go through query services in `application/` that apply the permission scope (section 8), so the app and the dashboard show each user the same rows.
 
 ## 6. Database design
 
 The database is PostgreSQL with about 50 tables. Every table inherits the common fields `id`, `created_at`, `created_by`, `updated_at`, `updated_by` and `is_active`. Clinical tables also keep a full history table via django-simple-history.
 
-&#91;embedded content: core ERD · 15 entities, read labels left to right or top to bottom\]
+![Figure 3. Core entity relationship diagram](figures/erd.png)
 
 A referral becomes exactly one case on the work card of the student it is assigned to, so the patient record and the student's grades stay linked.
 
@@ -177,7 +217,7 @@ A referral becomes exactly one case on the work card of the student it is assign
 | --- | --- | --- | --- |
 | core | AuditLog | user, action, model, object\_id, changes (JSON), ip, at | Index on (model, object\_id) and on at |
 | accounts | User | username, full\_name\_ar, full\_name\_en, phone, university\_id, must\_change\_password, failed\_logins, locked\_until | username unique; university\_id unique when set |
-| accounts | Role · UserRole | code (super\_admin, management, supervisor, student, technician) · user, role | (user, role) unique |
+| accounts | Role · UserRole | code (super\_admin, management, reception, supervisor, student, technician) · user, role | (user, role) unique |
 | accounts | DeviceToken | user, platform, token, last\_seen | token unique |
 | setup | Term | name, start\_date, end\_date, is\_current | One current term |
 | setup | Department | name\_ar, name\_en, head (User) | — |
@@ -276,12 +316,13 @@ The full request and response schemas are generated by drf-spectacular at `/api/
 
 Permissions are enforced in three layers on the server: the role allows the action, the scope limits the rows, and the record's state allows the change. The app only hides buttons; it is never trusted.
 
-**1. Role check (per endpoint).** Each view declares the roles allowed, using DRF permission classes such as `IsStudent`, `IsSupervisor`, `IsTechnician`, `IsSuperAdmin` and `IsManagement`. Roles come from the `UserRole` table. A user with several roles sends `X-Active-Role` to pick the interface; the server checks that the user holds that role.
+**1. Role check (per endpoint).** Each view declares the roles allowed, using DRF permission classes such as `IsStudent`, `IsSupervisor`, `IsTechnician`, `IsReception`, `IsSuperAdmin` and `IsManagement`. Each dashboard screen declares its roles in the same way. Roles come from the `UserRole` table. A user with several roles sends `X-Active-Role` to pick the interface; the server checks that the user holds that role.
 
 **2. Scope check (per row).** Every list and detail view reads through a selector that filters the queryset:
 
 - **Student:** patients with an active assignment to them; their own work cards, cases and steps.
-- **Supervisor:** clinics and courses in their `SupervisorScope`; diagnoses and steps submitted to those; referrals to and from those clinics.
+- **Supervisor:** clinics and courses in their `SupervisorScope`; diagnoses and steps submitted to those; referrals to and from those clinics. The same scope applies in the app and on the dashboard.
+- **Reception:** patient details (name, file number, contact details) and the diagnosis waiting queue; no clinical data such as diagnoses, steps or photos. Dashboard only.
 - **Technician:** clinics, chairs, rounds and tickets; no patient data.
 - **Management:** read-only, all data, dashboard only.
 
@@ -294,7 +335,7 @@ A record outside the user's scope returns 404, not 403, so its existence is not 
 - JWT access tokens last 15 minutes and refresh tokens 30 days, rotated on each refresh. Logout blacklists the refresh token.
 - 5 failed logins lock the account for 15 minutes (SYS-01). The super admin can unlock it from the dashboard.
 - New accounts get a temporary password, which must be changed on first login.
-- Dashboard sessions use Django's session login with CSRF protection, a 2-hour idle timeout, and access for the super admin and management roles only.
+- Dashboard sessions use Django's session login with CSRF protection and a 2-hour idle timeout. The dashboard is open to the super admin, management, reception and supervisor roles; students and technicians cannot log in to it.
 
 **Data protection**
 
@@ -308,7 +349,7 @@ A record outside the user's scope returns 404, not 403, so its existence is not 
 
 ## 9. Workflow engine
 
-Each workflow record has a `status` field changed only by one service function per action. That function checks the guard, writes the change and its side effects in one database transaction, and queues notifications after the commit. The lifecycles are drawn in the SRS (section 6).
+Each workflow record has a `status` field changed only by one application service per action (for example `ApproveStep`). The allowed transitions are defined once in the module's `domain/` state machine. The service checks the guard, writes the change and its side effects in one database transaction, and queues notifications after the commit. The lifecycles are drawn in the SRS (section 6).
 
 **Pattern used by every action**
 
@@ -354,15 +395,21 @@ One `Notification` row per recipient and event holds the type, a title and body 
 
 ## 10. Mobile app design
 
-One Flutter app opens one of three interfaces after login. Each interface is a separate feature folder with its own bottom navigation, and all three share the API client, the offline queue, the theme and the common widgets.
+One Flutter app opens one of three interfaces after login. Each interface is a separate feature folder with its own bottom navigation, and all three share the API client, the offline queue, the theme and the common widgets. Supervisors also have the web dashboard (section 11); students and technicians use only the app.
 
-### App architecture
+### App architecture (MVVM)
 
-- **Presentation:** screens and widgets. They read state from Riverpod providers and never call the API directly.
-- **State:** Riverpod providers and notifiers, one per screen or feature, which expose loading, data and error states.
-- **Data:** repositories per resource (for example `CaseRepository`). They call the API through dio and map JSON to freezed models.
+The app follows Model–View–ViewModel, the usual pattern for Flutter. Each feature folder has `model/`, `viewmodel/` and `view/`.
+
+- **View:** screens and widgets. They only draw the state of their ViewModel and pass user actions to it. They never call the API.
+- **ViewModel:** a Riverpod `Notifier` per screen or feature. It holds the screen state (loading, data, error), calls the repositories, and exposes actions such as `approve()`. It has no Flutter widget code, so it is unit-tested on its own.
+- **Model:** freezed data classes and repositories per resource (for example `CaseRepository`). Repositories call the API through dio and map JSON to the models. They are abstract classes with one implementation, so ViewModels can be tested with fakes.
 - **Local:** a drift (SQLite) database with three tables: diagnosis drafts, the upload queue and the cached lookups.
 - **Core:** the dio client with a token refresh interceptor, go\_router with role guards, the theme (Arabic font, right-to-left), localization, error mapping from API codes to messages, and the connectivity watcher.
+
+### Visual identity
+
+The screens are designed after the backend and its API are complete (section 13). The design uses the SPU visual identity: the university and Faculty of Dentistry logos and the university colours. The same colours are applied to the Unfold dashboard theme, so the app and the dashboard look like one product.
 
 ### Login and role routing
 
@@ -416,7 +463,14 @@ The dashboard is the Django admin styled with Unfold, at `/dashboard/`. Standard
 | Users | Users · Roles · Audit log | Admin; audit log read-only |
 | Settings | System settings | Single-record admin |
 
-**Management role:** the same sidebar without the setup, users and settings groups. Every admin is read-only for this role, enforced by `has_change_permission` returning false.
+**What each role sees.** One dashboard serves four roles. Each role sees only its own sidebar groups, and the server checks the role on every screen and action (section 8).
+
+| Role | Sidebar groups | Can change |
+| --- | --- | --- |
+| Super admin | All | Everything |
+| Management | Home, Patients (read-only), Clinical, Scheduling, Maintenance, Reports | Nothing; every screen is read-only (`has_change_permission` returns false) |
+| Reception | Patients (register, search, edit details) · Diagnosis queue (send a patient, see today's queue) | Patient details and queue entries only; no clinical data is shown |
+| Supervisor | Home (own clinics) · Approvals · Clinical (referral board for own clinics) · Scheduling (distribution and attendance for own clinics) · Students (progress in own courses) · Reports (own clinics and courses) · Maintenance (report a fault) | The same actions as in the Supervisor interface of the app, limited to their scope |
 
 **Arabic layout:** Django's `LANGUAGES` setting with Arabic as the default, and `dir="rtl"` on the dashboard's base template. RTL support in Unfold is checked in week 1, and the fallback is Flutter Web (Project Plan, risks).
 
@@ -459,24 +513,55 @@ The whole backend runs as Docker Compose services on one cloud Linux server. A s
 
 **Store publishing:** developer accounts held outside Syria (Project Plan). Reviewers get demo logins for each role on staging data. A privacy policy page is served at `/privacy/`.
 
-## 13. Development conventions for Claude Code
+## 13. Build plan and development conventions
+
+### Build order
+
+The system is built backend first. The whole backend, its API and the dashboard are finished and tested before the mobile screens are built, so the app is written once against a stable API instead of being changed after every backend change. This order is also the fastest with AI-assisted development.
+
+| Phase | Dates | Work | Done when |
+| --- | --- | --- | --- |
+| 0. Contracts | 21–22 Nov | Repository, Docker setup, `core` and `accounts` modules, the ports of every module, and the OpenAPI schema outline. Both developers together | Both tracks can start without waiting for each other |
+| 1. Backend | 22–27 Nov | All 13 modules: domain rules, services, adapters, API and dashboard screens. Two parallel tracks (below) | Every Must requirement passes its API tests; the dashboard works in Arabic |
+| 2. Frontend | 28–29 Nov | Visual design from the SPU identity; the three mobile interfaces built against the finished API. Two parallel tracks | Every screen in section 10 works against staging |
+| 3. Integration | 30 Nov | End-to-end tests of each user story on staging; fixes | All 24 user stories pass on staging |
+| 4. Hardening | 1–25 Dec | Should and Could requirements, reports and PDF exports, performance, store builds, Thursday demos to the clinic | Ready for the user acceptance test on 26 Dec |
+
+The later dates (acceptance test, production deployment, training and handover on 18 Jan 2027) stay as in the Project Plan. Phase 4 is the buffer that protects the handover date.
+
+### Two parallel tracks
+
+The work is split so the two developers never edit the same files. The ports agreed in phase 0 are the contract between the tracks: a track that needs another module calls its port, using a fake until the real adapter is ready.
+
+| Track | Phase 1 — Backend modules | Phase 2 — Mobile |
+| --- | --- | --- |
+| A — Clinical flow | patients, diagnosis, referrals, workcards, media | Student interface; shared app core (API client, login, offline queue) |
+| B — Operations | setup, academics, scheduling, maintenance, notifications, reports; dashboard theme and role menus | Supervisor and Maintenance interfaces |
+
+Each track works on its own branches and pull requests. The other developer reviews each pull request before it is merged.
+
+### Conventions for Claude Code
 
 These rules go into `CLAUDE.md` at the root of the repository, so every Claude Code session follows the same structure. Each build prompt names the user stories (US-xx) and requirement IDs it implements.
 
 **Backend rules**
 
+- Every module follows the layout in section 5: `domain/`, `application/`, `infrastructure/`, `api/`, `admin.py`, `models.py`, `container.py`. Ports and adapters is the only architectural pattern; do not add others.
 - Every model inherits `core.BaseModel`. Records are never hard-deleted; use `is_active=False`.
-- Business rules and status changes live only in `services.py`. Views, serializers and admin actions call services.
-- Reads that depend on the user go through `selectors.py`, which applies the scope filter (section 8).
+- Business rules and status changes live only in `domain/` and in the application services. Views, serializers, models and admin actions contain no business logic; they call a service.
+- One class, one responsibility: one service per use case, one repository per aggregate, one adapter per outside service.
+- Services receive their ports through the constructor (built in `container.py`) and return DTOs (frozen dataclasses), never Django model instances.
+- A module never imports another module's `models.py` or `infrastructure/`; it calls that module's application services.
+- Reads that depend on the user go through query services that apply the scope filter (section 8).
 - Errors: raise `DomainError(code, message)`; one exception handler turns it into the API error format.
 - Every user-facing string is wrapped in `gettext`, with Arabic in `locale/ar`.
-- Every service function gets pytest tests for the allowed path, each guard failure, and the permission scope.
+- Every service gets pytest tests for the allowed path, each guard failure, and the permission scope, using in-memory fakes of its ports. Repositories get separate tests against PostgreSQL.
 - Migrations are committed. Migrations are never edited after they are merged.
 
 **Mobile rules**
 
-- Feature-first folders (`features/<role>/<feature>/`), each with `data/`, `state/` and `ui/`.
-- No API calls in widgets; widgets read Riverpod providers only.
+- Feature-first folders (`features/<role>/<feature>/`), each with `model/`, `viewmodel/` and `view/` (MVVM).
+- No API calls or business logic in widgets; views read their ViewModel only, and ViewModels reach the API only through repositories.
 - Every text comes from the ARB files in Arabic and English. No hard-coded strings.
 - Use `EdgeInsetsDirectional` and `AlignmentDirectional` everywhere, so right-to-left layout works.
 - API error codes are mapped to localized messages in one place.
@@ -484,36 +569,38 @@ These rules go into `CLAUDE.md` at the root of the repository, so every Claude C
 
 **Process rules**
 
-- One branch and one pull request per user story. The pull request description lists the US and requirement IDs and how they were tested.
+- Work is split into small tasks, one per user story or module, never the whole project in one step. One branch and one pull request per task. The pull request description lists the US and requirement IDs and how they were tested.
 - Before merging, a developer reviews the diff, runs it on staging, and checks it in Arabic.
 - `docs/decisions.md` records every decision that changes this design, with its date and reason.
 
 **Prompt template for a story**
 
 ```
-Implement US-07 (SV-07, SYS-03) from docs/SRS.md.
-Scope: backend workcards app (approve/return step services + API) and
-mobile supervisor feature (approval queue, step review screen).
+Implement US-07 (SV-07, SYS-03) from docs/SRS.md, backend only.
+Scope: workcards module. Domain: step state machine (approve/return).
+Application: ApproveStep and ReturnStep services, StepDTO, StepRepository port.
+Adapters: ORM repository, DRF endpoints, Unfold action.
 Follow CLAUDE.md. Acceptance criteria: <paste from SRS>.
-Add tests for each criterion. Do not change other apps' models.
+Add tests for each criterion. Do not touch other modules.
 ```
 
 ## 14. Traceability
 
-Every SRS requirement maps to at least one backend app and one interface. The user stories in the SRS link each sprint to these modules.
+Every SRS requirement maps to at least one backend module and one interface, and each module belongs to one track (section 13).
 
-| SRS requirements | Backend app(s) | Interface | Sprint |
+| SRS requirements | Backend module(s) | Interface | Track |
 | --- | --- | --- | --- |
-| DB-01, DB-02, ST-01, SV-01, MT-01, SYS-01, SYS-02 | accounts, core | All | S1 |
-| DB-03, DB-05, DB-07 | academics | Dashboard | S1 |
-| DB-04, DB-06, DB-18, SYS-07, SYS-09, SYS-10 | setup, core | Dashboard | S1 |
-| ST-07–ST-11, SV-07, SYS-06 | workcards, media | Student, Supervisor | S2 |
-| DB-08–DB-11, ST-03, ST-04, SV-03 | patients | Dashboard, Student, Supervisor | S3 |
-| ST-05, ST-06, SV-04, SYS-05 | diagnosis | Student, Supervisor | S3 |
-| SV-05, SV-06, SV-08, DB-13 | referrals, workcards | Supervisor, Dashboard | S3–S4 |
-| SV-09, SV-10 | patients, diagnosis | Supervisor | S4 |
-| DB-12, SV-11, ST-12 | scheduling | Dashboard, Supervisor, Student | S4 |
-| MT-02–MT-08, SV-13, DB-14 | maintenance | Maintenance, Supervisor, Dashboard | S4 |
-| SYS-03, ST-14, SV-14, MT-09 | notifications | All | S5 |
-| DB-15, DB-16, DB-17, ST-13, SV-12, SYS-08 | reports, core | Dashboard, Student, Supervisor | S5 |
-| SYS-04 | core (AuditLog, simple-history) | Dashboard | S1 |
+| DB-01, DB-02, ST-01, SV-01, MT-01, SYS-01, SYS-02 | accounts, core | All | Both (phase 0) |
+| DB-03, DB-05, DB-07 | academics | Dashboard | B |
+| DB-04, DB-06, DB-18, SYS-07, SYS-09, SYS-10 | setup, core | Dashboard | B |
+| ST-07–ST-11, SV-07, SYS-06 | workcards, media | Student, Supervisor | A |
+| DB-08–DB-11, DB-20, ST-03, ST-04, SV-03 | patients | Dashboard, Student, Supervisor | A |
+| ST-05, ST-06, SV-04, SYS-05 | diagnosis | Student, Supervisor | A |
+| SV-05, SV-06, SV-08, DB-13 | referrals, workcards | Supervisor, Dashboard | A |
+| SV-09, SV-10 | patients, diagnosis | Supervisor | A |
+| DB-12, SV-11, ST-12 | scheduling | Dashboard, Supervisor, Student | B |
+| MT-02–MT-08, SV-13, DB-14 | maintenance | Maintenance, Supervisor, Dashboard | B |
+| SYS-03, ST-14, SV-14, MT-09 | notifications | All | B |
+| DB-15, DB-16, DB-17, ST-13, SV-12, SYS-08 | reports, core | Dashboard, Student, Supervisor | B |
+| DB-21 | accounts, all modules' dashboard screens | Dashboard | B |
+| SYS-04 | core (AuditLog, simple-history) | Dashboard | Both (phase 0) |

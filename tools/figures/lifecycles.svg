@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1070" height="610" viewBox="0 0 1070 610" font-family="Segoe UI, Calibri, Arial, sans-serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#44546A"/></marker></defs>
+<rect width="1070" height="610" fill="#ffffff"/>
+
+<text x="20" y="60" font-size="16" font-weight="700" fill="#1F3A5F">Diagnosis</text>
+<rect x="160" y="35" width="122" height="38" rx="19" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="221.0" y="59" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Draft</text>
+<rect x="352" y="35" width="122" height="38" rx="19" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="413.0" y="59" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Submitted</text>
+<rect x="544" y="35" width="122" height="38" rx="19" fill="#1F3A5F" stroke="#1F3A5F" stroke-width="1.5"/><text x="605.0" y="59" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">Approved</text>
+<rect x="352" y="107" width="122" height="38" rx="19" fill="#FBF1E6" stroke="#B5651D" stroke-width="1.5"/><text x="413.0" y="131" text-anchor="middle" font-size="13" font-weight="600" fill="#8A4A10">Returned</text>
+<path d="M284,54 L350,54" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="317.0" y="47" text-anchor="middle" font-size="11" fill="#44546A">submit</text>
+<path d="M476,54 L542,54" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="509.0" y="47" text-anchor="middle" font-size="11" fill="#44546A">approve</text>
+<path d="M391.0,75 L391.0,105" stroke="#B5651D" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="385.0" y="94.0" text-anchor="end" font-size="11" fill="#8A4A10">return</text>
+<path d="M435.0,109 L435.0,75" stroke="#B5651D" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="441.0" y="94.0" text-anchor="start" font-size="11" fill="#8A4A10">resubmit</text>
+<path d="M15,157 H1055" stroke="#D9D9D9" stroke-width="1"/>
+<text x="20" y="210" font-size="16" font-weight="700" fill="#1F3A5F">Referral</text>
+<rect x="160" y="185" width="122" height="38" rx="19" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="221.0" y="209" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Sent</text>
+<rect x="352" y="185" width="122" height="38" rx="19" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="413.0" y="209" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Accepted</text>
+<rect x="544" y="185" width="122" height="38" rx="19" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="605.0" y="209" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Assigned</text>
+<rect x="736" y="185" width="122" height="38" rx="19" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="797.0" y="209" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">In treatment</text>
+<rect x="928" y="185" width="122" height="38" rx="19" fill="#1F3A5F" stroke="#1F3A5F" stroke-width="1.5"/><text x="989.0" y="209" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">Completed</text>
+<rect x="160" y="257" width="122" height="38" rx="19" fill="#FBF1E6" stroke="#B5651D" stroke-width="1.5"/><text x="221.0" y="281" text-anchor="middle" font-size="13" font-weight="600" fill="#8A4A10">Rejected</text>
+<path d="M284,204 L350,204" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="317.0" y="197" text-anchor="middle" font-size="11" fill="#44546A">accept</text>
+<path d="M476,204 L542,204" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="509.0" y="197" text-anchor="middle" font-size="11" fill="#44546A">assign</text>
+<path d="M668,204 L734,204" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="701.0" y="197" text-anchor="middle" font-size="11" fill="#44546A">first step</text>
+<path d="M860,204 L926,204" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="893.0" y="197" text-anchor="middle" font-size="11" fill="#44546A">complete</text>
+<path d="M199.0,225 L199.0,255" stroke="#B5651D" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="193.0" y="244.0" text-anchor="end" font-size="11" fill="#8A4A10">reject</text>
+<path d="M15,307 H1055" stroke="#D9D9D9" stroke-width="1"/>
+<text x="20" y="360" font-size="16" font-weight="700" fill="#1F3A5F">Step</text>
+<rect x="160" y="335" width="122" height="38" rx="19" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="221.0" y="359" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Pending</text>
+<rect x="352" y="335" width="122" height="38" rx="19" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="413.0" y="359" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Submitted</text>
+<rect x="544" y="335" width="122" height="38" rx="19" fill="#1F3A5F" stroke="#1F3A5F" stroke-width="1.5"/><text x="605.0" y="359" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">Approved</text>
+<rect x="352" y="407" width="122" height="38" rx="19" fill="#FBF1E6" stroke="#B5651D" stroke-width="1.5"/><text x="413.0" y="431" text-anchor="middle" font-size="13" font-weight="600" fill="#8A4A10">Returned</text>
+<path d="M284,354 L350,354" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="317.0" y="347" text-anchor="middle" font-size="11" fill="#44546A">submit</text>
+<path d="M476,354 L542,354" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="509.0" y="347" text-anchor="middle" font-size="11" fill="#44546A">approve</text>
+<path d="M391.0,375 L391.0,405" stroke="#B5651D" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="385.0" y="394.0" text-anchor="end" font-size="11" fill="#8A4A10">return</text>
+<path d="M435.0,409 L435.0,375" stroke="#B5651D" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="441.0" y="394.0" text-anchor="start" font-size="11" fill="#8A4A10">resubmit</text>
+<path d="M15,457 H1055" stroke="#D9D9D9" stroke-width="1"/>
+<text x="20" y="510" font-size="16" font-weight="700" fill="#1F3A5F">Ticket</text>
+<rect x="160" y="485" width="122" height="38" rx="19" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="221.0" y="509" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Open</text>
+<rect x="352" y="485" width="122" height="38" rx="19" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="413.0" y="509" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">In progress</text>
+<rect x="544" y="485" width="122" height="38" rx="19" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="605.0" y="509" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">External repair</text>
+<rect x="736" y="485" width="122" height="38" rx="19" fill="#1F3A5F" stroke="#1F3A5F" stroke-width="1.5"/><text x="797.0" y="509" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">Resolved</text>
+<path d="M284,504 L350,504" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="317.0" y="497" text-anchor="middle" font-size="11" fill="#44546A">start</text>
+<path d="M476,504 L542,504" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="509.0" y="497" text-anchor="middle" font-size="11" fill="#44546A">send out</text>
+<path d="M668,504 L734,504" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="701.0" y="497" text-anchor="middle" font-size="11" fill="#44546A">repaired</text>
+<path d="M413.0,525 C413.0,583 797.0,583 797.0,526" fill="none" stroke="#B5651D" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="605.0" y="581" text-anchor="middle" font-size="11" fill="#8A4A10">repaired in house</text>
+</svg>

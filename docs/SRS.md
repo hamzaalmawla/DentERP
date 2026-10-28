@@ -1,8 +1,15 @@
 # SPU Dental Clinic System — Software Requirements Specification
 
-Oct 23, 2026 · @Zainab
+Oct 28, 2026 · @Zainab
 
 This specification defines what the system must do. It is written for approval by the dean of the Faculty of Dentistry and as the build input for the development team.
+
+**Document history**
+
+| Version | Date | Changes |
+| --- | --- | --- |
+| 1.0 | 23 Oct 2026 | First complete specification |
+| 1.1 | 28 Oct 2026 | Reception role added; supervisors use the dashboard as well as the app (DB-20, DB-21); build plan changed to backend first, so requirements and stories are no longer tied to sprints (section 5); record lifecycle diagram added |
 
 ## 1. Introduction
 
@@ -11,7 +18,7 @@ This specification defines what the system must do. It is written for approval b
 **Scope.** The system has:
 
 - one mobile app (iOS and Android) with three interfaces: Student, Supervisor and Maintenance
-- one web dashboard for the super admin and management
+- one web dashboard for the super admin, reception, supervisors and management
 - one Django backend that serves both
 
 It covers patient records, diagnosis, referrals, clinical and lab work cards with grading, chair and session distribution, chair checks and maintenance, photos and reports. It does not cover fees or payments, the university's academic system, or the X-ray imaging software.
@@ -31,7 +38,8 @@ It covers patient records, diagnosis, referrals, clinical and lab work cards wit
 | Session | A time slot in the clinic day, for example 8:00–9:40 |
 | Round | A morning or afternoon chair check (F6, F18) |
 | Ticket | A fault report on a chair, followed until it is repaired |
-| Super admin | The dashboard user who manages the whole system and registers patients |
+| Super admin | The dashboard user who manages the whole system |
+| Reception | The dashboard user at the clinic front desk who registers patients and sends them to a diagnosis clinic |
 | FDI | The two-digit tooth numbering used on F1 (quadrant 1–4, tooth 1–8) |
 
 **References**
@@ -48,8 +56,8 @@ The system is new and stands alone. One Django backend holds all data. It serves
 **Product perspective**
 
 - **Backend:** Django, Django REST Framework, PostgreSQL. It holds all records, the rules and the permissions.
-- **Dashboard:** Django Unfold, inside the same Django project. Only the super admin and management use it.
-- **Mobile app:** Flutter. One app; after login it opens the Student, Supervisor or Maintenance interface according to the user's role. A user with several roles picks one.
+- **Dashboard:** Django Unfold, inside the same Django project. The super admin, reception, supervisors and management use it; each role sees only its own menus. Students and technicians cannot open it.
+- **Mobile app:** Flutter. One app; after login it opens the Student, Supervisor or Maintenance interface according to the user's role. A user with several roles picks one. Supervisors can do the same work on the app or on the dashboard.
 - **Storage:** photos and X-ray images in S3-compatible object storage.
 - **Notifications:** in-app list for every user, plus push notifications where the device supports them.
 
@@ -57,10 +65,11 @@ The system is new and stands alone. One Django backend holds all data. It serves
 
 | User class | Interface | Typical number | Main need |
 | --- | --- | --- | --- |
-| Super admin | Dashboard | 1–3 | Set up and run the whole system; register patients; manage users; view everything |
+| Super admin | Dashboard | 1–3 | Set up and run the whole system; manage users; view everything |
 | Management (dean, department heads) | Dashboard, read-only | 5–15 | Reports, statistics, referral and maintenance overview |
+| Reception | Dashboard | 1–5 | Register and find patients; send them to a diagnosis clinic's waiting queue |
 | Student | Mobile, Student interface | Hundreds (to confirm) | Diagnose patients, record treatment steps, follow own work cards and grades |
-| Supervisor | Mobile, Supervisor interface | Tens (to confirm) | Approve and grade, refer patients, assign patients to students, follow attendance |
+| Supervisor | Mobile, Supervisor interface, and Dashboard | Tens (to confirm) | Approve and grade, refer patients, assign patients to students, follow attendance, view reports for own clinics and courses |
 | Maintenance technician | Mobile, Maintenance interface | 1–5 | Chair rounds, fault tickets, repairs |
 
 **Operating environment**
@@ -89,32 +98,33 @@ The system is new and stands alone. One Django backend holds all data. It serves
 
 The server checks every action against the user's role and, for students, against ownership. A student only ever sees patients and cases assigned to them.
 
-Key: ✓ allowed · *own* only their own records · *scope* only clinics or courses the supervisor is assigned to · *view* read-only · — not allowed
+Key: ✓ allowed · *own* only their own records · *scope* only clinics or courses the supervisor is assigned to · *view* read-only · *details* personal and contact details only, no clinical data · — not allowed
 
-| Action | Super admin | Management | Supervisor | Student | Technician |
-| --- | --- | --- | --- | --- | --- |
-| Configure clinics, chairs, sessions, courses, steps, lists | ✓ | — | — | — | — |
-| Manage users and import students | ✓ | — | — | — | — |
-| Register and edit patients | ✓ | — | — | — | — |
-| View a patient record | ✓ | view | scope | own | — |
-| Assign a waiting patient to a student for diagnosis | ✓ | — | scope | — | — |
-| Fill and submit a diagnosis | — | — | — | own | — |
-| Approve or return a diagnosis | — | — | scope | — | — |
-| Create a referral | — | — | scope | — | — |
-| Accept or reject a referral, assign to a student | ✓ | — | scope | — | — |
-| Record a step and upload photos | — | — | — | own | — |
-| Create a lab case | — | — | — | own | — |
-| Approve, grade or return a step | — | — | scope | — | — |
-| Transfer a patient between students | ✓ | — | scope | — | — |
-| Distribute students to chairs and sessions | ✓ | — | scope | view own | — |
-| Mark attendance | — | — | scope | — | — |
-| Do a chair round | — | — | — | — | ✓ |
-| Report a chair fault | ✓ | — | scope | — | ✓ |
-| Work and close a ticket; set a chair in or out of service | ✓ | — | — | — | ✓ |
-| View reports and statistics | ✓ | view | scope | own | own tickets |
-| View the audit log | ✓ | — | — | — | — |
+| Action | Super admin | Management | Reception | Supervisor | Student | Technician |
+| --- | --- | --- | --- | --- | --- | --- |
+| Configure clinics, chairs, sessions, courses, steps, lists | ✓ | — | — | — | — | — |
+| Manage users and import students | ✓ | — | — | — | — | — |
+| Register and edit patients | ✓ | — | ✓ | — | — | — |
+| Send a patient to a diagnosis clinic's queue | ✓ | — | ✓ | — | — | — |
+| View a patient record | ✓ | view | details | scope | own | — |
+| Assign a waiting patient to a student for diagnosis | ✓ | — | — | scope | — | — |
+| Fill and submit a diagnosis | — | — | — | — | own | — |
+| Approve or return a diagnosis | — | — | — | scope | — | — |
+| Create a referral | — | — | — | scope | — | — |
+| Accept or reject a referral, assign to a student | ✓ | — | — | scope | — | — |
+| Record a step and upload photos | — | — | — | — | own | — |
+| Create a lab case | — | — | — | — | own | — |
+| Approve, grade or return a step | — | — | — | scope | — | — |
+| Transfer a patient between students | ✓ | — | — | scope | — | — |
+| Distribute students to chairs and sessions | ✓ | — | — | scope | view own | — |
+| Mark attendance | — | — | — | scope | — | — |
+| Do a chair round | — | — | — | — | — | ✓ |
+| Report a chair fault | ✓ | — | — | scope | — | ✓ |
+| Work and close a ticket; set a chair in or out of service | ✓ | — | — | — | — | ✓ |
+| View reports and statistics | ✓ | view | — | scope | own | own tickets |
+| View the audit log | ✓ | — | — | — | — | — |
 
-A user can hold several roles, for example a supervisor who is also a department head (Management). Permissions add up across roles.
+A user can hold several roles, for example a supervisor who is also a department head (Management). Permissions add up across roles. A supervisor has the same permissions on the mobile app and on the dashboard.
 
 ## 4. Dynamic configuration
 
@@ -147,105 +157,109 @@ The defaults listed come from the SPU/AQM forms. They are loaded on first instal
 
 ## 5. Functional requirements
 
-There are 67 requirements across the dashboard (DB), the Student (ST), Supervisor (SV) and Maintenance (MT) interfaces, and the system as a whole (SYS). Priority uses MoSCoW: **Must** for the handover, **Should** if time allows, **Could** later. The sprint column matches the Project Plan.
+There are 69 requirements across the dashboard (DB), the Student (ST), Supervisor (SV) and Maintenance (MT) interfaces, and the system as a whole (SYS). Priority uses MoSCoW: **Must** for the handover, **Should** if time allows, **Could** later.
 
-### 5.1 Web dashboard (super admin and management)
+The system is built backend first (System Design, section 13). Every Must requirement is built in phase 1 (backend, API and dashboard), phase 2 (mobile screens) and phase 3 (integration). Should requirements are built in phase 4, before the user acceptance test, and Could requirements only if time remains.
 
-| ID | Requirement | Priority | Sprint |
-| --- | --- | --- | --- |
-| DB-01 | Log in with username and password; management users get read-only menus | Must | S1 |
-| DB-02 | Create, edit and deactivate users; assign one or more roles and a department; reset passwords | Must | S1 |
-| DB-03 | Import students and enrollments from an Excel template, with a validation report of rejected rows | Must | S1 |
-| DB-04 | Manage terms, departments, clinics, chairs, sessions and courses (section 4) | Must | S1 |
-| DB-05 | Manage case requirements, step templates and grading types per course | Must | S1 |
-| DB-06 | Manage lookup lists: tooth codes, medical history items, soft tissue sites, index set, treatment types, checklist items, fault categories | Must | S1 |
-| DB-07 | Assign supervisors to courses and clinics | Must | S1 |
-| DB-08 | Register a patient: full name, national ID, date of birth, sex, job, phone, address. The system generates a unique file number and warns about duplicates by national ID or by name plus phone | Must | S3 |
-| DB-09 | Send a registered patient to a diagnosis clinic's waiting queue | Must | S3 |
-| DB-10 | Search patients by file number, national ID, name or phone; open the full record (read-only for clinical parts) | Must | S3 |
-| DB-11 | Edit patient details, with a change history | Must | S3 |
-| DB-12 | Distribute students to chairs and sessions for a clinic and a date range (F7), with an auto-suggest that respects students per chair and skips out-of-service chairs | Should | S4 |
-| DB-13 | Referral board: all referrals with status, age in days and filters by clinic, department and status | Must | S4 |
-| DB-14 | Maintenance board: chair status per clinic, open tickets, repair history | Must | S4 |
-| DB-15 | Reports: daily clinic report (F8), daily lab report (F9), chair status (F6/F18), student logbook, course progress, patients with pending plan items, referral and maintenance statistics; export to Excel and PDF | Must | S5 |
-| DB-16 | Home page with key figures: patients registered, open referrals, approvals waiting, chairs out of service | Should | S5 |
-| DB-17 | Audit log viewer with filters by user, record and date | Must | S5 |
-| DB-18 | System settings (section 4) | Must | S1 |
-| DB-19 | Merge duplicate patient records | Could | — |
+### 5.1 Web dashboard (super admin, reception, supervisors and management)
+
+| ID | Requirement | Priority |
+| --- | --- | --- |
+| DB-01 | Log in with username and password; management users get read-only menus | Must |
+| DB-02 | Create, edit and deactivate users; assign one or more roles and a department; reset passwords | Must |
+| DB-03 | Import students and enrollments from an Excel template, with a validation report of rejected rows | Must |
+| DB-04 | Manage terms, departments, clinics, chairs, sessions and courses (section 4) | Must |
+| DB-05 | Manage case requirements, step templates and grading types per course | Must |
+| DB-06 | Manage lookup lists: tooth codes, medical history items, soft tissue sites, index set, treatment types, checklist items, fault categories | Must |
+| DB-07 | Assign supervisors to courses and clinics | Must |
+| DB-08 | Register a patient: full name, national ID, date of birth, sex, job, phone, address. The system generates a unique file number and warns about duplicates by national ID or by name plus phone | Must |
+| DB-09 | Send a registered patient to a diagnosis clinic's waiting queue | Must |
+| DB-10 | Search patients by file number, national ID, name or phone; open the full record (read-only for clinical parts) | Must |
+| DB-11 | Edit patient details, with a change history | Must |
+| DB-12 | Distribute students to chairs and sessions for a clinic and a date range (F7), with an auto-suggest that respects students per chair and skips out-of-service chairs | Should |
+| DB-13 | Referral board: all referrals with status, age in days and filters by clinic, department and status | Must |
+| DB-14 | Maintenance board: chair status per clinic, open tickets, repair history | Must |
+| DB-15 | Reports: daily clinic report (F8), daily lab report (F9), chair status (F6/F18), student logbook, course progress, patients with pending plan items, referral and maintenance statistics; export to Excel and PDF | Must |
+| DB-16 | Home page with key figures: patients registered, open referrals, approvals waiting, chairs out of service | Should |
+| DB-17 | Audit log viewer with filters by user, record and date | Must |
+| DB-18 | System settings (section 4) | Must |
+| DB-19 | Merge duplicate patient records | Could |
+| DB-20 | Reception workspace: register and search patients, edit their personal details, send them to a diagnosis clinic's queue, and see today's queue with each patient's status. Reception never sees diagnoses, steps, photos or grades | Must |
+| DB-21 | Supervisor workspace: a supervisor logs in to the dashboard and, for their own clinics and courses only, sees the approvals queue, the referral board, chair distribution and attendance, student progress and reports, and can take the same actions as in the Supervisor interface of the app | Must |
 
 ### 5.2 Student interface (mobile)
 
-| ID | Requirement | Priority | Sprint |
-| --- | --- | --- | --- |
-| ST-01 | Log in; change password on first login; stay logged in until logout or 30 days of inactivity | Must | S1 |
-| ST-02 | Home: today's clinic, chair and sessions; returned items to fix; items waiting for approval; latest notifications | Must | S4 |
-| ST-03 | My patients: patients assigned to me for diagnosis or treatment, with medical alerts shown first | Must | S3 |
-| ST-04 | Patient record (own patients only): details, alerts, diagnoses, plan and its status, referrals, photos and X-rays | Must | S3 |
-| ST-05 | Fill a diagnosis (F1) as a step-by-step form: complaint; medical history; dental chart (tap a tooth, pick codes); soft tissue sites; calculus and plaque indices; X-ray findings with images; diagnosis; treatment plan items (treatment type, teeth). Saves a draft automatically | Must | S3 |
-| ST-06 | Submit the diagnosis to a supervisor of that clinic; see a returned diagnosis with the comment, fix it and resubmit | Must | S3 |
-| ST-07 | My work cards: one card per course and term, showing cases done against required, and grades | Must | S2 |
-| ST-08 | Case view: patient, tooth, case type and the list of steps with status, grade and supervisor | Must | S2 |
-| ST-09 | Record a step: mark it done, add a note, attach photos from the camera or gallery, and send it to a supervisor for approval | Must | S2 |
-| ST-10 | Create a lab case on a lab work card: case type and exercise or model number | Must | S2 |
-| ST-11 | Upload photos compressed, with a queue that retries when the network returns | Must | S2 |
-| ST-12 | My schedule: chair and session distribution for the coming days | Should | S4 |
-| ST-13 | Logbook: all my cases by course and case type, with grades | Should | S5 |
-| ST-14 | Notifications list; tap to open the related item | Must | S5 |
-| ST-15 | Profile, Arabic / English switch, logout | Must | S1 |
+| ID | Requirement | Priority |
+| --- | --- | --- |
+| ST-01 | Log in; change password on first login; stay logged in until logout or 30 days of inactivity | Must |
+| ST-02 | Home: today's clinic, chair and sessions; returned items to fix; items waiting for approval; latest notifications | Must |
+| ST-03 | My patients: patients assigned to me for diagnosis or treatment, with medical alerts shown first | Must |
+| ST-04 | Patient record (own patients only): details, alerts, diagnoses, plan and its status, referrals, photos and X-rays | Must |
+| ST-05 | Fill a diagnosis (F1) as a step-by-step form: complaint; medical history; dental chart (tap a tooth, pick codes); soft tissue sites; calculus and plaque indices; X-ray findings with images; diagnosis; treatment plan items (treatment type, teeth). Saves a draft automatically | Must |
+| ST-06 | Submit the diagnosis to a supervisor of that clinic; see a returned diagnosis with the comment, fix it and resubmit | Must |
+| ST-07 | My work cards: one card per course and term, showing cases done against required, and grades | Must |
+| ST-08 | Case view: patient, tooth, case type and the list of steps with status, grade and supervisor | Must |
+| ST-09 | Record a step: mark it done, add a note, attach photos from the camera or gallery, and send it to a supervisor for approval | Must |
+| ST-10 | Create a lab case on a lab work card: case type and exercise or model number | Must |
+| ST-11 | Upload photos compressed, with a queue that retries when the network returns | Must |
+| ST-12 | My schedule: chair and session distribution for the coming days | Should |
+| ST-13 | Logbook: all my cases by course and case type, with grades | Should |
+| ST-14 | Notifications list; tap to open the related item | Must |
+| ST-15 | Profile, Arabic / English switch, logout | Must |
 
 ### 5.3 Supervisor interface (mobile)
 
-| ID | Requirement | Priority | Sprint |
-| --- | --- | --- | --- |
-| SV-01 | Log in, same as ST-01 | Must | S1 |
-| SV-02 | Home: approvals waiting, by type; my clinics today; new referrals; patients waiting for diagnosis | Must | S4 |
-| SV-03 | Diagnosis queue: assign a waiting patient to a student in my clinic | Must | S3 |
-| SV-04 | Review a diagnosis (all sections, photos, X-rays), then approve it or return it with a comment | Must | S3 |
-| SV-05 | From an approved diagnosis, select plan items and create a referral to a department clinic, with the procedure and a note | Must | S3 |
-| SV-06 | Referral inbox for my clinics: accept or reject with a reason; assign the patient to an eligible student (enrolled in a course run in that clinic this term), with the student's progress shown | Must | S4 |
-| SV-07 | Approval queue for steps: see the photos and the student's note; enter a grade according to the course's grading type; approve or return with a comment. Two taps for a normal approval | Must | S2 |
-| SV-08 | When the last step is approved, confirm the case as complete. The referral then closes and the referring clinic is notified | Must | S4 |
-| SV-09 | Transfer a patient (and their open cases) to another student, with a reason | Must | S4 |
-| SV-10 | Case finder: search patients with pending plan items by treatment type, department or tooth, to give students the cases they need | Should | S4 |
-| SV-11 | Clinic today: chair × session grid of students; mark attendance; adjust the distribution | Should | S4 |
-| SV-12 | View a student's work cards and progress (students in my scope) | Should | S5 |
-| SV-13 | Report a chair fault with a photo and a note; it opens a ticket | Must | S4 |
-| SV-14 | Notifications list | Must | S5 |
+| ID | Requirement | Priority |
+| --- | --- | --- |
+| SV-01 | Log in, same as ST-01 | Must |
+| SV-02 | Home: approvals waiting, by type; my clinics today; new referrals; patients waiting for diagnosis | Must |
+| SV-03 | Diagnosis queue: assign a waiting patient to a student in my clinic | Must |
+| SV-04 | Review a diagnosis (all sections, photos, X-rays), then approve it or return it with a comment | Must |
+| SV-05 | From an approved diagnosis, select plan items and create a referral to a department clinic, with the procedure and a note | Must |
+| SV-06 | Referral inbox for my clinics: accept or reject with a reason; assign the patient to an eligible student (enrolled in a course run in that clinic this term), with the student's progress shown | Must |
+| SV-07 | Approval queue for steps: see the photos and the student's note; enter a grade according to the course's grading type; approve or return with a comment. Two taps for a normal approval | Must |
+| SV-08 | When the last step is approved, confirm the case as complete. The referral then closes and the referring clinic is notified | Must |
+| SV-09 | Transfer a patient (and their open cases) to another student, with a reason | Must |
+| SV-10 | Case finder: search patients with pending plan items by treatment type, department or tooth, to give students the cases they need | Should |
+| SV-11 | Clinic today: chair × session grid of students; mark attendance; adjust the distribution | Should |
+| SV-12 | View a student's work cards and progress (students in my scope) | Should |
+| SV-13 | Report a chair fault with a photo and a note; it opens a ticket | Must |
+| SV-14 | Notifications list | Must |
 
 ### 5.4 Maintenance interface (mobile)
 
-| ID | Requirement | Priority | Sprint |
-| --- | --- | --- | --- |
-| MT-01 | Log in, same as ST-01 | Must | S1 |
-| MT-02 | Home: clinics with counts of chairs in and out of service; open tickets by age | Must | S4 |
-| MT-03 | Do a round: pick a clinic and the morning or afternoon round, then check each chair against the checklist. "All OK" in one tap; a fault takes a note and an optional photo | Must | S4 |
-| MT-04 | A failed check opens a ticket automatically, linked to the chair and the round | Must | S4 |
-| MT-05 | Work a ticket: Open → In progress → (External repair) → Resolved; mark it internal or external; add repair notes and photos | Must | S4 |
-| MT-06 | A ticket in a blocking fault category takes the chair out of service. Resolving it returns the chair to service | Must | S4 |
-| MT-07 | Set a chair in or out of service by hand, with a reason | Must | S4 |
-| MT-08 | Chair history: past rounds, tickets and repairs | Should | S5 |
-| MT-09 | Reminder notification when a round has not been done by the end of its window | Could | S5 |
+| ID | Requirement | Priority |
+| --- | --- | --- |
+| MT-01 | Log in, same as ST-01 | Must |
+| MT-02 | Home: clinics with counts of chairs in and out of service; open tickets by age | Must |
+| MT-03 | Do a round: pick a clinic and the morning or afternoon round, then check each chair against the checklist. "All OK" in one tap; a fault takes a note and an optional photo | Must |
+| MT-04 | A failed check opens a ticket automatically, linked to the chair and the round | Must |
+| MT-05 | Work a ticket: Open → In progress → (External repair) → Resolved; mark it internal or external; add repair notes and photos | Must |
+| MT-06 | A ticket in a blocking fault category takes the chair out of service. Resolving it returns the chair to service | Must |
+| MT-07 | Set a chair in or out of service by hand, with a reason | Must |
+| MT-08 | Chair history: past rounds, tickets and repairs | Should |
+| MT-09 | Reminder notification when a round has not been done by the end of its window | Could |
 
 ### 5.5 System-wide
 
-| ID | Requirement | Priority | Sprint |
-| --- | --- | --- | --- |
-| SYS-01 | JWT login with refresh tokens; lock an account for 15 minutes after 5 failed attempts | Must | S1 |
-| SYS-02 | Role and ownership checks on every API call (section 3), never only in the app | Must | S1 |
-| SYS-03 | In-app notifications for: diagnosis submitted, approved or returned; step submitted, approved or returned; referral received, accepted, rejected or completed; patient assigned or transferred; ticket opened or resolved. Push notifications for the same events where available | Must | S5 |
-| SYS-04 | Audit log of every create, change, approval and login: user, action, record, time | Must | S1 |
-| SYS-05 | Approved diagnoses and steps are locked. A change after approval creates a new version, and the history is kept | Must | S3 |
-| SYS-06 | Photos: JPEG or PNG, compressed on the phone to at most 2 MB, with thumbnails generated on the server; linked to the patient and optionally to a case and step | Must | S2 |
-| SYS-07 | Arabic and English for every screen, label and lookup list, right to left in Arabic | Must | S1 |
-| SYS-08 | Printable PDF of a diagnosis (F1 layout), a work card (F2/F3) and the daily reports | Should | S5 |
-| SYS-09 | API documented with OpenAPI at /api/v1/docs | Must | S1 |
-| SYS-10 | Soft delete only: records are deactivated, never removed, so history and grades stay intact | Must | S1 |
+| ID | Requirement | Priority |
+| --- | --- | --- |
+| SYS-01 | JWT login with refresh tokens; lock an account for 15 minutes after 5 failed attempts | Must |
+| SYS-02 | Role and ownership checks on every API call (section 3), never only in the app | Must |
+| SYS-03 | In-app notifications for: diagnosis submitted, approved or returned; step submitted, approved or returned; referral received, accepted, rejected or completed; patient assigned or transferred; ticket opened or resolved. Push notifications for the same events where available | Must |
+| SYS-04 | Audit log of every create, change, approval and login: user, action, record, time | Must |
+| SYS-05 | Approved diagnoses and steps are locked. A change after approval creates a new version, and the history is kept | Must |
+| SYS-06 | Photos: JPEG or PNG, compressed on the phone to at most 2 MB, with thumbnails generated on the server; linked to the patient and optionally to a case and step | Must |
+| SYS-07 | Arabic and English for every screen, label and lookup list, right to left in Arabic | Must |
+| SYS-08 | Printable PDF of a diagnosis (F1 layout), a work card (F2/F3) and the daily reports | Should |
+| SYS-09 | API documented with OpenAPI at /api/v1/docs | Must |
+| SYS-10 | Soft delete only: records are deactivated, never removed, so history and grades stay intact | Must |
 
 ## 6. Business rules and record lifecycles
 
 Four records carry the workflow. Each one moves forward only through a named person's action, and the server rejects any change that skips a state.
 
-&#91;embedded content: record lifecycles · diagnosis, referral, step, ticket\]
+![Figure 1. Record lifecycles: diagnosis, referral, step and ticket](figures/lifecycles.png)
 
 A return sends the record back to the student to fix and resubmit. A diagnosis can be returned many times before it is approved.
 
@@ -253,7 +267,7 @@ A return sends the record back to the student to fix and resubmit. A diagnosis c
 
 | ID | Rule |
 | --- | --- |
-| BR-01 | Only the super admin creates patients. Each patient has a unique file number generated by the system and a unique national ID when one is given |
+| BR-01 | Only reception and the super admin create patients. Each patient has a unique file number generated by the system and a unique national ID when one is given |
 | BR-02 | A patient has at most one diagnosis in progress at a time. A later diagnosis is a new record; the earlier ones stay as history, and the medical history is copied forward to be checked |
 | BR-03 | Students see and work only on patients assigned to them, for diagnosis or for treatment. A transfer ends the old student's access to that patient's open cases |
 | BR-04 | An approved diagnosis is locked. Only its plan items can be referred, and each item can be in only one open referral at a time |
@@ -270,18 +284,18 @@ A return sends the record back to the student to fix and resubmit. A diagnosis c
 
 ## 7. User stories and acceptance criteria
 
-There are 24 user stories, grouped by the sprint that delivers them. Each story is done when every acceptance criterion passes, together with the definition of done in the Project Plan.
+There are 24 user stories, grouped by area. Each story is done when every acceptance criterion passes, together with the definition of done in the Project Plan. Because the backend is built first, each story is finished in two parts: its backend and API in phase 1, and its screens in phase 2. It is accepted in phase 3, when it passes end to end on staging.
 
-### Sprint 1 — Foundation
+### 7.1 Foundation
 
 | ID | Story | Acceptance criteria | Covers |
 | --- | --- | --- | --- |
 | US-01 | As the super admin, I want to set up a clinic with its chairs and sessions, so that the system matches the real faculty | Create clinic 5 (treatment, 12 chairs) and 5 sessions. The chairs appear in distribution and rounds. Deactivating a chair hides it from new distributions but keeps its history | DB-04 |
 | US-02 | As the super admin, I want to define a course with its case requirements and steps, so that work cards follow the course rules | Create a course with 2 case types, a required count for each, 4 steps and a 0–100 grading type. A student enrolled in it gets a work card showing 0 of the required count | DB-04, DB-05 |
 | US-03 | As the super admin, I want to import students from Excel, so that I don't type them by hand | A file with 200 rows imports in under 1 minute. Rows with a missing university ID or an unknown course are listed with the reason and not imported. Importing the same file again creates no duplicates | DB-03 |
-| US-04 | As any user, I want to log in once and land in my own interface | A student lands in the Student interface, a supervisor in the Supervisor interface, a technician in Maintenance. A user with two roles chooses one. Every screen is in Arabic, right to left, by default | ST-01, SYS-01, SYS-07 |
+| US-04 | As any user, I want to log in once and land in my own interface | A student lands in the Student interface, a supervisor in the Supervisor interface, a technician in Maintenance. A user with two roles chooses one. Reception and supervisors can log in to the dashboard and see only their own menus; students and technicians cannot. Every screen is in Arabic, right to left, by default | ST-01, SYS-01, SYS-07, DB-21 |
 
-### Sprint 2 — Labs
+### 7.2 Labs
 
 | ID | Story | Acceptance criteria | Covers |
 | --- | --- | --- | --- |
@@ -290,18 +304,18 @@ There are 24 user stories, grouped by the sprint that delivers them. Each story 
 | US-07 | As a supervisor, I want to grade lab work from photos on my phone | The queue lists waiting steps for my courses only. An approval with a grade takes 2 taps after opening. A return needs a comment. The student is notified within 1 minute | SV-07, SYS-03 |
 | US-08 | As a student, I want to see my progress on each work card | The card shows each case type as done / required, plus the grades. A case counts as done only when its last step is approved | ST-07, ST-08 |
 
-### Sprint 3 — Patients and diagnosis
+### 7.3 Patients and diagnosis
 
 | ID | Story | Acceptance criteria | Covers |
 | --- | --- | --- | --- |
-| US-09 | As the super admin, I want to register a patient once | The file number is generated and unique. A matching national ID blocks saving; a matching name plus phone shows a warning. The patient can be sent to a diagnosis clinic's queue | DB-08, DB-09 |
+| US-09 | As reception, I want to register a patient once | The file number is generated and unique. A matching national ID blocks saving; a matching name plus phone shows a warning. The patient can be sent to a diagnosis clinic's queue. Reception sees no clinical data | DB-08, DB-09, DB-20 |
 | US-10 | As a supervisor, I want to give a waiting patient to a student for diagnosis | The queue shows the patients waiting in my diagnosis clinics. After assignment, the patient appears in the student's "My patients" list | SV-03 |
 | US-11 | As a student, I want to fill the diagnosis on my phone | All F1 sections are present. Tapping a tooth opens its codes, and several codes per tooth are allowed. Index scores accept only the configured range. A draft survives closing the app | ST-05 |
 | US-12 | As a student, I want the patient's medical risks shown clearly | Any medical history item flagged as an alert (for example anticoagulants or allergy) shows as a red banner on every screen of that patient | ST-03, ST-04 |
 | US-13 | As a supervisor, I want to approve or return a diagnosis | Approval locks it. A return needs a comment and sends it back to the student as editable. Both actions are logged with name and time | SV-04, SYS-05 |
 | US-14 | As a supervisor, I want to refer plan items to departments | Only items of an approved diagnosis can be referred, and each item can be in only one open referral. The receiving clinic sees the referral at once | SV-05 |
 
-### Sprint 4 — Clinical cards and maintenance
+### 7.4 Clinical cards and maintenance
 
 | ID | Story | Acceptance criteria | Covers |
 | --- | --- | --- | --- |
@@ -313,7 +327,7 @@ There are 24 user stories, grouped by the sprint that delivers them. Each story 
 | US-20 | As the super admin, I want to distribute students to chairs | The suggestion fills each chair with up to the course's students per chair and never uses out-of-service chairs. Changes are saved per date and session | DB-12 |
 | US-21 | As a supervisor, I want to mark attendance on the chair grid | Each student in each session is marked present or absent. The daily clinic report (F8) shows it | SV-11 |
 
-### Sprint 5 — Reports and hardening
+### 7.5 Reports and notifications
 
 | ID | Story | Acceptance criteria | Covers |
 | --- | --- | --- | --- |

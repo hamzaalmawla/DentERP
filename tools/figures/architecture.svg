@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600" font-family="Segoe UI, Calibri, Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#44546A"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="600" fill="#ffffff"/>
+
+  <!-- clients -->
+  <text x="125" y="40" text-anchor="middle" font-size="15" font-weight="700" fill="#1F3A5F">Clients</text>
+  <rect x="20" y="70" width="210" height="120" rx="8" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/>
+  <text x="125" y="100" text-anchor="middle" font-size="15" font-weight="700" fill="#1F3A5F">Mobile app (Flutter)</text>
+  <text x="125" y="126" text-anchor="middle" font-size="13" fill="#333">Student · Supervisor</text>
+  <text x="125" y="146" text-anchor="middle" font-size="13" fill="#333">Maintenance</text>
+  <text x="125" y="172" text-anchor="middle" font-size="12" fill="#666">iOS and Android</text>
+
+  <rect x="20" y="260" width="210" height="130" rx="8" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/>
+  <text x="125" y="290" text-anchor="middle" font-size="15" font-weight="700" fill="#1F3A5F">Web browser</text>
+  <text x="125" y="314" text-anchor="middle" font-size="13" fill="#333">Unfold dashboard</text>
+  <text x="125" y="340" text-anchor="middle" font-size="12" fill="#666">Super admin · Management</text>
+  <text x="125" y="358" text-anchor="middle" font-size="12" fill="#666">Reception · Supervisor</text>
+
+  <!-- server -->
+  <rect x="270" y="20" width="710" height="450" rx="10" fill="#FAFBFC" stroke="#8496B0" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="290" y="45" font-size="14" font-weight="700" fill="#44546A">Cloud server · Docker Compose</text>
+
+  <rect x="290" y="190" width="120" height="80" rx="8" fill="#fff" stroke="#44546A" stroke-width="1.5"/>
+  <text x="350" y="223" text-anchor="middle" font-size="15" font-weight="700" fill="#1F3A5F">Nginx</text>
+  <text x="350" y="245" text-anchor="middle" font-size="12" fill="#666">HTTPS, static files</text>
+
+  <rect x="450" y="60" width="270" height="290" rx="8" fill="#fff" stroke="#1F3A5F" stroke-width="2"/>
+  <text x="585" y="85" text-anchor="middle" font-size="15" font-weight="700" fill="#1F3A5F">Django (Gunicorn)</text>
+  <rect x="465" y="100" width="117" height="50" rx="5" fill="#DDE6F1" stroke="none"/>
+  <text x="523" y="121" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">REST API</text>
+  <text x="523" y="139" text-anchor="middle" font-size="11" fill="#444">/api/v1/</text>
+  <rect x="590" y="100" width="117" height="50" rx="5" fill="#DDE6F1" stroke="none"/>
+  <text x="648" y="121" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Dashboard</text>
+  <text x="648" y="139" text-anchor="middle" font-size="11" fill="#444">/dashboard/</text>
+  <rect x="465" y="165" width="242" height="70" rx="5" fill="#1F3A5F"/>
+  <text x="586" y="194" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">Application services</text>
+  <text x="586" y="214" text-anchor="middle" font-size="12" fill="#DDE6F1">13 modules · ports and adapters</text>
+  <rect x="465" y="250" width="242" height="40" rx="5" fill="#C9D6E8"/>
+  <text x="586" y="275" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Domain rules</text>
+  <text x="586" y="325" text-anchor="middle" font-size="11" fill="#666">Same services for the app and the dashboard</text>
+
+  <rect x="450" y="380" width="270" height="70" rx="8" fill="#fff" stroke="#44546A" stroke-width="1.5"/>
+  <text x="585" y="408" text-anchor="middle" font-size="14" font-weight="700" fill="#1F3A5F">Celery worker and beat</text>
+  <text x="585" y="430" text-anchor="middle" font-size="12" fill="#666">Push, thumbnails, imports, exports</text>
+
+  <rect x="770" y="60" width="190" height="65" rx="8" fill="#F3F6EA" stroke="#5B7B2A" stroke-width="1.5"/>
+  <text x="865" y="88" text-anchor="middle" font-size="14" font-weight="700" fill="#3E5A16">PostgreSQL 16</text>
+  <text x="865" y="108" text-anchor="middle" font-size="12" fill="#666">All records, history</text>
+  <rect x="770" y="160" width="190" height="65" rx="8" fill="#F3F6EA" stroke="#5B7B2A" stroke-width="1.5"/>
+  <text x="865" y="188" text-anchor="middle" font-size="14" font-weight="700" fill="#3E5A16">Object storage</text>
+  <text x="865" y="208" text-anchor="middle" font-size="12" fill="#666">MinIO / S3 · photos, X-rays</text>
+  <rect x="770" y="260" width="190" height="65" rx="8" fill="#F3F6EA" stroke="#5B7B2A" stroke-width="1.5"/>
+  <text x="865" y="288" text-anchor="middle" font-size="14" font-weight="700" fill="#3E5A16">Redis</text>
+  <text x="865" y="308" text-anchor="middle" font-size="12" fill="#666">Job queue and cache</text>
+  <rect x="770" y="380" width="190" height="70" rx="8" fill="#fff" stroke="#44546A" stroke-width="1.5"/>
+  <text x="865" y="408" text-anchor="middle" font-size="14" font-weight="700" fill="#1F3A5F">Backup job</text>
+  <text x="865" y="430" text-anchor="middle" font-size="12" fill="#666">Nightly, encrypted</text>
+
+  <!-- external -->
+  <rect x="450" y="510" width="270" height="65" rx="8" fill="#FBF1E6" stroke="#B5651D" stroke-width="1.5"/>
+  <text x="585" y="537" text-anchor="middle" font-size="14" font-weight="700" fill="#8A4A10">Push services</text>
+  <text x="585" y="557" text-anchor="middle" font-size="12" fill="#666">Firebase (Android) · APNs (iOS)</text>
+  <rect x="770" y="510" width="190" height="65" rx="8" fill="#FBF1E6" stroke="#B5651D" stroke-width="1.5"/>
+  <text x="865" y="537" text-anchor="middle" font-size="14" font-weight="700" fill="#8A4A10">Off-server storage</text>
+  <text x="865" y="557" text-anchor="middle" font-size="12" fill="#666">Backups kept 30 days</text>
+
+  <!-- arrows -->
+  <g stroke="#44546A" stroke-width="1.6" fill="none" marker-end="url(#a)">
+    <path d="M230,130 C260,130 260,215 288,215"/>
+    <path d="M230,325 C260,325 260,250 288,250"/>
+    <path d="M410,230 L448,230"/>
+    <path d="M720,110 L768,95"/>
+    <path d="M720,200 L768,193"/>
+    <path d="M720,270 L768,290"/>
+    <path d="M770,312 C742,312 748,412 722,412"/>
+    <path d="M585,452 L585,508"/>
+    <path d="M865,452 L865,508"/>
+  </g>
+  <g font-size="11" fill="#44546A">
+    <text x="282" y="178">HTTPS · JSON · JWT</text>
+    <text x="300" y="292">HTTPS</text>
+    <text x="728" y="372">jobs</text>
+  </g>
+</svg>
