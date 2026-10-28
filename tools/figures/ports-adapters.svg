@@ -54,7 +54,7 @@
     <text x="895" y="188" text-anchor="middle" font-size="12" fill="#666">PostgreSQL</text>
     <rect x="810" y="208" width="170" height="54" rx="8" fill="#F3F6EA" stroke="#5B7B2A" stroke-width="1.5"/>
     <text x="895" y="231" text-anchor="middle" font-weight="700" fill="#3E5A16">S3 storage</text>
-    <text x="895" y="250" text-anchor="middle" font-size="12" fill="#666">MinIO</text>
+    <text x="895" y="250" text-anchor="middle" font-size="12" fill="#666">Garage / S3</text>
     <rect x="810" y="270" width="170" height="54" rx="8" fill="#F3F6EA" stroke="#5B7B2A" stroke-width="1.5"/>
     <text x="895" y="293" text-anchor="middle" font-weight="700" fill="#3E5A16">Push notifier</text>
     <text x="895" y="312" text-anchor="middle" font-size="12" fill="#666">Firebase</text>

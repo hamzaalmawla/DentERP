@@ -202,6 +202,173 @@ def lifecycles():
     return "\n".join(parts)
 
 
+# ---------- shared shapes for the report figures ----------
+
+def text_lines(cx, cy, text, size=13, weight="400", color=TEXT, gap=17):
+    lines = text.split("\n")
+    top = cy - (len(lines) - 1) * gap / 2 + size * 0.35
+    return "".join(
+        f'<text x="{cx}" y="{top + i * gap:.0f}" text-anchor="middle" font-size="{size}" font-weight="{weight}" fill="{color}">{line}</text>'
+        for i, line in enumerate(lines))
+
+
+def box(x, y, w, h, label, fill="#fff", stroke=NAVY, color=NAVY, size=13, weight="600", rx=7):
+    return (f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{rx}" fill="{fill}" stroke="{stroke}" stroke-width="1.5"/>'
+            + text_lines(x + w / 2, y + h / 2, label, size, weight, color))
+
+
+def arrow(d, color=GREY, dashed=False):
+    dash = ' stroke-dasharray="5 4"' if dashed else ""
+    return f'<path d="{d}" fill="none" stroke="{color}" stroke-width="1.6"{dash} marker-end="url(#a)"/>'
+
+
+def label(x, y, text, color=GREY, anchor="middle", size=11.5, weight="400"):
+    return f'<text x="{x}" y="{y}" text-anchor="{anchor}" font-size="{size}" font-weight="{weight}" fill="{color}">{text}</text>'
+
+
+# ---------- block diagram ----------
+
+def block_diagram():
+    w, h = 1100, 580
+    p = [HEAD.format(w=w, h=h)]
+    heads = [(105, "Users"), (335, "Interfaces"), (640, "Backend"), (965, "Outputs")]
+    for x, t in heads:
+        p.append(label(x, 32, t, NAVY, size=15, weight="700"))
+
+    users = ["Student", "Maintenance\ntechnician", "Supervisor", "Reception", "Super admin and\nmanagement"]
+    for i, u in enumerate(users):
+        p.append(box(20, 60 + i * 100, 170, 64, u, fill="#EAF0F7"))
+
+    # interfaces
+    p.append(f'<rect x="240" y="60" width="190" height="250" rx="8" fill="#fff" stroke="{NAVY}" stroke-width="2"/>')
+    p.append(text_lines(335, 86, "Mobile app", 14, "700", NAVY))
+    p.append(text_lines(335, 106, "Android and iOS", 11.5, "400", "#666"))
+    for i, t in enumerate(["Student interface", "Supervisor interface", "Maintenance interface"]):
+        p.append(box(255, 130 + i * 58, 160, 44, t, fill="#DDE6F1", stroke="#DDE6F1", size=12.5))
+    p.append(f'<rect x="240" y="350" width="190" height="200" rx="8" fill="#fff" stroke="{NAVY}" stroke-width="2"/>')
+    p.append(text_lines(335, 376, "Web dashboard", 14, "700", NAVY))
+    for i, t in enumerate(["Super admin", "Reception", "Supervisor", "Management (read-only)"]):
+        p.append(text_lines(335, 410 + i * 34, t, 12.5, "400", TEXT))
+
+    # user -> interface arrows (students, technicians and supervisors use the app;
+    # supervisors, reception and admin use the dashboard)
+    for y in (92, 192, 284):
+        p.append(arrow(f"M190,{y} L238,{y}"))
+    p.append(arrow("M190,302 C218,302 214,368 238,368"))
+    for y in (392, 492):
+        p.append(arrow(f"M190,{y} L238,{y}"))
+
+    # backend
+    p.append(f'<rect x="480" y="50" width="320" height="500" rx="10" fill="#FAFBFC" stroke="{NAVY}" stroke-width="2"/>')
+    p.append(box(495, 65, 290, 40, "REST API  ·  dashboard screens", fill="#DDE6F1", stroke="#DDE6F1", size=12.5))
+    mods = ["Patients and\ndiagnosis", "Referrals", "Work cards\nand grading", "Scheduling and\nattendance",
+            "Chair maintenance", "Notifications", "Reports", "Users and\nconfiguration"]
+    for i, m in enumerate(mods):
+        x = 495 + (i % 2) * 150
+        y = 118 + (i // 2) * 62
+        p.append(box(x, y, 140, 52, m, fill=NAVY, stroke=NAVY, color="#fff", size=12.5))
+    p.append(box(495, 372, 290, 40, "Security: roles, scope, audit log", fill="#C9D6E8", stroke="#C9D6E8", size=12.5))
+    p.append(box(495, 430, 140, 100, "PostgreSQL\ndatabase\n\nall records", fill="#F3F6EA", stroke="#5B7B2A", color="#3E5A16", size=12.5))
+    p.append(box(645, 430, 140, 100, "Photo storage\n(S3)\n\nphotos, X-rays", fill="#F3F6EA", stroke="#5B7B2A", color="#3E5A16", size=12.5))
+    p.append(arrow("M432,185 L478,185"))
+    p.append(arrow("M432,450 L478,450"))
+
+    # outputs
+    outs = ["Complete patient\narchive", "Work cards, grades\nand logbook", "Daily reports\n(F6, F8, F9, F18)",
+            "Referral and\nmaintenance boards", "Statistics for\nmanagement"]
+    for i, o in enumerate(outs):
+        y = 60 + i * 100
+        p.append(box(880, y, 200, 64, o, fill="#FBF1E6", stroke="#B5651D", color="#8A4A10"))
+        p.append(arrow(f"M802,{300} C840,300 840,{y + 32} 878,{y + 32}"))
+    p.append("</svg>")
+    return "\n".join(p)
+
+
+# ---------- flowchart ----------
+
+FW, FH = 300, 52  # process box
+DW, DH = 240, 78  # decision diamond
+
+
+def fbox(cx, cy, text, kind="process"):
+    if kind == "terminal":
+        return box(cx - FW / 2, cy - 22, FW, 44, text, fill=NAVY, stroke=NAVY, color="#fff", rx=22)
+    return box(cx - FW / 2, cy - FH / 2, FW, FH, text, fill="#EAF0F7")
+
+
+def diamond(cx, cy, text):
+    pts = f"{cx},{cy - DH / 2} {cx + DW / 2},{cy} {cx},{cy + DH / 2} {cx - DW / 2},{cy}"
+    return (f'<polygon points="{pts}" fill="#FBF1E6" stroke="#B5651D" stroke-width="1.5"/>'
+            + text_lines(cx, cy, text, 12.5, "600", "#8A4A10", gap=15))
+
+
+def flowchart():
+    w, h = 1000, 900
+    L, R = 250, 720
+    p = [HEAD.format(w=w, h=h)]
+    p.append(label(L, 30, "Diagnosis phase", NAVY, size=15, weight="700"))
+    p.append(label(R, 30, "Treatment phase", NAVY, size=15, weight="700"))
+
+    left = [(70, "Patient arrives at the clinic", "terminal"),
+            (150, "Reception registers the patient\n(file number generated)", "process"),
+            (230, "Patient waits in a diagnosis\nclinic's queue", "process"),
+            (310, "Supervisor assigns the patient\nto a student", "process"),
+            (390, "Student fills in the diagnosis (F1)\nin the app and submits it", "process")]
+    for cy, t, k in left:
+        p.append(fbox(L, cy, t, k))
+    for (a, _, ka), (b, _, _) in zip(left, left[1:]):
+        top = a + (22 if ka == "terminal" else FH / 2)
+        p.append(arrow(f"M{L},{top} L{L},{b - FH / 2 - 2}"))
+    p.append(diamond(L, 490, "Supervisor\napproves?"))
+    p.append(arrow(f"M{L},{390 + FH / 2} L{L},{490 - DH / 2 - 2}"))
+    p.append(fbox(L, 590, "Diagnosis locked;\ntreatment plan items created"))
+    p.append(arrow(f"M{L},{490 + DH / 2} L{L},{590 - FH / 2 - 2}"))
+    p.append(label(L + 12, 548, "Yes", anchor="start", weight="600"))
+    p.append(fbox(L, 670, "Supervisor refers a plan item\nto a department clinic"))
+    p.append(arrow(f"M{L},{590 + FH / 2} L{L},{670 - FH / 2 - 2}"))
+    # return loop on the diagnosis
+    p.append(arrow(f"M{L - DW / 2},490 L30,490 L30,390 L{L - FW / 2 - 2},390", "#B5651D"))
+    p.append(label(38, 436, "No:", "#8A4A10", anchor="start"))
+    p.append(label(38, 451, "returned", "#8A4A10", anchor="start"))
+
+    # link to the treatment column
+    p.append(arrow(f"M{L + FW / 2},664 L480,664 L480,90 L{R},90 L{R},{150 - DH / 2 - 2}"))
+
+    p.append(diamond(R, 150, "Receiving clinic\naccepts?"))
+    p.append(box(860, 124, 130, 52, "Rejected: item\nstays in the plan", fill="#fff", stroke="#B5651D", color="#8A4A10", size=12, weight="400"))
+    p.append(arrow(f"M{R + DW / 2},150 L858,150", "#B5651D"))
+    p.append(label(849, 140, "No", "#8A4A10", weight="600"))
+    p.append(fbox(R, 250, "Supervisor assigns an eligible student;\ncase added to the work card"))
+    p.append(arrow(f"M{R},{150 + DH / 2} L{R},{250 - FH / 2 - 2}"))
+    p.append(label(R + 10, 212, "Yes", anchor="start", weight="600"))
+    p.append(fbox(R, 340, "Student records a step\nwith photos"))
+    p.append(arrow(f"M{R},{250 + FH / 2} L{R},{340 - FH / 2 - 2}"))
+    p.append(diamond(R, 440, "Supervisor\napproves and grades?"))
+    p.append(arrow(f"M{R},{340 + FH / 2} L{R},{440 - DH / 2 - 2}"))
+    p.append(arrow(f"M{R + DW / 2},440 L930,440 L930,340 L{R + FW / 2 + 2},340", "#B5651D"))
+    p.append(label(936, 400, "No:", "#8A4A10", anchor="start"))
+    p.append(label(936, 415, "returned", "#8A4A10", anchor="start"))
+    p.append(diamond(R, 550, "Last step\nof the case?"))
+    p.append(arrow(f"M{R},{440 + DH / 2} L{R},{550 - DH / 2 - 2}"))
+    p.append(label(R + 10, 504, "Yes", anchor="start", weight="600"))
+    p.append(arrow(f"M{R - DW / 2},550 L540,550 L540,346 L{R - FW / 2 - 2},346"))
+    p.append(label(546, 470, "No: next", anchor="start"))
+    p.append(label(546, 485, "step", anchor="start"))
+    p.append(fbox(R, 650, "Case complete: referral closed,\nplan item done, student credited"))
+    p.append(arrow(f"M{R},{550 + DH / 2} L{R},{650 - FH / 2 - 2}"))
+    p.append(label(R + 10, 606, "Yes", anchor="start", weight="600"))
+    p.append(diamond(R, 750, "More plan\nitems?"))
+    p.append(arrow(f"M{R},{650 + FH / 2} L{R},{750 - DH / 2 - 2}"))
+    p.append(arrow(f"M{R - DW / 2},750 L520,750 L520,680 L{L + FW / 2 + 2},680"))
+    p.append(label(512, 708, "Yes: refer", anchor="end"))
+    p.append(label(512, 723, "the next item", anchor="end"))
+    p.append(fbox(R, 850, "Full record kept in the patient archive", "terminal"))
+    p.append(arrow(f"M{R},{750 + DH / 2} L{R},{850 - 22 - 2}"))
+    p.append(label(R + 10, 808, "No", anchor="start", weight="600"))
+    p.append("</svg>")
+    return "\n".join(p)
+
+
 # ---------- render ----------
 
 def render(svg_path):
@@ -222,5 +389,7 @@ if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     (HERE / "erd.svg").write_text(erd(), encoding="utf-8")
     (HERE / "lifecycles.svg").write_text(lifecycles(), encoding="utf-8")
+    (HERE / "block-diagram.svg").write_text(block_diagram(), encoding="utf-8")
+    (HERE / "flowchart.svg").write_text(flowchart(), encoding="utf-8")
     for svg in sorted(HERE.glob("*.svg")):
         render(svg)

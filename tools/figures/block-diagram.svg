@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="580" viewBox="0 0 1100 580" font-family="Segoe UI, Calibri, Arial, sans-serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#44546A"/></marker></defs>
+<rect width="1100" height="580" fill="#ffffff"/>
+
+<text x="105" y="32" text-anchor="middle" font-size="15" font-weight="700" fill="#1F3A5F">Users</text>
+<text x="335" y="32" text-anchor="middle" font-size="15" font-weight="700" fill="#1F3A5F">Interfaces</text>
+<text x="640" y="32" text-anchor="middle" font-size="15" font-weight="700" fill="#1F3A5F">Backend</text>
+<text x="965" y="32" text-anchor="middle" font-size="15" font-weight="700" fill="#1F3A5F">Outputs</text>
+<rect x="20" y="60" width="170" height="64" rx="7" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="105.0" y="97" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Student</text>
+<rect x="20" y="160" width="170" height="64" rx="7" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="105.0" y="188" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Maintenance</text><text x="105.0" y="205" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">technician</text>
+<rect x="20" y="260" width="170" height="64" rx="7" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="105.0" y="297" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Supervisor</text>
+<rect x="20" y="360" width="170" height="64" rx="7" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="105.0" y="397" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Reception</text>
+<rect x="20" y="460" width="170" height="64" rx="7" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="105.0" y="488" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Super admin and</text><text x="105.0" y="505" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">management</text>
+<rect x="240" y="60" width="190" height="250" rx="8" fill="#fff" stroke="#1F3A5F" stroke-width="2"/>
+<text x="335" y="91" text-anchor="middle" font-size="14" font-weight="700" fill="#1F3A5F">Mobile app</text>
+<text x="335" y="110" text-anchor="middle" font-size="11.5" font-weight="400" fill="#666">Android and iOS</text>
+<rect x="255" y="130" width="160" height="44" rx="7" fill="#DDE6F1" stroke="#DDE6F1" stroke-width="1.5"/><text x="335.0" y="156" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1F3A5F">Student interface</text>
+<rect x="255" y="188" width="160" height="44" rx="7" fill="#DDE6F1" stroke="#DDE6F1" stroke-width="1.5"/><text x="335.0" y="214" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1F3A5F">Supervisor interface</text>
+<rect x="255" y="246" width="160" height="44" rx="7" fill="#DDE6F1" stroke="#DDE6F1" stroke-width="1.5"/><text x="335.0" y="272" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1F3A5F">Maintenance interface</text>
+<rect x="240" y="350" width="190" height="200" rx="8" fill="#fff" stroke="#1F3A5F" stroke-width="2"/>
+<text x="335" y="381" text-anchor="middle" font-size="14" font-weight="700" fill="#1F3A5F">Web dashboard</text>
+<text x="335" y="414" text-anchor="middle" font-size="12.5" font-weight="400" fill="#333333">Super admin</text>
+<text x="335" y="448" text-anchor="middle" font-size="12.5" font-weight="400" fill="#333333">Reception</text>
+<text x="335" y="482" text-anchor="middle" font-size="12.5" font-weight="400" fill="#333333">Supervisor</text>
+<text x="335" y="516" text-anchor="middle" font-size="12.5" font-weight="400" fill="#333333">Management (read-only)</text>
+<path d="M190,92 L238,92" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M190,192 L238,192" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M190,284 L238,284" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M190,302 C218,302 214,368 238,368" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M190,392 L238,392" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M190,492 L238,492" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="480" y="50" width="320" height="500" rx="10" fill="#FAFBFC" stroke="#1F3A5F" stroke-width="2"/>
+<rect x="495" y="65" width="290" height="40" rx="7" fill="#DDE6F1" stroke="#DDE6F1" stroke-width="1.5"/><text x="640.0" y="89" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1F3A5F">REST API  ·  dashboard screens</text>
+<rect x="495" y="118" width="140" height="52" rx="7" fill="#1F3A5F" stroke="#1F3A5F" stroke-width="1.5"/><text x="565.0" y="140" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">Patients and</text><text x="565.0" y="157" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">diagnosis</text>
+<rect x="645" y="118" width="140" height="52" rx="7" fill="#1F3A5F" stroke="#1F3A5F" stroke-width="1.5"/><text x="715.0" y="148" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">Referrals</text>
+<rect x="495" y="180" width="140" height="52" rx="7" fill="#1F3A5F" stroke="#1F3A5F" stroke-width="1.5"/><text x="565.0" y="202" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">Work cards</text><text x="565.0" y="219" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">and grading</text>
+<rect x="645" y="180" width="140" height="52" rx="7" fill="#1F3A5F" stroke="#1F3A5F" stroke-width="1.5"/><text x="715.0" y="202" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">Scheduling and</text><text x="715.0" y="219" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">attendance</text>
+<rect x="495" y="242" width="140" height="52" rx="7" fill="#1F3A5F" stroke="#1F3A5F" stroke-width="1.5"/><text x="565.0" y="272" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">Chair maintenance</text>
+<rect x="645" y="242" width="140" height="52" rx="7" fill="#1F3A5F" stroke="#1F3A5F" stroke-width="1.5"/><text x="715.0" y="272" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">Notifications</text>
+<rect x="495" y="304" width="140" height="52" rx="7" fill="#1F3A5F" stroke="#1F3A5F" stroke-width="1.5"/><text x="565.0" y="334" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">Reports</text>
+<rect x="645" y="304" width="140" height="52" rx="7" fill="#1F3A5F" stroke="#1F3A5F" stroke-width="1.5"/><text x="715.0" y="326" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">Users and</text><text x="715.0" y="343" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">configuration</text>
+<rect x="495" y="372" width="290" height="40" rx="7" fill="#C9D6E8" stroke="#C9D6E8" stroke-width="1.5"/><text x="640.0" y="396" text-anchor="middle" font-size="12.5" font-weight="600" fill="#1F3A5F">Security: roles, scope, audit log</text>
+<rect x="495" y="430" width="140" height="100" rx="7" fill="#F3F6EA" stroke="#5B7B2A" stroke-width="1.5"/><text x="565.0" y="459" text-anchor="middle" font-size="12.5" font-weight="600" fill="#3E5A16">PostgreSQL</text><text x="565.0" y="476" text-anchor="middle" font-size="12.5" font-weight="600" fill="#3E5A16">database</text><text x="565.0" y="493" text-anchor="middle" font-size="12.5" font-weight="600" fill="#3E5A16"></text><text x="565.0" y="510" text-anchor="middle" font-size="12.5" font-weight="600" fill="#3E5A16">all records</text>
+<rect x="645" y="430" width="140" height="100" rx="7" fill="#F3F6EA" stroke="#5B7B2A" stroke-width="1.5"/><text x="715.0" y="459" text-anchor="middle" font-size="12.5" font-weight="600" fill="#3E5A16">Photo storage</text><text x="715.0" y="476" text-anchor="middle" font-size="12.5" font-weight="600" fill="#3E5A16">(S3)</text><text x="715.0" y="493" text-anchor="middle" font-size="12.5" font-weight="600" fill="#3E5A16"></text><text x="715.0" y="510" text-anchor="middle" font-size="12.5" font-weight="600" fill="#3E5A16">photos, X-rays</text>
+<path d="M432,185 L478,185" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M432,450 L478,450" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="880" y="60" width="200" height="64" rx="7" fill="#FBF1E6" stroke="#B5651D" stroke-width="1.5"/><text x="980.0" y="88" text-anchor="middle" font-size="13" font-weight="600" fill="#8A4A10">Complete patient</text><text x="980.0" y="105" text-anchor="middle" font-size="13" font-weight="600" fill="#8A4A10">archive</text>
+<path d="M802,300 C840,300 840,92 878,92" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="880" y="160" width="200" height="64" rx="7" fill="#FBF1E6" stroke="#B5651D" stroke-width="1.5"/><text x="980.0" y="188" text-anchor="middle" font-size="13" font-weight="600" fill="#8A4A10">Work cards, grades</text><text x="980.0" y="205" text-anchor="middle" font-size="13" font-weight="600" fill="#8A4A10">and logbook</text>
+<path d="M802,300 C840,300 840,192 878,192" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="880" y="260" width="200" height="64" rx="7" fill="#FBF1E6" stroke="#B5651D" stroke-width="1.5"/><text x="980.0" y="288" text-anchor="middle" font-size="13" font-weight="600" fill="#8A4A10">Daily reports</text><text x="980.0" y="305" text-anchor="middle" font-size="13" font-weight="600" fill="#8A4A10">(F6, F8, F9, F18)</text>
+<path d="M802,300 C840,300 840,292 878,292" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="880" y="360" width="200" height="64" rx="7" fill="#FBF1E6" stroke="#B5651D" stroke-width="1.5"/><text x="980.0" y="388" text-anchor="middle" font-size="13" font-weight="600" fill="#8A4A10">Referral and</text><text x="980.0" y="405" text-anchor="middle" font-size="13" font-weight="600" fill="#8A4A10">maintenance boards</text>
+<path d="M802,300 C840,300 840,392 878,392" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="880" y="460" width="200" height="64" rx="7" fill="#FBF1E6" stroke="#B5651D" stroke-width="1.5"/><text x="980.0" y="488" text-anchor="middle" font-size="13" font-weight="600" fill="#8A4A10">Statistics for</text><text x="980.0" y="505" text-anchor="middle" font-size="13" font-weight="600" fill="#8A4A10">management</text>
+<path d="M802,300 C840,300 840,492 878,492" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+</svg>

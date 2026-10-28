@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="900" viewBox="0 0 1000 900" font-family="Segoe UI, Calibri, Arial, sans-serif">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#44546A"/></marker></defs>
+<rect width="1000" height="900" fill="#ffffff"/>
+
+<text x="250" y="30" text-anchor="middle" font-size="15" font-weight="700" fill="#1F3A5F">Diagnosis phase</text>
+<text x="720" y="30" text-anchor="middle" font-size="15" font-weight="700" fill="#1F3A5F">Treatment phase</text>
+<rect x="100.0" y="48" width="300" height="44" rx="22" fill="#1F3A5F" stroke="#1F3A5F" stroke-width="1.5"/><text x="250.0" y="75" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">Patient arrives at the clinic</text>
+<rect x="100.0" y="124.0" width="300" height="52" rx="7" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="250.0" y="146" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Reception registers the patient</text><text x="250.0" y="163" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">(file number generated)</text>
+<rect x="100.0" y="204.0" width="300" height="52" rx="7" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="250.0" y="226" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Patient waits in a diagnosis</text><text x="250.0" y="243" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">clinic's queue</text>
+<rect x="100.0" y="284.0" width="300" height="52" rx="7" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="250.0" y="306" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Supervisor assigns the patient</text><text x="250.0" y="323" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">to a student</text>
+<rect x="100.0" y="364.0" width="300" height="52" rx="7" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="250.0" y="386" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Student fills in the diagnosis (F1)</text><text x="250.0" y="403" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">in the app and submits it</text>
+<path d="M250,92 L250,122.0" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M250,176.0 L250,202.0" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M250,256.0 L250,282.0" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M250,336.0 L250,362.0" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<polygon points="250,451.0 370.0,490 250,529.0 130.0,490" fill="#FBF1E6" stroke="#B5651D" stroke-width="1.5"/><text x="250" y="487" text-anchor="middle" font-size="12.5" font-weight="600" fill="#8A4A10">Supervisor</text><text x="250" y="502" text-anchor="middle" font-size="12.5" font-weight="600" fill="#8A4A10">approves?</text>
+<path d="M250,416.0 L250,449.0" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<rect x="100.0" y="564.0" width="300" height="52" rx="7" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="250.0" y="586" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Diagnosis locked;</text><text x="250.0" y="603" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">treatment plan items created</text>
+<path d="M250,529.0 L250,562.0" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="262" y="548" text-anchor="start" font-size="11.5" font-weight="600" fill="#44546A">Yes</text>
+<rect x="100.0" y="644.0" width="300" height="52" rx="7" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="250.0" y="666" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Supervisor refers a plan item</text><text x="250.0" y="683" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">to a department clinic</text>
+<path d="M250,616.0 L250,642.0" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M130.0,490 L30,490 L30,390 L98.0,390" fill="none" stroke="#B5651D" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="38" y="436" text-anchor="start" font-size="11.5" font-weight="400" fill="#8A4A10">No:</text>
+<text x="38" y="451" text-anchor="start" font-size="11.5" font-weight="400" fill="#8A4A10">returned</text>
+<path d="M400.0,664 L480,664 L480,90 L720,90 L720,109.0" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<polygon points="720,111.0 840.0,150 720,189.0 600.0,150" fill="#FBF1E6" stroke="#B5651D" stroke-width="1.5"/><text x="720" y="147" text-anchor="middle" font-size="12.5" font-weight="600" fill="#8A4A10">Receiving clinic</text><text x="720" y="162" text-anchor="middle" font-size="12.5" font-weight="600" fill="#8A4A10">accepts?</text>
+<rect x="860" y="124" width="130" height="52" rx="7" fill="#fff" stroke="#B5651D" stroke-width="1.5"/><text x="925.0" y="146" text-anchor="middle" font-size="12" font-weight="400" fill="#8A4A10">Rejected: item</text><text x="925.0" y="163" text-anchor="middle" font-size="12" font-weight="400" fill="#8A4A10">stays in the plan</text>
+<path d="M840.0,150 L858,150" fill="none" stroke="#B5651D" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="849" y="140" text-anchor="middle" font-size="11.5" font-weight="600" fill="#8A4A10">No</text>
+<rect x="570.0" y="224.0" width="300" height="52" rx="7" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="720.0" y="246" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Supervisor assigns an eligible student;</text><text x="720.0" y="263" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">case added to the work card</text>
+<path d="M720,189.0 L720,222.0" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="730" y="212" text-anchor="start" font-size="11.5" font-weight="600" fill="#44546A">Yes</text>
+<rect x="570.0" y="314.0" width="300" height="52" rx="7" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="720.0" y="336" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Student records a step</text><text x="720.0" y="353" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">with photos</text>
+<path d="M720,276.0 L720,312.0" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<polygon points="720,401.0 840.0,440 720,479.0 600.0,440" fill="#FBF1E6" stroke="#B5651D" stroke-width="1.5"/><text x="720" y="437" text-anchor="middle" font-size="12.5" font-weight="600" fill="#8A4A10">Supervisor</text><text x="720" y="452" text-anchor="middle" font-size="12.5" font-weight="600" fill="#8A4A10">approves and grades?</text>
+<path d="M720,366.0 L720,399.0" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M840.0,440 L930,440 L930,340 L872.0,340" fill="none" stroke="#B5651D" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="936" y="400" text-anchor="start" font-size="11.5" font-weight="400" fill="#8A4A10">No:</text>
+<text x="936" y="415" text-anchor="start" font-size="11.5" font-weight="400" fill="#8A4A10">returned</text>
+<polygon points="720,511.0 840.0,550 720,589.0 600.0,550" fill="#FBF1E6" stroke="#B5651D" stroke-width="1.5"/><text x="720" y="547" text-anchor="middle" font-size="12.5" font-weight="600" fill="#8A4A10">Last step</text><text x="720" y="562" text-anchor="middle" font-size="12.5" font-weight="600" fill="#8A4A10">of the case?</text>
+<path d="M720,479.0 L720,509.0" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="730" y="504" text-anchor="start" font-size="11.5" font-weight="600" fill="#44546A">Yes</text>
+<path d="M600.0,550 L540,550 L540,346 L568.0,346" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="546" y="470" text-anchor="start" font-size="11.5" font-weight="400" fill="#44546A">No: next</text>
+<text x="546" y="485" text-anchor="start" font-size="11.5" font-weight="400" fill="#44546A">step</text>
+<rect x="570.0" y="624.0" width="300" height="52" rx="7" fill="#EAF0F7" stroke="#1F3A5F" stroke-width="1.5"/><text x="720.0" y="646" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">Case complete: referral closed,</text><text x="720.0" y="663" text-anchor="middle" font-size="13" font-weight="600" fill="#1F3A5F">plan item done, student credited</text>
+<path d="M720,589.0 L720,622.0" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="730" y="606" text-anchor="start" font-size="11.5" font-weight="600" fill="#44546A">Yes</text>
+<polygon points="720,711.0 840.0,750 720,789.0 600.0,750" fill="#FBF1E6" stroke="#B5651D" stroke-width="1.5"/><text x="720" y="747" text-anchor="middle" font-size="12.5" font-weight="600" fill="#8A4A10">More plan</text><text x="720" y="762" text-anchor="middle" font-size="12.5" font-weight="600" fill="#8A4A10">items?</text>
+<path d="M720,676.0 L720,709.0" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<path d="M600.0,750 L520,750 L520,680 L402.0,680" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="512" y="708" text-anchor="end" font-size="11.5" font-weight="400" fill="#44546A">Yes: refer</text>
+<text x="512" y="723" text-anchor="end" font-size="11.5" font-weight="400" fill="#44546A">the next item</text>
+<rect x="570.0" y="828" width="300" height="44" rx="22" fill="#1F3A5F" stroke="#1F3A5F" stroke-width="1.5"/><text x="720.0" y="855" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">Full record kept in the patient archive</text>
+<path d="M720,789.0 L720,826" fill="none" stroke="#44546A" stroke-width="1.6" marker-end="url(#a)"/>
+<text x="730" y="808" text-anchor="start" font-size="11.5" font-weight="600" fill="#44546A">No</text>
+</svg>

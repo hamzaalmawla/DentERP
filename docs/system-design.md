@@ -10,6 +10,7 @@ This document describes how the system is built to meet the Software Requirement
 | --- | --- | --- |
 | 1.0 | 26 Oct 2026 | First complete design |
 | 1.1 | 28 Oct 2026 | Architecture review: ports and adapters inside the modular monolith, SOLID rules, MVVM in the app; Reception role; supervisors on the dashboard; backend-first build plan in two parallel tracks; diagrams added |
+| 1.2 | 29 Oct 2026 | Technology versions checked against current releases: Python 3.13, PostgreSQL 18, Redis 8; Garage replaces MinIO, whose community edition was archived in April 2026; Unfold RTL status updated |
 
 ## 1. Design overview and goals
 
@@ -53,7 +54,7 @@ All choices are mature open-source tools with good documentation, which matters 
 
 | Purpose | Library or tool |
 | --- | --- |
-| Language and framework | Python 3.12, Django 5.2 (LTS) |
+| Language and framework | Python 3.13, Django 5.2 (LTS, supported until April 2028; upgrade to 6.2 LTS after its April 2027 release) |
 | REST API | Django REST Framework |
 | Authentication | djangorestframework-simplejwt (access and refresh tokens) |
 | API documentation | drf-spectacular (OpenAPI schema and Swagger UI) |
@@ -62,10 +63,10 @@ All choices are mature open-source tools with good documentation, which matters 
 | Excel import and export | django-import-export, openpyxl |
 | Change history and versions | django-simple-history |
 | File storage | django-storages with boto3 (S3-compatible), Pillow for thumbnails |
-| Background jobs | Celery with Redis as the broker; django-celery-beat for scheduled jobs (round reminders, backups) |
+| Background jobs | Celery with Redis 8 as the broker (open source under AGPLv3; Valkey is a drop-in alternative); django-celery-beat for scheduled jobs (round reminders, backups) |
 | PDF generation | WeasyPrint (HTML templates to PDF, supports Arabic right to left) |
 | Push notifications | firebase-admin (FCM for Android, and APNs for iOS through FCM) |
-| Database | PostgreSQL 16 |
+| Database | PostgreSQL 18 (supported until November 2030) |
 | Tests | pytest, pytest-django, factory-boy |
 | Code quality | ruff (lint and format), mypy (optional) |
 | Error tracking | Sentry (free tier) |
@@ -94,7 +95,7 @@ All choices are mature open-source tools with good documentation, which matters 
 | Containers | Docker, Docker Compose |
 | Web server and TLS | Nginx with Let's Encrypt certificates |
 | App server | Gunicorn |
-| Object storage | MinIO on the same server, or the cloud provider's S3-compatible storage |
+| Object storage | Garage (self-hosted, S3-compatible) on the same server, or the hosting provider's S3-compatible storage. MinIO is not used: its community edition was archived in April 2026 and is no longer maintained |
 | Code hosting and CI/CD | GitHub, GitHub Actions |
 | App builds | Flutter build in CI; uploaded to TestFlight and the Google Play internal track |
 
@@ -472,7 +473,7 @@ The dashboard is the Django admin styled with Unfold, at `/dashboard/`. Standard
 | Reception | Patients (register, search, edit details) · Diagnosis queue (send a patient, see today's queue) | Patient details and queue entries only; no clinical data is shown |
 | Supervisor | Home (own clinics) · Approvals · Clinical (referral board for own clinics) · Scheduling (distribution and attendance for own clinics) · Students (progress in own courses) · Reports (own clinics and courses) · Maintenance (report a fault) | The same actions as in the Supervisor interface of the app, limited to their scope |
 
-**Arabic layout:** Django's `LANGUAGES` setting with Arabic as the default, and `dir="rtl"` on the dashboard's base template. RTL support in Unfold is checked in week 1, and the fallback is Flutter Web (Project Plan, risks).
+**Arabic layout:** Django's `LANGUAGES` setting with Arabic as the default, and `dir="rtl"` on the dashboard's base template. Unfold merged a series of right-to-left fixes in September and October 2026 (sidebar, header, filters, actions); RTL is still checked in phase 0, and the fallback is Flutter Web (Project Plan, risks).
 
 ## 12. Deployment, environments and CI/CD
 
@@ -494,9 +495,9 @@ The whole backend runs as Docker Compose services on one cloud Linux server. A s
 | web | backend image | Gunicorn running Django: the API and the dashboard |
 | worker | backend image | Celery worker: push, thumbnails, imports, PDF and Excel exports |
 | beat | backend image | Celery beat: scheduled jobs (section 9) |
-| db | postgres:16 | Database, on a persistent volume |
-| redis | redis | Celery broker and cache |
-| minio | minio | Photo storage, on a persistent volume (or the provider's S3) |
+| db | postgres:18 | Database, on a persistent volume |
+| redis | redis:8 | Celery broker and cache |
+| storage | garage | S3-compatible photo storage, on a persistent volume (or the provider's S3) |
 | backup | small cron image | Nightly encrypted database dump and storage copy to off-server storage, kept 30 days |
 
 ### CI/CD with GitHub Actions

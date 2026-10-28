@@ -6,6 +6,15 @@ Today, patient diagnosis, referrals, student work cards, chair schedules and cha
 
 ## Project documents
 
+**Graduation project report — Part 1** (problem and objectives, state of the art, proposed solution with block diagram and flowchart, Chapter 1: Theoretical Study)
+
+| Language | PDF | Word | Source |
+| --- | --- | --- | --- |
+| English | [SPU-Dental-Report-Part1-EN.pdf](docs/report/SPU-Dental-Report-Part1-EN.pdf) | [.docx](docs/report/SPU-Dental-Report-Part1-EN.docx) | [part1-en.md](docs/report/part1-en.md) |
+| العربية | [SPU-Dental-Report-Part1-AR.pdf](docs/report/SPU-Dental-Report-Part1-AR.pdf) | [.docx](docs/report/SPU-Dental-Report-Part1-AR.docx) | [part1-ar.md](docs/report/part1-ar.md) |
+
+**Specifications**
+
 | Document | PDF | Word | Source |
 | --- | --- | --- | --- |
 | Software Requirements Specification (SRS) | [SPU-Dental-SRS.pdf](docs/SPU-Dental-SRS.pdf) | [.docx](docs/SPU-Dental-SRS.docx) | [SRS.md](docs/SRS.md) |
@@ -37,7 +46,7 @@ The app is Arabic first (right to left), with English as a second language.
 
 ## Architecture
 
-- **Backend:** Python 3.12, Django 5.2 LTS, Django REST Framework, PostgreSQL 16, Celery + Redis — a modular monolith with ports and adapters (hexagonal) inside each module, following SOLID
+- **Backend:** Python 3.13, Django 5.2 LTS, Django REST Framework, PostgreSQL 18, Celery + Redis 8, S3-compatible storage (Garage) — a modular monolith with ports and adapters (hexagonal) inside each module, following SOLID
 - **Web dashboard:** Django Unfold, inside the same Django project
 - **Mobile app:** Flutter (iOS and Android), one app with three role-based interfaces, built with MVVM
 - **Storage:** S3-compatible object storage for clinical photos and X-rays
@@ -59,7 +68,7 @@ Full details are in the [System Design Document](docs/SPU-Dental-System-Design.p
 ## Repository layout
 
 ```
-docs/      SRS and System Design (Markdown source, PDF, Word) and their figures
+docs/      SRS, System Design and the project report (Markdown source, PDF, Word) and their figures
 tools/     scripts that generate the PDF and Word documents and the diagrams
 ```
 
@@ -77,6 +86,9 @@ powershell -ExecutionPolicy Bypass -File tools/export_pdf.ps1
 ```
 
 ## Team
+
+Supervised by Dr. Mouhib Alnoukari and Amer Khourshed.
+
 
 - Hamza Almawla
 - Zeannab Alhommsi
