@@ -78,9 +78,11 @@ CLAUDE.md          conventions every Claude Code session follows
 Makefile           development commands (make help)
 backend/           Django project: API, dashboard, Celery jobs
   config/          settings (base, dev, test, staging, prod), urls, celery, wsgi, asgi, /health/
-  apps/            one folder per module (added from P0.2 on, layout in System Design section 5)
+  apps/            one folder per module, layout in System Design section 5
+    core/          base model, soft delete, audit log, error format, API conventions, shared
+                   ports; its README is the template every module copies
   locale/ar/       Arabic translations
-  tests/           project-level tests
+  tests/           project-level tests; testapp/ exercises core (installed only in tests)
   pyproject.toml   exact library versions (locked in uv.lock)
   Dockerfile       dev and prod images
 deploy/            docker-compose.yml for development, .env.example, Garage storage config
@@ -99,7 +101,7 @@ Requires Docker with Docker Compose.
 make up
 ```
 
-This creates `deploy/.env` from `deploy/.env.example`, then starts the API (http://localhost:8000), the Celery worker and beat, PostgreSQL 18, Redis 8 and Garage storage with its bucket. http://localhost:8000/health/ returns 200 when the database and Redis are up. `make test` runs the tests, `make lint` checks the code, and `make help` lists every command.
+This creates `deploy/.env` from `deploy/.env.example`, then starts the API (http://localhost:8000), the Celery worker and beat, PostgreSQL 18, Redis 8 and Garage storage with its bucket. http://localhost:8000/health/ returns 200 when the database and Redis are up. The API is under http://localhost:8000/api/v1/, with its documentation at http://localhost:8000/api/v1/docs/. `make test` runs the tests, `make lint` checks the code, and `make help` lists every command.
 
 ## Rebuilding the documents
 

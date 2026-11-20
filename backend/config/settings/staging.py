@@ -14,6 +14,9 @@ if not ALLOWED_HOSTS:
 
 # nginx terminates HTTPS and passes the original scheme.
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+# nginx adds the client address to X-Forwarded-For; read it from there (audit log, throttles).
+NUM_PROXIES = env_int("DJANGO_NUM_PROXIES", 1)
+REST_FRAMEWORK = {**REST_FRAMEWORK, "NUM_PROXIES": NUM_PROXIES or None}
 SECURE_SSL_REDIRECT = env_bool("DJANGO_SECURE_SSL_REDIRECT", True)
 # The uptime check and the container health check call /health/ over plain HTTP.
 SECURE_REDIRECT_EXEMPT = [r"^health/$"]
