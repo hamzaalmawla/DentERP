@@ -20,6 +20,12 @@ Today, patient diagnosis, referrals, student work cards, chair schedules and cha
 | Software Requirements Specification (SRS) | [SPU-Dental-SRS.pdf](docs/SPU-Dental-SRS.pdf) | [.docx](docs/SPU-Dental-SRS.docx) | [SRS.md](docs/SRS.md) |
 | System Design Document | [SPU-Dental-System-Design.pdf](docs/SPU-Dental-System-Design.pdf) | [.docx](docs/SPU-Dental-System-Design.docx) | [system-design.md](docs/system-design.md) |
 
+**Build prompts**
+
+| Document | Source |
+| --- | --- |
+| Release 1 build prompts (Diagnosis and Endodontics clinics, chairs system, login and roles, main dashboard) | [build-prompts.md](docs/build-prompts.md) |
+
 The Markdown files are the working source. The PDF and Word files are generated from them (see [Rebuilding the documents](#rebuilding-the-documents)). The diagrams are in [docs/figures](docs/figures).
 
 ## What the system does
