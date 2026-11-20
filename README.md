@@ -74,11 +74,32 @@ Full details are in the [System Design Document](docs/SPU-Dental-System-Design.p
 ## Repository layout
 
 ```
-docs/      SRS, System Design and the project report (Markdown source, PDF, Word) and their figures
-tools/     scripts that generate the PDF and Word documents and the diagrams
+CLAUDE.md          conventions every Claude Code session follows
+Makefile           development commands (make help)
+backend/           Django project: API, dashboard, Celery jobs
+  config/          settings (base, dev, test, staging, prod), urls, celery, wsgi, asgi, /health/
+  apps/            one folder per module (added from P0.2 on, layout in System Design section 5)
+  locale/ar/       Arabic translations
+  tests/           project-level tests
+  pyproject.toml   exact library versions (locked in uv.lock)
+  Dockerfile       dev and prod images
+deploy/            docker-compose.yml for development, .env.example, Garage storage config
+docs/              SRS, System Design, report, decisions log, build prompts, figures
+tools/             scripts that generate the PDF and Word documents and the diagrams
+.github/workflows/ CI: backend-ci (ruff, migrations check, schema build, pytest)
 ```
 
-The `backend/`, `mobile/` and `deploy/` folders will be added during development, as described in section 4 of the System Design.
+The `mobile/` folder and the production compose file will be added during development, as described in section 4 of the System Design.
+
+## Running the backend
+
+Requires Docker with Docker Compose.
+
+```bash
+make up
+```
+
+This creates `deploy/.env` from `deploy/.env.example`, then starts the API (http://localhost:8000), the Celery worker and beat, PostgreSQL 18, Redis 8 and Garage storage with its bucket. http://localhost:8000/health/ returns 200 when the database and Redis are up. `make test` runs the tests, `make lint` checks the code, and `make help` lists every command.
 
 ## Rebuilding the documents
 

@@ -1,0 +1,129 @@
+# Development stack. Start it with `make up` from the repository root
+# (or: docker compose -f deploy/docker-compose.yml up --build).
+#
+#   web            Django runserver: API, dashboard, /health/     http://localhost:8000
+#   worker         Celery worker
+#   beat           Celery beat (schedules stored in the database)
+#   db             PostgreSQL 18
+#   redis          Redis 8: Celery broker and cache
+#   storage        Garage, S3-compatible storage for photos and X-rays
+#   storage-init   one-off: creates the Garage layout, access key and bucket
+#   migrate        one-off: compiles translations and applies migrations before the app starts
+#
+# Values come from deploy/.env (copy of .env.example).
+
+name: spu-dental
+
+x-backend: &backend
+  image: spu-dental-backend:dev
+  build:
+    context: ../backend
+    target: dev
+  env_file: .env
+  # Run as the developer's own user so files written into the mounted source
+  # (migrations, translations) belong to them. The Makefile sets HOST_UID and HOST_GID.
+  user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+  environment:
+    HOME: /tmp
+  volumes:
+    - ../backend:/app
+
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - db-data:/var/lib/postgresql
+    ports:
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:8
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  storage:
+    image: dxflrs/garage:v2.5.0
+    environment:
+      GARAGE_RPC_SECRET: ${GARAGE_RPC_SECRET}
+      GARAGE_ADMIN_TOKEN: ${GARAGE_ADMIN_TOKEN}
+    volumes:
+      - ./garage/garage.toml:/etc/garage.toml:ro
+      - storage-meta:/var/lib/garage/meta
+      - storage-data:/var/lib/garage/data
+    ports:
+      - "127.0.0.1:${STORAGE_PORT:-3900}:3900"
+
+  storage-init:
+    <<: *backend
+    command: ["python", "/deploy/garage/init_storage.py"]
+    volumes:
+      - ./garage:/deploy/garage:ro
+    depends_on:
+      storage:
+        condition: service_started
+    restart: "no"
+
+  migrate:
+    <<: *backend
+    # Also compiles the Arabic translations, so the app shows them after every start.
+    command:
+      - sh
+      - -c
+      - python manage.py compilemessages --ignore ".venv/*" && python manage.py migrate --noinput
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  web:
+    <<: *backend
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8000}:8000"
+    depends_on: &app-dependencies
+      migrate:
+        condition: service_completed_successfully
+      storage-init:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8000/health/', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  worker:
+    <<: *backend
+    command: ["celery", "-A", "config", "worker", "--loglevel", "INFO"]
+    depends_on: *app-dependencies
+
+  beat:
+    <<: *backend
+    command: ["celery", "-A", "config", "beat", "--loglevel", "INFO"]
+    depends_on: *app-dependencies
+
+volumes:
+  db-data:
+  redis-data:
+  storage-meta:
+  storage-data:

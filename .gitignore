@@ -4,3 +4,21 @@ M-09-*.docx
 
 # Word lock files
 ~$*
+
+# Python and tools
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Backend build output (compiled translations are built by `make up` and the image)
+backend/staticfiles/
+backend/media/
+backend/schema.yml
+*.mo
+dump.rdb
+
+# Local environment files with secrets
+.env
+!.env.example
