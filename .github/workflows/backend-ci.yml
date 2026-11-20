@@ -1,0 +1,83 @@
+name: backend-ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: backend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: spu_dental
+          POSTGRES_USER: spu_dental
+          POSTGRES_PASSWORD: spu_dental
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U spu_dental -d spu_dental"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+      redis:
+        image: redis:8
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 3s --health-retries 20
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      DJANGO_SETTINGS_MODULE: config.settings.test
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: spu_dental
+      POSTGRES_USER: spu_dental
+      POSTGRES_PASSWORD: spu_dental
+      REDIS_URL: redis://localhost:6379/0
+      REDIS_CACHE_URL: redis://localhost:6379/1
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10.4.0  # this action publishes no floating major tag
+        with:
+          version: "0.11.32"
+          python-version: "3.13"
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Install gettext
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends gettext
+
+      - name: Lint
+        run: |
+          uv run ruff check --output-format=github .
+          uv run ruff format --check .
+
+      - name: Migrations are complete
+        run: uv run python manage.py makemigrations --check --dry-run
+
+      - name: Translations compile
+        run: uv run python manage.py compilemessages --ignore ".venv/*"
+
+      - name: OpenAPI schema builds
+        run: uv run python manage.py spectacular --validate --fail-on-warn --file schema.yml
+
+      - name: Tests
+        run: uv run pytest
