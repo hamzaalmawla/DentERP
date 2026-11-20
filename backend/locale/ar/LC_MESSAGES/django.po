@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: spu-dental-backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 00:51+0300\n"
+"POT-Creation-Date: 2026-11-21 01:24+0300\n"
 "PO-Revision-Date: 2026-11-21 00:55+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
@@ -13,10 +13,86 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: config/settings/base.py:132
+#: apps/core/api/errors.py:88
+msgid "The data sent is not valid."
+msgstr "البيانات المرسلة غير صالحة."
+
+#: apps/core/apps.py:8
+msgid "Core"
+msgstr "النواة"
+
+#: apps/core/domain/errors.py:45
+msgid "The record was not found."
+msgstr "السجل غير موجود."
+
+#: apps/core/domain/errors.py:55
+msgid "You do not have permission to do this."
+msgstr "ليس لديك صلاحية للقيام بهذا."
+
+#: apps/core/domain/errors.py:71
+msgid "Records cannot be deleted. Deactivate the record instead."
+msgstr "لا يمكن حذف السجلات. عطّل السجل بدلاً من ذلك."
+
+#: apps/core/models.py:56
+msgid "created at"
+msgstr "تاريخ الإنشاء"
+
+#: apps/core/models.py:59
+msgid "created by"
+msgstr "أنشأه"
+
+#: apps/core/models.py:66
+msgid "updated at"
+msgstr "تاريخ التعديل"
+
+#: apps/core/models.py:69
+msgid "updated by"
+msgstr "عدّله"
+
+#: apps/core/models.py:76
+msgid "active"
+msgstr "فعّال"
+
+#: apps/core/models.py:111
+msgid "user"
+msgstr "المستخدم"
+
+#: apps/core/models.py:117
+msgid "action"
+msgstr "الإجراء"
+
+#: apps/core/models.py:118
+msgid "record type"
+msgstr "نوع السجل"
+
+#: apps/core/models.py:119
+msgid "record id"
+msgstr "رقم السجل"
+
+#: apps/core/models.py:120
+msgid "changes"
+msgstr "التغييرات"
+
+#: apps/core/models.py:121
+msgid "IP address"
+msgstr "عنوان IP"
+
+#: apps/core/models.py:122
+msgid "time"
+msgstr "الوقت"
+
+#: apps/core/models.py:125
+msgid "audit log entry"
+msgstr "قيد سجل التدقيق"
+
+#: apps/core/models.py:126
+msgid "audit log"
+msgstr "سجل التدقيق"
+
+#: config/settings/base.py:136
 msgid "Arabic"
 msgstr "العربية"
 
-#: config/settings/base.py:133
+#: config/settings/base.py:137
 msgid "English"
 msgstr "الإنجليزية"

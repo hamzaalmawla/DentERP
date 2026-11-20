@@ -16,3 +16,6 @@ STORAGES = {
 # Celery tasks run in the test process.
 CELERY_TASK_ALWAYS_EAGER = True
 CELERY_TASK_EAGER_PROPAGATES = True
+
+# Models and endpoints that exercise core (tests/testapp). Never installed outside tests.
+INSTALLED_APPS = [*INSTALLED_APPS, "tests.testapp"]

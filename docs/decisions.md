@@ -36,3 +36,39 @@ the other departments are then added as data, not code. The full scope is in
 
 **Reason.** Reproducible installs on both developers' machines and in CI; a storage service that
 works with one command; settings that fail fast when a secret is missing.
+
+## 2026-11-20 — Core module details (P0.2)
+
+**Decision.**
+
+1. Domain messages are marked with `_` from `apps.core.domain.i18n`, a no-op marker that
+   `makemessages` collects, so `domain/` stays plain Python. The API exception handler
+   translates the message into the request's language. Placeholders use `%(name)s` and are filled
+   from the error's `details`.
+2. The HTTP status of a `DomainError` is chosen by its subclass: `NotFoundError` 404,
+   `AccessDeniedError` 403, `ConflictError` 409, any other `DomainError` 400. Django's `Http404`
+   returns the same `not_found` message as `NotFoundError` and never names the model.
+3. `AuditLog` inherits `BaseModel` like every table, and its rows are append-only: `save()` on an
+   existing row raises and `delete()` raises as for every model.
+4. `created_by`, `updated_by`, the history user and the audit user come from one place:
+   `CurrentRequestMiddleware` keeps the request (the user is read at save time, so JWT logins that
+   DRF authenticates inside the view are seen), and `acting_as(user_id)` sets the user for Celery
+   tasks, commands and imports. `updated_by` is empty when the system made the last change.
+5. The client IP comes from `REMOTE_ADDR`, or from `X-Forwarded-For` behind `DJANGO_NUM_PROXIES`
+   proxies (0 in development, 1 for nginx in staging and production), the same rule DRF's
+   throttles use.
+6. `core.0001` and the test app's migration refer to `settings.AUTH_USER_MODEL` as a swappable
+   dependency, so P0.3 can still set `AUTH_USER_MODEL` to the custom user. A developer database
+   migrated before P0.3 must be recreated with `make clean` then `make migrate` (nothing is
+   deployed yet).
+7. Until P0.3 adds JWT, the API authenticates with the Django session only; Basic auth is off.
+   The API renders JSON only. Every endpoint requires a logged-in user unless it says otherwise;
+   the schema and docs at `/api/v1/schema/` and `/api/v1/docs/` are public (SYS-09).
+8. Tests of core use `tests/testapp`, an app installed only by `config.settings.test`, with its
+   own committed migration.
+9. Ruff's `RUF012` (mutable class attributes) is turned off: Django's `Meta`, serializer and admin
+   options are lists by design.
+
+**Reason.** Keep the domain free of Django while every message is still translatable; give the
+mobile app one stable error format; record the acting user the same way in the API, the dashboard
+and background jobs; and test core the way real modules will use it.

@@ -43,6 +43,9 @@ extend-exclude = ["*/migrations/*"]
 
 [tool.ruff.lint]
 select = ["E", "W", "F", "I", "B", "UP", "DJ", "SIM", "C4", "PT", "RUF"]
+# Django's Meta options, serializer fields and admin options are mutable class attributes
+# by design; RUF012 would flag every model and view.
+ignore = ["RUF012"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["config", "apps"]

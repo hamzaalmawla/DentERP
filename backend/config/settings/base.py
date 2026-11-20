@@ -19,8 +19,8 @@ ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS")
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
 
 # Applications -------------------------------------------------------------
-# django.contrib.admin (with Unfold), simple-history and import-export are added by
-# the prompts that use them (P0.2, P0.4), after the custom user model exists (P0.3).
+# django.contrib.admin (with Unfold) and import-export are added by the prompts that use
+# them (P0.4 and later), after the custom user model exists (P0.3).
 
 DJANGO_APPS = [
     "django.contrib.auth",
@@ -35,9 +35,12 @@ THIRD_PARTY_APPS = [
     "django_filters",
     "drf_spectacular",
     "django_celery_beat",
+    "simple_history",
 ]
 
-LOCAL_APPS: list[str] = []
+LOCAL_APPS = [
+    "apps.core",
+]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -48,6 +51,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "apps.core.infrastructure.request_context.CurrentRequestMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -163,11 +167,35 @@ AWS_S3_FILE_OVERWRITE = False
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024
 
+# Reverse proxies in front of Django (nginx in staging and production). The client IP for
+# the audit log and the throttles is then read from X-Forwarded-For. 0 in development.
+NUM_PROXIES = env_int("DJANGO_NUM_PROXIES", 0)
+
 # REST API -----------------------------------------------------------------
-# The full API conventions (versioned router, pagination, error format) come in P0.2.
+# Conventions in docs/system-design.md section 7; the pieces live in apps/core/api.
+# JWT authentication and the throttles are added with accounts (P0.3).
 
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
+    "DEFAULT_PARSER_CLASSES": [
+        "rest_framework.parsers.JSONParser",
+        "rest_framework.parsers.MultiPartParser",
+        "rest_framework.parsers.FormParser",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "apps.core.api.pagination.StandardPagination",
+    "PAGE_SIZE": 20,
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.OrderingFilter",
+    ],
+    "ORDERING_PARAM": "ordering",
+    "EXCEPTION_HANDLER": "apps.core.api.errors.exception_handler",
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "NUM_PROXIES": NUM_PROXIES or None,
 }
 
 SPECTACULAR_SETTINGS = {
@@ -175,6 +203,8 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "API for the student, supervisor and maintenance mobile interfaces.",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "SCHEMA_PATH_PREFIX": r"/api/v1",
+    "COMPONENT_SPLIT_REQUEST": True,
 }
 
 # Security shared by every environment ------------------------------------
