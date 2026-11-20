@@ -59,7 +59,15 @@ Rules for this task:
 - Never hard-code clinic names, department names, course names or step names. Use configuration tables and the clinic type only.
 - Work only in the modules and folders this prompt names. If you need another module, call its application service or port; if the port is missing, stop and tell me.
 - Create a branch named after the prompt id (for example p1-3-patients), commit there, and open a draft pull request.
-- Tests: for every service, cover the allowed path, each guard failure and the permission scope. All tests and linters must pass before you finish.
+- Tests are part of the task, not a later step. Write them in the same pull request as the code:
+  - Backend: pytest for every service — the allowed path, each guard failure (by its error code) and the
+    permission scope (a row outside scope returns 404), using the in-memory fakes of the ports. API tests for
+    every endpoint with each allowed role and one forbidden role. Repository tests against PostgreSQL.
+  - Mobile: unit tests for every ViewModel with fake repositories (loading, data, error, each action);
+    repository tests with a mocked dio; widget tests for every key widget and screen state.
+  - One test per acceptance criterion of the stories named in the prompt, named after the story (test_us09_...).
+- Run ruff + pytest (backend) or flutter analyze + flutter test (mobile). All must pass before you finish.
+  Paste the test summary in the pull request description.
 - Every user-facing string is translatable, with the Arabic translation added.
 - End with: what you built, the requirement and US ids covered, how you tested it, and anything left open.
 ```
@@ -93,6 +101,9 @@ Set up the repository for development, following docs/system-design.md sections 
    and the main dashboard screens. Labs and other departments are deferred. Clinics stay configuration data."
 9. Update README.md "Repository layout" for backend/ and deploy/.
 
+Tests: settings load for dev, staging and prod; /health/ returns 200 when the database and Redis are up and 503
+when one is down; CI runs and passes on the pull request.
+
 Done when: `docker compose up` starts every service, /health/ returns 200, CI passes on the pull request.
 ```
 
@@ -119,7 +130,9 @@ Requirements: SYS-02, SYS-04, SYS-10.
    body_key, params, target)), FileStorage, UnitOfWork if useful. In-memory fakes for each in core/testing/.
 8. A base for scope-aware query services (section 8): a helper so a query service returns 404 for rows outside scope.
 
-Tests for soft delete, audit diff, the error format in Arabic and English, and pagination limits.
+Tests: soft delete (delete() raises, deactivate() hides the row, all_objects still sees it); created_by / updated_by
+filled; audit diff; history row on change; the error format in Arabic and English for DomainError, validation, 404
+and 403; pagination limits (default 20, maximum 100); the scope helper returns 404; the schema builds.
 ```
 
 ### P0.3 Accounts: login and roles (backend)
@@ -204,6 +217,10 @@ For each module:
 Write docs/contracts.md: one table per module listing its facade functions and DTOs. This is the agreement
 between Track A and Track B. Generate the OpenAPI outline of the planned endpoints in section 7 (Release 1 only),
 even if the views return 501 for now.
+
+Tests: every fake satisfies its Protocol; every module imports and is registered; the OpenAPI schema builds; an
+import-rule test that fails if a module imports another module's models.py or infrastructure/ (keep it for the
+whole project).
 ```
 
 ---
@@ -233,6 +250,10 @@ Requirements: DB-04, DB-06, DB-18, SYS-07, SYS-10. Story: US-01.
 
 Acceptance (US-01): create a clinic with 12 chairs and 5 sessions; deactivating a chair hides it from
 list_chairs(in_service_only) but keeps its history.
+
+Tests: US-01 criteria; unique constraints (clinic number, chair number per clinic, tooth code letter, one current
+term); SetChairStatus writes history and needs a reason; /lookups/ in Arabic and English, version changes after an
+edit, ETag returns 304; seed_defaults run twice creates no duplicates; only the super admin can open these screens.
 ```
 
 ### P1.2 Academics: courses, steps, enrollments, supervisor scope
@@ -255,6 +276,11 @@ Requirements: DB-03, DB-05, DB-07. Stories: US-02, US-03.
    the 7 step templates and the 0–100 grading scheme from docs/build-prompts.md section 1.
 
 Acceptance: US-02 and US-03 criteria from SRS section 7.1.
+
+Tests: US-02 (an enrolled student gets a card showing 0 of the required count); US-03 (200 rows under 1 minute,
+rejected rows with reasons, re-import creates no duplicates); eligible_students includes only students enrolled this
+term in a course run in that clinic (BR-05); validate_grade for each scheme type, in and out of range;
+supervisor_scope by course, by clinic and both; unique constraints.
 ```
 
 ### P1.3 Patients and reception — Track A
@@ -280,6 +306,12 @@ Requirements: DB-08, DB-09, DB-10, DB-11, DB-20, ST-03, SV-03, SV-09 (service on
    in their scope. Reception never sees diagnoses, steps, photos or grades.
 
 Acceptance: US-09 and US-10 from SRS section 7.3.
+
+Tests: US-09 (file number generated and unique, also under concurrent registrations; duplicate national ID blocks;
+name + phone warns); US-10 (assigned patient appears in the student's list); only one waiting queue entry per patient;
+assign refused for a supervisor outside the diagnosis clinic; transfer ends the old assignment and records the reason;
+a student gets 404 on a patient not assigned to them; reception's responses contain no clinical fields; editing
+details writes a history row; search under 2 seconds on 20,000 patients.
 ```
 
 ### P1.4 Diagnosis (F1) — Track A
@@ -303,6 +335,13 @@ Requirements: ST-05, ST-06, SV-04, SYS-05. Business rules: BR-02, BR-04, BR-07. 
    actions for supervisors calling the same services (DB-21).
 
 Acceptance: US-11 (backend part), US-12 (alerts in patient detail), US-13.
+
+Tests: every allowed transition and every refused one (approve a draft, submit an approved diagnosis, …); submit
+refused when sections are missing or the patient is not assigned; approve refused for the owner and outside scope;
+return without a comment refused; approved record locked (PATCH refused) and a change makes a new version; a second
+diagnosis in progress refused (BR-02) and medical history copied forward; index score out of range refused; invalid
+FDI tooth refused; several codes per tooth allowed; alerts in patient detail; notifications sent only after commit;
+audit log entries for submit, approve and return.
 ```
 
 ### P1.5 Media: photos and X-rays — Track A
@@ -321,7 +360,10 @@ Requirements: ST-11 (server side), SYS-06.
 5. API: POST /media/ (multipart), GET /media/{id}/ (returns signed URLs for file and thumbnail).
 6. facade.attach(media_ids, owner) used by diagnosis, workcards and maintenance.
 
-Tests with a fake FileStorage; one integration test against the Garage container.
+Tests: with a fake FileStorage — wrong type and too large refused; the same Idempotency-Key returns the same object
+and stores one file; the thumbnail task creates a thumbnail; signed URL expires after 10 minutes; a student gets 404
+on another student's patient photo; a technician gets only ticket photos. One integration test against the Garage
+container.
 ```
 
 ### P1.6 Clinical work cards and steps (Endodontics) — Track A
@@ -351,6 +393,13 @@ Lab cases (POST /cases/ for labs, ST-10) are deferred: do not build them.
 7. Dashboard: Work cards and cases read-only; supervisors get approve / return / complete actions in scope.
 
 Acceptance: US-07 and US-08 criteria applied to clinical steps, US-16.
+
+Tests: step transitions allowed and refused; submit out of order refused unless the course allows any order (BR-06);
+submit without a required photo or X-ray refused; approve with a grade outside the scheme refused; approve refused
+for the owner and outside scope (BR-07); return without a comment refused; approved step locked; complete refused
+while a step is not approved; complete updates referral, plan item and progress (BR-08); progress counts only
+completed cases (BR-09); transfer keeps completed steps credited to the old student; the approvals queue shows only
+my scope; a notification for each event.
 ```
 
 ### P1.7 Referrals: Diagnosis → Endodontics — Track A
@@ -376,6 +425,12 @@ Write one end-to-end service test: approved diagnosis with an Endodontics plan i
 assign → case on the student's card with patient, tooth and case type → all steps approved → complete →
 referral completed, plan item done, referring clinic notified.
 Acceptance: US-14, US-15, US-16.
+
+Tests (besides the end-to-end one): referring a plan item of a non-approved diagnosis refused; the same plan item in
+two open referrals refused (BR-04); a target clinic of the wrong department refused; accept / reject / assign by a
+supervisor of another clinic return 404; reject without a reason refused and plan items go back to planned; assign
+to an ineligible student refused (BR-05); the first step submit moves the referral to in_treatment; inbox and sent
+filters.
 ```
 
 ### P1.8 Chair distribution and attendance — Track B
@@ -398,6 +453,11 @@ Requirements: DB-12, SV-11, ST-12. Rule: BR-12. Stories: US-20, US-21.
    Attendance page per clinic and date.
 
 Acceptance: US-20, US-21 (F8 report itself comes in P1.11).
+
+Tests: the suggestion never uses an out-of-service chair and never puts more than students-per-chair on a chair;
+only enrolled students are suggested; the same student twice in one date and session refused; attendance by a
+supervisor outside scope returns 404; /schedule/ returns only my own chairs; the /clinics/{id}/today/ grid matches
+the saved distribution; a chair going out of service lists the affected assignments.
 ```
 
 ### P1.9 Maintenance: rounds, tickets, chair status — Track B
@@ -422,6 +482,12 @@ Requirements: MT-02 to MT-08, SV-13, DB-14. Rules: BR-11, BR-12. Stories: US-18,
    tickets list with filters, rounds list. Supervisors can only report a fault.
 
 Acceptance: US-18 (20 chairs all OK in one request), US-19.
+
+Tests: a second round for the same clinic, kind and day refused (BR-11); a failed check without a note refused; a
+failed check opens a ticket linked to chair and round; a blocking category takes the chair out of service (BR-12);
+resolve returns the chair to service only when no other blocking ticket is open; each ticket transition allowed and
+refused; external and resolve need a note; a manual status change needs a reason; ticket responses contain no
+patient data; notifications for opened and resolved.
 ```
 
 ### P1.10 Notifications — Track B
@@ -441,6 +507,10 @@ Requirements: SYS-03, ST-14, SV-14. Story: US-24.
    ticket opened / resolved. Add a test that lists them.
 
 Acceptance: US-24 (backend part).
+
+Tests: a row is created in the recipient's language; a push failure keeps the row; dead tokens are removed; push is
+skipped without credentials; unread count; mark read by ids and all; a user cannot read or mark another user's
+notifications.
 ```
 
 ### P1.11 Dashboard main screens and reports — Track B
@@ -464,6 +534,11 @@ Requirements: DB-13, DB-14, DB-15 (Release 1 part), DB-16, DB-20, DB-21. Story: 
 
 Write a short checklist in docs/dashboard-checklist.md of each role, its menus and what it can do, and confirm
 each line by test or by hand.
+
+Tests: home figures per role and scope; a supervisor's approve action on the dashboard calls the same service as the
+API (same guards); management cannot save on any screen (a test that loops over every registered admin class);
+opening another role's screen by URL is refused; F8 and chair status report rows for seeded data; the Excel export
+has the same rows as the screen; reception sees no clinical data on any screen.
 ```
 
 ### P1.12 Backend acceptance and demo data
@@ -509,6 +584,10 @@ Requirements: SYS-07, NFR-09, NFR-10 (foundation).
 7. Shared widgets: loading / error / empty states, patient alert banner, status chip, confirm dialog.
 8. .github/workflows/mobile-ci.yml: flutter analyze, flutter test.
 
+Tests: refresh interceptor (an expired token refreshes once and replays queued requests; a refresh failure logs
+out); error-code mapping returns Arabic and English messages; headers sent on every request; drift tables open;
+widget tests for the shared widgets in RTL and LTR.
+
 Done when the app starts on Android and iOS to an empty login screen in Arabic RTL and CI passes.
 ```
 
@@ -545,6 +624,10 @@ Requirements: ST-11, ST-14, SV-14, SYS-03, SYS-06, NFR-10. Story: US-24 (mobile 
 3. Notifications: list screen, unread badge on the home tab, mark read, tap opens the target route
    ("case:123" → case screen, and so on); push messages via firebase_messaging and local notifications,
    tapping a push opens the same target.
+
+Tests: lookups served from cache and refreshed only on a new version; upload queue — compresses to 2 MB or less,
+retries with back-off after a network error, sends the same idempotency key on retry, deletes the local file after
+success, survives an app restart; notification target routing for each target type; unread badge count.
 ```
 
 ### P2.4 Student — Diagnosis clinic — Track A
@@ -564,6 +647,10 @@ Requirements: ST-02, ST-03, ST-04, ST-05, ST-06. Stories: US-11, US-12.
    review and submit with the supervisor choice.
 4. Draft saved to drift on every change and synced to the server draft when online; survives closing the app.
 5. Returned diagnosis shows the supervisor comment and opens for editing and resubmission.
+
+Tests: ViewModel tests for home, patients and the wizard (each step's validation, submit, resubmit after return);
+the draft is saved locally on change, restored after a restart, then synced; widget tests for the dental chart (FDI
+order, multi-select codes, primary teeth), the indices (only 0–3 accepted) and the alert banner on each patient screen.
 ```
 
 ### P2.5 Student — Endodontics work cards and schedule — Track A
@@ -579,6 +666,10 @@ Requirements: ST-07, ST-08, ST-09, ST-11, ST-12. Stories: US-06 (clinical), US-0
    Returned steps show the comment and can be resubmitted.
 4. My schedule: chair and session distribution for the coming days (GET /schedule/).
 No lab case creation (deferred).
+
+Tests: progress shows done / required per case type; submit is disabled and shows "waiting to upload" until required
+photos are uploaded; a returned step shows the comment and resubmits; the schedule shows only my chairs; ViewModel
+tests with fake repositories for every screen.
 ```
 
 ### P2.6 Supervisor — approvals — Track B
@@ -594,6 +685,10 @@ Requirements: SV-02, SV-04, SV-07, SV-08. Stories: US-07, US-13, US-16.
 4. Step review: photos full screen with zoom, student note, grade input built from the grading scheme
    (number pad / code chips / pass-fail), approve or return. A normal approval is 2 taps after opening.
 5. Case: when all steps are approved, a "Confirm case complete" action.
+
+Tests: widget tests for the grade input in each scheme type (numeric range, codes, pass / fail); return blocked
+without a comment; a normal approval takes 2 taps after opening (a widget test that counts the taps); complete shown
+only when all steps are approved; API error codes shown as localized messages.
 ```
 
 ### P2.7 Supervisor — queue, referrals, assignment, transfer — Track B
@@ -608,6 +703,9 @@ Requirements: SV-03, SV-05, SV-06, SV-09. Stories: US-10, US-14, US-15, US-17.
 3. Referral inbox and sent list with status and age; accept, reject with a reason; assign to an eligible
    student with their progress shown.
 4. Transfer patient to another student with a reason.
+
+Tests: ViewModel tests for assign, create referral (items already in an open referral cannot be selected), accept,
+reject (reason required), assign (only eligible students listed) and transfer (reason required).
 ```
 
 ### P2.8 Chairs — Clinic today and fault report — Track B
@@ -620,6 +718,9 @@ Requirements: SV-11, SV-13. Story: US-21.
    service shown and disabled; mark attendance present / absent per student in bulk; move a student to another
    chair for a session.
 2. Report fault: pick a chair, category, note and optional photo → opens a ticket.
+
+Tests: the grid shows the saved distribution; out-of-service chairs are disabled; bulk attendance sends one request;
+the fault report requires a note and queues the photo.
 ```
 
 ### P2.9 Maintenance interface — Track B
@@ -635,6 +736,10 @@ Requirements: MT-02 to MT-08. Stories: US-18, US-19.
 3. Ticket list and ticket detail: start, mark external with a note, resolve with a repair note and photos;
    event history.
 4. Chair detail: status, history of rounds and tickets, set in or out of service with a reason.
+
+Tests: "All OK" marks every chair in one tap and submits one request; a fault row needs a note; a second round shows
+the already-submitted message; ticket actions shown only in allowed states; external and resolve need a note; a
+status change needs a reason.
 ```
 
 ---
@@ -654,6 +759,10 @@ Deploy Release 1 to staging — docs/system-design.md section 12.
 4. /privacy/ page, Sentry for backend and app, uptime check on /health/.
 5. Staging loaded with `seed_demo`; a staging build of the app pointing to staging.
 Write the runbook in deploy/README.md.
+
+Checks: the full backend test suite passes inside the production image; after deploy, /health/ returns 200 over
+HTTPS and HTTP redirects to HTTPS; a photo URL without a signature is refused; a backup is made and restored once to
+a scratch database (NFR-04).
 ```
 
 ### P3.2 Release 1 acceptance
