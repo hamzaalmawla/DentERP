@@ -1,0 +1,20 @@
+{% extends "admin/base_site.html" %}
+{% load i18n unfold %}
+
+{% block content %}
+    <div class="border border-base-200 rounded-default shadow-xs p-6 dark:border-base-800 dashboard-narrow">
+        <p class="font-semibold leading-relaxed mb-4 text-font-important-light dark:text-font-important-dark">
+            {{ question }}
+        </p>
+
+        <form method="post" class="flex flex-row gap-3 justify-end">
+            {% csrf_token %}
+            {% component "unfold/components/button.html" with href=cancel_url variant="default" %}{% translate "Cancel" %}{% endcomponent %}
+            {% if danger %}
+                {% component "unfold/components/button.html" with submit=1 variant="danger" %}{{ confirm_label }}{% endcomponent %}
+            {% else %}
+                {% component "unfold/components/button.html" with submit=1 %}{{ confirm_label }}{% endcomponent %}
+            {% endif %}
+        </form>
+    </div>
+{% endblock %}

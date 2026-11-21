@@ -21,6 +21,15 @@ class LoginResult:
 
 
 @dataclass(frozen=True, slots=True)
+class VerifiedUser:
+    """A user whose username and password were accepted (``VerifyCredentials``)."""
+
+    user_id: int
+    roles: frozenset[str]
+    must_change_password: bool
+
+
+@dataclass(frozen=True, slots=True)
 class AuthContext:
     """What every authenticated request needs to know about its user (read once per request)."""
 
@@ -71,3 +80,13 @@ class NewAccount:
     password_hash: str
     must_change_password: bool
     roles: frozenset[str]
+
+
+@dataclass(frozen=True, slots=True)
+class UserDetails:
+    """The details of a user the administrator can edit (DB-02)."""
+
+    full_name_ar: str
+    full_name_en: str
+    phone: str
+    university_id: str | None

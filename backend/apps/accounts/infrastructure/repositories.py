@@ -5,7 +5,13 @@ from datetime import datetime
 
 from django.db.models import Prefetch
 
-from apps.accounts.application.dtos import AuthContext, DeviceDTO, NewAccount, UserDTO
+from apps.accounts.application.dtos import (
+    AuthContext,
+    DeviceDTO,
+    NewAccount,
+    UserDetails,
+    UserDTO,
+)
 from apps.accounts.domain.accounts import Account
 from apps.accounts.models import DeviceToken, Role, User, UserRole
 
@@ -76,8 +82,35 @@ class OrmAccountRepository:
     def username_exists(self, username: str) -> bool:
         return User.all_objects.filter(username=username).exists()
 
-    def university_id_exists(self, university_id: str) -> bool:
-        return User.all_objects.filter(university_id=university_id).exists()
+    def university_id_exists(
+        self, university_id: str, *, exclude_user_id: int | None = None
+    ) -> bool:
+        users = User.all_objects.filter(university_id=university_id)
+        if exclude_user_id is not None:
+            users = users.exclude(pk=exclude_user_id)
+        return users.exists()
+
+    def details_of(self, user_id: int) -> UserDetails | None:
+        user = User.objects.filter(pk=user_id).first()
+        if user is None:
+            return None
+        return UserDetails(
+            full_name_ar=user.full_name_ar,
+            full_name_en=user.full_name_en,
+            phone=user.phone,
+            university_id=user.university_id,
+        )
+
+    def update_details(self, user_id: int, details: UserDetails) -> None:
+        user = User.objects.get(pk=user_id)
+        user.full_name_ar = details.full_name_ar
+        user.full_name_en = details.full_name_en
+        user.phone = details.phone
+        user.university_id = details.university_id
+        user.save(update_fields=["full_name_ar", "full_name_en", "phone", "university_id"])
+
+    def deactivate(self, user_id: int) -> None:
+        User.objects.get(pk=user_id).deactivate()
 
     def roles_of(self, user_id: int) -> frozenset[str]:
         return _active_roles(user_id)

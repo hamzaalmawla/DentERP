@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 
 import pytest
+from django.conf import settings
+from django.test import Client
 
 from apps.accounts.models import Role, User, UserRole
 from apps.accounts.testing import (
@@ -66,5 +68,32 @@ def logged_in(make_user):
         response = login(user.username, PASSWORD)
         assert response.status_code == 200, response.json()
         return user, response.json()
+
+    return make
+
+
+# --- Dashboard tests --------------------------------------------------------------------
+
+
+def english_client() -> Client:
+    """A browser that picked English with the language switch (messages are asserted in
+    English; Arabic is the default and is tested on its own)."""
+    client = Client()
+    client.cookies[settings.LANGUAGE_COOKIE_NAME] = "en"
+    return client
+
+
+@pytest.fixture
+def dashboard(make_user):
+    """A dashboard session for a new user: ``dashboard("supervisor")`` → client (with
+    ``client.user``). The session is opened with ``force_login``; the login form itself is
+    tested in test_dashboard_login.py."""
+
+    def make(*roles: str, username: str | None = None, **fields) -> Client:
+        user = make_user(username or "_".join(roles) or "nobody", *roles, **fields)
+        client = english_client()
+        client.force_login(user)
+        client.user = user
+        return client
 
     return make

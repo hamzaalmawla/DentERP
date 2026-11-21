@@ -7,7 +7,7 @@ import pytest
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 
-from apps.accounts.application.dtos import NewAccount
+from apps.accounts.application.dtos import NewAccount, UserDetails
 from apps.accounts.infrastructure.repositories import (
     OrmAccountRepository,
     OrmAuthContextReader,
@@ -107,6 +107,35 @@ class TestAccountRepository:
 
         with pytest.raises(IntegrityError), transaction.atomic():
             self.repo.create(new_account(username="huda"))
+
+    def test_university_id_exists_can_leave_one_user_out(self):
+        user_id = self.repo.create(new_account(university_id="77"))
+
+        assert self.repo.university_id_exists("77")
+        assert not self.repo.university_id_exists("77", exclude_user_id=user_id)
+        User.objects.filter(pk=user_id).deactivate()
+        assert self.repo.university_id_exists("77")
+
+    def test_details_are_read_and_updated(self):
+        user_id = self.repo.create(new_account())
+        details = UserDetails(
+            full_name_ar="سارة علي", full_name_en="Sara Ali", phone="0911", university_id=None
+        )
+
+        self.repo.update_details(user_id, details)
+
+        assert self.repo.details_of(user_id) == details
+        assert User.objects.get(pk=user_id).username == "sara"
+
+    def test_deactivate_hides_the_user_and_keeps_the_row(self):
+        user_id = self.repo.create(new_account())
+
+        self.repo.deactivate(user_id)
+
+        assert self.repo.get(user_id) is None
+        assert self.repo.details_of(user_id) is None
+        assert User.all_objects.get(pk=user_id).is_active is False
+        assert self.repo.username_exists("sara")
 
 
 class TestOtherRepositories:

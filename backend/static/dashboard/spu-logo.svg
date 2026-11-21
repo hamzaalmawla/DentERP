@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SPU">
+  <!-- Placeholder until the university's identity files arrive. -->
+  <rect width="64" height="64" rx="12" fill="#1f5fa8"/>
+  <path d="M20 18c-5 0-8 4-8 10 0 7 4 10 6 18 1 4 2 6 4 6 3 0 3-6 5-10 1-2 2-3 5-3s4 1 5 3c2 4 2 10 5 10 2 0 3-2 4-6 2-8 6-11 6-18 0-6-3-10-8-10-4 0-6 2-12 2s-8-2-12-2z" fill="#fff"/>
+</svg>

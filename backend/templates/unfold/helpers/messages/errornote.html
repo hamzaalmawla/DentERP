@@ -1,0 +1,9 @@
+{% load i18n %}
+{% comment %}
+Unfold's errornote counts errors.items, which is 0 for the admin's error list (a list, not a dict).
+English shows the plural text for 0, so it goes unnoticed; Arabic has its own text for 0 ("no
+errors to correct"). Count the list itself when it is not a dict.
+{% endcomment %}
+{% if errors %}
+    {% if errors.items %}{% with count=errors.items|length %}{% include "unfold/helpers/messages/errornote_text.html" %}{% endwith %}{% else %}{% with count=errors|length %}{% include "unfold/helpers/messages/errornote_text.html" %}{% endwith %}{% endif %}
+{% endif %}

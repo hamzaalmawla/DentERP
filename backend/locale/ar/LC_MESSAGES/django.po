@@ -4,14 +4,129 @@ msgid ""
 msgstr ""
 "Project-Id-Version: spu-dental-backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 07:45+0300\n"
+"POT-Creation-Date: 2026-11-22 00:39+0300\n"
 "PO-Revision-Date: 2026-11-21 00:55+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: apps/accounts/admin.py:51 apps/accounts/admin.py:288
+#: apps/accounts/admin.py:476
+msgid "Roles"
+msgstr "الأدوار"
+
+#: apps/accounts/admin.py:138 apps/accounts/models.py:135
+#: apps/accounts/models.py:151
+msgid "role"
+msgstr "الدور"
+
+#: apps/accounts/admin.py:153
+msgid "locked"
+msgstr "مقفل"
+
+#: apps/accounts/admin.py:157
+msgid "Locked now"
+msgstr "مقفل الآن"
+
+#: apps/accounts/admin.py:210
+msgid "Login"
+msgstr "تسجيل الدخول"
+
+#: apps/accounts/admin.py:283
+msgid "The user was created with these login details."
+msgstr "أُنشئ المستخدم ببيانات الدخول هذه."
+
+#: apps/accounts/admin.py:296
+msgid "Status"
+msgstr "الحالة"
+
+#: apps/accounts/admin.py:297 apps/accounts/admin.py:304
+msgid "Active"
+msgstr "فعّال"
+
+#: apps/accounts/admin.py:297 apps/accounts/admin.py:303
+msgid "Locked"
+msgstr "مقفل"
+
+#: apps/accounts/admin.py:297 apps/accounts/admin.py:301
+msgid "Deactivated"
+msgstr "معطّل"
+
+#: apps/accounts/admin.py:308
+msgid "Unlock the selected accounts"
+msgstr "فك قفل الحسابات المحددة"
+
+#: apps/accounts/admin.py:321
+#, python-format
+msgid "Accounts unlocked: %(count)d."
+msgstr "عدد الحسابات التي فُك قفلها: %(count)d."
+
+#: apps/accounts/admin.py:325 apps/accounts/admin.py:338
+msgid "Reset password"
+msgstr "إعادة تعيين كلمة المرور"
+
+#: apps/accounts/admin.py:336
+#, python-format
+msgid ""
+"Give %(name)s a new temporary password? Their current password stops working."
+msgstr ""
+"هل تريد إعطاء %(name)s كلمة مرور مؤقتة جديدة؟ ستتوقف كلمة المرور الحالية عن "
+"العمل."
+
+#: apps/accounts/admin.py:345
+msgid "The password was reset. The account is also unlocked."
+msgstr "أُعيد تعيين كلمة المرور، وفُك قفل الحساب أيضاً."
+
+#: apps/accounts/admin.py:349 apps/accounts/admin.py:361
+msgid "Unlock account"
+msgstr "فك قفل الحساب"
+
+#: apps/accounts/admin.py:360
+#, python-format
+msgid "Unlock the account of %(name)s?"
+msgstr "هل تريد فك قفل حساب %(name)s؟"
+
+#: apps/accounts/admin.py:367
+msgid "The account was unlocked."
+msgstr "فُك قفل الحساب."
+
+#: apps/accounts/admin.py:371 apps/accounts/admin.py:387
+msgid "Deactivate user"
+msgstr "تعطيل المستخدم"
+
+#: apps/accounts/admin.py:383
+#, python-format
+msgid ""
+"Deactivate %(name)s? They can no longer log in, and they are logged out of "
+"the app. Their records are kept."
+msgstr ""
+"هل تريد تعطيل %(name)s؟ لن يتمكن من تسجيل الدخول، وسيُسجَّل خروجه من التطبيق."
+" تبقى سجلاته محفوظة."
+
+#: apps/accounts/admin.py:394
+msgid "The user was deactivated."
+msgstr "عُطّل المستخدم."
+
+#: apps/accounts/admin.py:433
+#: apps/accounts/templates/dashboard/temporary_password.html:14
+msgid "Temporary password"
+msgstr "كلمة المرور المؤقتة"
+
+#: apps/accounts/admin.py:463 apps/accounts/admin.py:475
+#: apps/accounts/dashboard/navigation.py:56
+msgid "Users"
+msgstr "المستخدمون"
+
+#: apps/accounts/admin.py:474 apps/accounts/dashboard/navigation.py:45
+#: apps/accounts/dashboard/site.py:45
+msgid "Home"
+msgstr "الرئيسية"
+
+#: apps/accounts/admin.py:479
+msgid "Audit log"
+msgstr "سجل التدقيق"
 
 #: apps/accounts/api/serializers.py:16 apps/accounts/models.py:73
 msgid "username"
@@ -21,29 +136,330 @@ msgstr "اسم المستخدم"
 msgid "password"
 msgstr "كلمة المرور"
 
-#: apps/accounts/api/serializers.py:40
+#: apps/accounts/api/serializers.py:39
 msgid "refresh token"
 msgstr "رمز التجديد"
 
-#: apps/accounts/api/serializers.py:65
+#: apps/accounts/api/serializers.py:62
 msgid "current password"
 msgstr "كلمة المرور الحالية"
 
-#: apps/accounts/api/serializers.py:68
+#: apps/accounts/api/serializers.py:65
 msgid "new password"
 msgstr "كلمة المرور الجديدة"
 
-#: apps/accounts/api/serializers.py:74 apps/accounts/models.py:168
+#: apps/accounts/api/serializers.py:70 apps/accounts/models.py:171
 msgid "platform"
 msgstr "المنصة"
 
-#: apps/accounts/api/serializers.py:76
+#: apps/accounts/api/serializers.py:71
 msgid "push token"
 msgstr "رمز الإشعارات"
 
 #: apps/accounts/apps.py:8
 msgid "Accounts"
 msgstr "الحسابات"
+
+#: apps/accounts/dashboard/forms.py:63
+msgid "Current password"
+msgstr "كلمة المرور الحالية"
+
+#: apps/accounts/dashboard/forms.py:66
+msgid "New password"
+msgstr "كلمة المرور الجديدة"
+
+#: apps/accounts/dashboard/forms.py:69
+msgid "New password again"
+msgstr "تأكيد كلمة المرور الجديدة"
+
+#: apps/accounts/dashboard/forms.py:86
+msgid "The two new passwords are not the same."
+msgstr "كلمتا المرور الجديدتان غير متطابقتين."
+
+#: apps/accounts/dashboard/navigation.py:46
+msgid "Patients"
+msgstr "المرضى"
+
+#: apps/accounts/dashboard/navigation.py:47
+msgid "Approvals"
+msgstr "الموافقات"
+
+#: apps/accounts/dashboard/navigation.py:48
+msgid "Clinical"
+msgstr "السريري"
+
+#: apps/accounts/dashboard/navigation.py:49
+msgid "Scheduling"
+msgstr "الجدولة"
+
+#: apps/accounts/dashboard/navigation.py:50
+msgid "Maintenance"
+msgstr "الصيانة"
+
+#: apps/accounts/dashboard/navigation.py:51
+msgid "Students"
+msgstr "الطلاب"
+
+#: apps/accounts/dashboard/navigation.py:52
+msgid "Academic setup"
+msgstr "الإعداد الأكاديمي"
+
+#: apps/accounts/dashboard/navigation.py:53
+msgid "Facilities"
+msgstr "المرافق"
+
+#: apps/accounts/dashboard/navigation.py:54
+msgid "Lists"
+msgstr "القوائم"
+
+#: apps/accounts/dashboard/navigation.py:55
+msgid "Reports"
+msgstr "التقارير"
+
+#: apps/accounts/dashboard/navigation.py:57
+msgid "Settings"
+msgstr "الإعدادات"
+
+#: apps/accounts/dashboard/navigation.py:200
+msgid "Change password"
+msgstr "غيّر كلمة المرور"
+
+#: apps/accounts/dashboard/navigation.py:202
+#: apps/accounts/dashboard/site.py:158
+msgid "Choose your role"
+msgstr "اختر دورك"
+
+#: apps/accounts/dashboard/navigation.py:217
+msgid "Your account"
+msgstr "حسابك"
+
+#: apps/accounts/dashboard/navigation.py:239
+msgid "Switch role"
+msgstr "تبديل الدور"
+
+#: apps/accounts/dashboard/unfold_messages.py:12
+msgid "Welcome back to"
+msgstr "مرحباً بك مجدداً في"
+
+#: apps/accounts/dashboard/unfold_messages.py:13
+msgid "Return to site"
+msgstr "العودة إلى الموقع"
+
+#: apps/accounts/dashboard/unfold_messages.py:14
+msgid "Forgotten your password or username?"
+msgstr "هل نسيت كلمة المرور أو اسم المستخدم؟"
+
+#: apps/accounts/dashboard/unfold_messages.py:15
+msgid "Toggle password visibility"
+msgstr "إظهار كلمة المرور أو إخفاؤها"
+
+#: apps/accounts/dashboard/unfold_messages.py:16
+msgid "You have been successfully logged out from the administration"
+msgstr "سُجّل خروجك من لوحة التحكم بنجاح"
+
+#: apps/accounts/dashboard/unfold_messages.py:17
+msgid "Type to search"
+msgstr "اكتب للبحث"
+
+#: apps/accounts/dashboard/unfold_messages.py:18
+msgid "Search apps and models..."
+msgstr "ابحث في الشاشات..."
+
+#: apps/accounts/dashboard/unfold_messages.py:19
+msgid "Nothing matched your search"
+msgstr "لا شيء يطابق بحثك"
+
+#: apps/accounts/dashboard/unfold_messages.py:20
+msgid "No results found"
+msgstr "لا توجد نتائج"
+
+#: apps/accounts/dashboard/unfold_messages.py:21
+msgid "This page yielded into no results."
+msgstr "لا توجد نتائج في هذه الصفحة."
+
+#: apps/accounts/dashboard/unfold_messages.py:22
+msgid "Recent searches"
+msgstr "عمليات البحث الأخيرة"
+
+#: apps/accounts/dashboard/unfold_messages.py:23
+msgid "Apply Filters"
+msgstr "تطبيق المرشحات"
+
+#: apps/accounts/dashboard/unfold_messages.py:24
+msgid "Reset filters"
+msgstr "إعادة تعيين المرشحات"
+
+#: apps/accounts/dashboard/unfold_messages.py:25
+msgid "Toggle filter"
+msgstr "إظهار المرشحات أو إخفاؤها"
+
+#: apps/accounts/dashboard/unfold_messages.py:26
+msgid "Date from"
+msgstr "من تاريخ"
+
+#: apps/accounts/dashboard/unfold_messages.py:27
+msgid "Date to"
+msgstr "إلى تاريخ"
+
+#: apps/accounts/dashboard/unfold_messages.py:28
+msgid "From"
+msgstr "من"
+
+#: apps/accounts/dashboard/unfold_messages.py:29
+msgid "To"
+msgstr "إلى"
+
+#: apps/accounts/dashboard/unfold_messages.py:30
+msgid "Select value"
+msgstr "اختر قيمة"
+
+#: apps/accounts/dashboard/unfold_messages.py:31
+msgid "Select record"
+msgstr "اختر سجلاً"
+
+#: apps/accounts/dashboard/unfold_messages.py:32
+msgid "Select action"
+msgstr "اختر إجراءً"
+
+#: apps/accounts/dashboard/unfold_messages.py:33
+msgid "Select action to run"
+msgstr "اختر الإجراء المراد تنفيذه"
+
+#: apps/accounts/dashboard/unfold_messages.py:34
+msgid "Run"
+msgstr "تنفيذ"
+
+#: apps/accounts/dashboard/unfold_messages.py:35
+msgid "Toggle sidebar"
+msgstr "إظهار القائمة الجانبية أو إخفاؤها"
+
+#: apps/accounts/dashboard/unfold_messages.py:36
+msgid "Toggle dark/light mode"
+msgstr "التبديل بين الوضع الداكن والفاتح"
+
+#: apps/accounts/dashboard/unfold_messages.py:37
+msgid "Dark"
+msgstr "داكن"
+
+#: apps/accounts/dashboard/unfold_messages.py:38
+msgid "Light"
+msgstr "فاتح"
+
+#: apps/accounts/dashboard/unfold_messages.py:39
+msgid "System"
+msgstr "حسب النظام"
+
+#: apps/accounts/dashboard/unfold_messages.py:40
+msgid "All applications"
+msgstr "كل الشاشات"
+
+#: apps/accounts/dashboard/unfold_messages.py:41
+msgid "Go back"
+msgstr "رجوع"
+
+#: apps/accounts/dashboard/unfold_messages.py:42
+msgid "Previous"
+msgstr "السابق"
+
+#: apps/accounts/dashboard/unfold_messages.py:43
+msgid "Next"
+msgstr "التالي"
+
+#: apps/accounts/dashboard/unfold_messages.py:44
+msgid "previous"
+msgstr "السابق"
+
+#: apps/accounts/dashboard/unfold_messages.py:45
+msgid "next"
+msgstr "التالي"
+
+#: apps/accounts/dashboard/unfold_messages.py:46
+msgid "No data"
+msgstr "لا توجد بيانات"
+
+#: apps/accounts/dashboard/unfold_messages.py:47
+msgid "Not enough data."
+msgstr "لا توجد بيانات كافية."
+
+#: apps/accounts/dashboard/unfold_messages.py:48
+msgid "Create new record"
+msgstr "إنشاء سجل جديد"
+
+#: apps/accounts/dashboard/unfold_messages.py:49
+msgid "Add new item"
+msgstr "إضافة عنصر جديد"
+
+#: apps/accounts/dashboard/unfold_messages.py:50
+msgid "Add row"
+msgstr "إضافة صف"
+
+#: apps/accounts/dashboard/unfold_messages.py:51
+msgid "Edit"
+msgstr "تعديل"
+
+#: apps/accounts/dashboard/unfold_messages.py:52
+msgid "General"
+msgstr "عام"
+
+#: apps/accounts/dashboard/unfold_messages.py:53
+msgid "Open command tool"
+msgstr "فتح أداة الأوامر"
+
+#: apps/accounts/dashboard/unfold_messages.py:54
+msgid "Open shortcuts list"
+msgstr "فتح قائمة الاختصارات"
+
+#: apps/accounts/dashboard/unfold_messages.py:55
+msgid "Global shortcuts"
+msgstr "اختصارات عامة"
+
+#: apps/accounts/dashboard/unfold_messages.py:56
+msgid "Changelist shortcuts"
+msgstr "اختصارات القوائم"
+
+#: apps/accounts/dashboard/unfold_messages.py:57
+msgid "Command tool shortcuts"
+msgstr "اختصارات أداة الأوامر"
+
+#: apps/accounts/dashboard/unfold_messages.py:58
+msgid "Available shortcuts"
+msgstr "الاختصارات المتاحة"
+
+#: apps/accounts/dashboard/unfold_messages.py:59
+msgid "Navigate"
+msgstr "التنقل"
+
+#: apps/accounts/dashboard/unfold_messages.py:60
+msgid "Open selection"
+msgstr "فتح المحدد"
+
+#: apps/accounts/dashboard/unfold_messages.py:61
+msgid "Open selection in new tab"
+msgstr "فتح المحدد في تبويب جديد"
+
+#: apps/accounts/dashboard/unfold_messages.py:62
+msgid "True"
+msgstr "نعم"
+
+#: apps/accounts/dashboard/unfold_messages.py:63
+msgid "False"
+msgstr "لا"
+
+#: apps/accounts/dashboard/unfold_messages.py:64
+msgid "Choose file to upload"
+msgstr "اختر ملفاً لرفعه"
+
+#: apps/accounts/dashboard/unfold_messages.py:65
+msgid "Current file"
+msgstr "الملف الحالي"
+
+#: apps/accounts/dashboard/unfold_messages.py:66
+msgid "Collapse"
+msgstr "طي"
+
+#: apps/accounts/dashboard/unfold_messages.py:67
+msgid "hide warning"
+msgstr "إخفاء التحذير"
 
 #: apps/accounts/domain/errors.py:19
 msgid "The username or password is incorrect."
@@ -57,71 +473,83 @@ msgstr "الحساب مقفل بعد محاولات دخول فاشلة كثير
 msgid "Your account has no role yet. Ask the system administrator."
 msgstr "لم يُمنح حسابك أي دور بعد. راجع مدير النظام."
 
-#: apps/accounts/domain/errors.py:41
+#: apps/accounts/domain/errors.py:43
+msgid ""
+"Students and maintenance technicians use the mobile app. Your account cannot "
+"log in to the dashboard."
+msgstr ""
+"يستخدم الطلاب وفنيو الصيانة تطبيق الهاتف. لا يمكن لحسابك تسجيل الدخول إلى "
+"لوحة التحكم."
+
+#: apps/accounts/domain/errors.py:52
 msgid "You do not hold the role you selected."
 msgstr "أنت لا تملك الدور الذي اخترته."
 
-#: apps/accounts/domain/errors.py:49
+#: apps/accounts/domain/errors.py:60
 msgid "You hold more than one role. Choose the role to use first."
 msgstr "لديك أكثر من دور. اختر الدور الذي تريد استخدامه أولاً."
 
-#: apps/accounts/domain/errors.py:56
+#: apps/accounts/domain/errors.py:67
 msgid "Change your temporary password to continue."
 msgstr "غيّر كلمة المرور المؤقتة للمتابعة."
 
-#: apps/accounts/domain/errors.py:62
+#: apps/accounts/domain/errors.py:73
 msgid "The current password is incorrect."
 msgstr "كلمة المرور الحالية غير صحيحة."
 
-#: apps/accounts/domain/errors.py:68
+#: apps/accounts/domain/errors.py:79
 msgid "The new password must be different from the current one."
 msgstr "يجب أن تختلف كلمة المرور الجديدة عن الحالية."
 
-#: apps/accounts/domain/errors.py:76
+#: apps/accounts/domain/errors.py:87
 msgid "The new password does not meet the password rules."
 msgstr "كلمة المرور الجديدة لا تحقق قواعد كلمات المرور."
 
-#: apps/accounts/domain/errors.py:83
+#: apps/accounts/domain/errors.py:94
 msgid "The session has expired. Log in again."
 msgstr "انتهت الجلسة. سجّل الدخول مرة أخرى."
 
-#: apps/accounts/domain/errors.py:89 apps/accounts/models.py:77
+#: apps/accounts/domain/errors.py:100 apps/accounts/models.py:77
 msgid "This username is already used."
 msgstr "اسم المستخدم هذا مستخدم من قبل."
 
-#: apps/accounts/domain/errors.py:97
+#: apps/accounts/domain/errors.py:108
 msgid "This university ID belongs to another user."
 msgstr "الرقم الجامعي هذا يخص مستخدماً آخر."
 
-#: apps/accounts/domain/errors.py:104
+#: apps/accounts/domain/errors.py:115
 msgid "Give the user at least one role."
 msgstr "امنح المستخدم دوراً واحداً على الأقل."
 
-#: apps/accounts/domain/errors.py:110
+#: apps/accounts/domain/errors.py:121
 msgid "One of the roles does not exist."
 msgstr "أحد الأدوار غير موجود."
 
-#: apps/accounts/domain/errors.py:118
+#: apps/accounts/domain/errors.py:129
 msgid "You cannot remove the system administrator role from your own account."
 msgstr "لا يمكنك إزالة دور مدير النظام من حسابك."
 
-#: apps/accounts/domain/errors.py:124
+#: apps/accounts/domain/errors.py:135
+msgid "You cannot deactivate your own account."
+msgstr "لا يمكنك تعطيل حسابك."
+
+#: apps/accounts/domain/errors.py:140
 msgid "The account is not locked."
 msgstr "الحساب غير مقفل."
 
-#: apps/accounts/domain/errors.py:130
+#: apps/accounts/domain/errors.py:145
 msgid "Only the system administrator can manage users."
 msgstr "إدارة المستخدمين لمدير النظام فقط."
 
-#: apps/accounts/domain/errors.py:138
+#: apps/accounts/domain/errors.py:152
 msgid "A username may only contain letters, digits and . @ + - _ characters."
 msgstr "يمكن أن يحتوي اسم المستخدم على أحرف وأرقام والرموز . @ + - _ فقط."
 
-#: apps/accounts/domain/errors.py:144
+#: apps/accounts/domain/errors.py:158
 msgid "Enter the user's full name in Arabic."
 msgstr "أدخل الاسم الكامل للمستخدم بالعربية."
 
-#: apps/accounts/domain/errors.py:149
+#: apps/accounts/domain/errors.py:163
 msgid "The device details are not valid."
 msgstr "بيانات الجهاز غير صالحة."
 
@@ -161,76 +589,126 @@ msgstr "الاسم الكامل (بالإنجليزية)"
 msgid "phone"
 msgstr "الهاتف"
 
-#: apps/accounts/models.py:82
+#: apps/accounts/models.py:84
 msgid "university ID"
 msgstr "الرقم الجامعي"
 
-#: apps/accounts/models.py:83
+#: apps/accounts/models.py:86
 msgid "must change password"
 msgstr "يجب تغيير كلمة المرور"
 
-#: apps/accounts/models.py:84
+#: apps/accounts/models.py:87
 msgid "failed logins"
 msgstr "محاولات الدخول الفاشلة"
 
-#: apps/accounts/models.py:85
+#: apps/accounts/models.py:88
 msgid "locked until"
 msgstr "مقفل حتى"
 
-#: apps/accounts/models.py:94 apps/accounts/models.py:145
-#: apps/accounts/models.py:166 apps/core/models.py:111
+#: apps/accounts/models.py:97 apps/accounts/models.py:148
+#: apps/accounts/models.py:169 apps/core/models.py:111
 msgid "user"
 msgstr "المستخدم"
 
-#: apps/accounts/models.py:95
+#: apps/accounts/models.py:98
 msgid "users"
 msgstr "المستخدمون"
 
-#: apps/accounts/models.py:127
+#: apps/accounts/models.py:130
 msgid "code"
 msgstr "الرمز"
 
-#: apps/accounts/models.py:128
+#: apps/accounts/models.py:131
 msgid "name (Arabic)"
 msgstr "الاسم (بالعربية)"
 
-#: apps/accounts/models.py:129
+#: apps/accounts/models.py:132
 msgid "name (English)"
 msgstr "الاسم (بالإنجليزية)"
 
-#: apps/accounts/models.py:132 apps/accounts/models.py:148
-msgid "role"
-msgstr "الدور"
-
-#: apps/accounts/models.py:133
+#: apps/accounts/models.py:136
 msgid "roles"
 msgstr "الأدوار"
 
-#: apps/accounts/models.py:152
+#: apps/accounts/models.py:155
 msgid "user role"
 msgstr "دور المستخدم"
 
-#: apps/accounts/models.py:153
+#: apps/accounts/models.py:156
 msgid "user roles"
 msgstr "أدوار المستخدمين"
 
-#: apps/accounts/models.py:169
+#: apps/accounts/models.py:172
 msgid "token"
 msgstr "الرمز"
 
-#: apps/accounts/models.py:170
+#: apps/accounts/models.py:173
 msgid "last seen"
 msgstr "آخر ظهور"
 
-#: apps/accounts/models.py:173
+#: apps/accounts/models.py:176
 msgid "device"
 msgstr "الجهاز"
 
-#: apps/accounts/models.py:174
+#: apps/accounts/models.py:177
 msgid "devices"
 msgstr "الأجهزة"
 
-#: apps/core/api/errors.py:88
+#: apps/accounts/templates/dashboard/choose_role.html:9
+msgid ""
+"Your account has more than one role. Choose the role to work in now; you can "
+"switch it later from your account menu."
+msgstr ""
+"لحسابك أكثر من دور. اختر الدور الذي تعمل به الآن، ويمكنك تبديله لاحقاً من "
+"قائمة حسابك."
+
+#: apps/accounts/templates/dashboard/confirm_action.html:12
+msgid "Cancel"
+msgstr "إلغاء"
+
+#: apps/accounts/templates/dashboard/home.html:12
+msgid "Welcome"
+msgstr "مرحباً"
+
+#: apps/accounts/templates/dashboard/home.html:15
+msgid ""
+"The key figures of the clinics will appear here. Use the menu to open your "
+"screens."
+msgstr "ستظهر هنا الأرقام الرئيسية للعيادات. استخدم القائمة لفتح شاشاتك."
+
+#: apps/accounts/templates/dashboard/password_change.html:6
+msgid "Your password is temporary. Change it to continue to the dashboard."
+msgstr "كلمة المرور الحالية مؤقتة. غيّرها للمتابعة إلى لوحة التحكم."
+
+#: apps/accounts/templates/dashboard/temporary_password.html:12
+msgid "Username"
+msgstr "اسم المستخدم"
+
+#: apps/accounts/templates/dashboard/temporary_password.html:18
+msgid ""
+"Give this password to the user in person. It is shown only once; the user "
+"must change it at the first login."
+msgstr ""
+"سلّم كلمة المرور هذه للمستخدم شخصياً. تظهر مرة واحدة فقط، ويجب على المستخدم "
+"تغييرها عند أول تسجيل دخول."
+
+#: apps/accounts/templates/dashboard/temporary_password.html:22
+msgid "Done"
+msgstr "تم"
+
+#: apps/core/admin.py:61 apps/core/models.py:117
+msgid "action"
+msgstr "الإجراء"
+
+#: apps/core/admin.py:67 apps/core/models.py:118
+msgid "record type"
+msgstr "نوع السجل"
+
+#: apps/core/admin.py:94 apps/core/models.py:120
+msgid "changes"
+msgstr "التغييرات"
+
+#: apps/core/api/errors.py:93
 msgid "The data sent is not valid."
 msgstr "البيانات المرسلة غير صالحة."
 
@@ -270,21 +748,9 @@ msgstr "عدّله"
 msgid "active"
 msgstr "فعّال"
 
-#: apps/core/models.py:117
-msgid "action"
-msgstr "الإجراء"
-
-#: apps/core/models.py:118
-msgid "record type"
-msgstr "نوع السجل"
-
 #: apps/core/models.py:119
 msgid "record id"
 msgstr "رقم السجل"
-
-#: apps/core/models.py:120
-msgid "changes"
-msgstr "التغييرات"
 
 #: apps/core/models.py:121
 msgid "IP address"
@@ -302,10 +768,32 @@ msgstr "قيد سجل التدقيق"
 msgid "audit log"
 msgstr "سجل التدقيق"
 
-#: config/settings/base.py:148
+#: config/settings/base.py:166
 msgid "Arabic"
 msgstr "العربية"
 
-#: config/settings/base.py:149
+#: config/settings/base.py:167
 msgid "English"
 msgstr "الإنجليزية"
+
+#: config/settings/base.py:278
+msgid "SPU Dental Clinic System"
+msgstr "نظام عيادات طب الأسنان - الجامعة السورية الخاصة"
+
+#: config/settings/base.py:279
+msgid "SPU Dental Clinics"
+msgstr "عيادات طب الأسنان"
+
+#: config/settings/base.py:280
+msgid "Faculty of Dentistry"
+msgstr "كلية طب الأسنان"
+
+#: templates/unfold/helpers/messages/errornote_text.html:3
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] "لا توجد أخطاء لتصحيحها."
+msgstr[1] "الرجاء تصحيح الخطأ أدناه."
+msgstr[2] "الرجاء تصحيح الخطأين أدناه."
+msgstr[3] "الرجاء تصحيح الأخطاء أدناه."
+msgstr[4] "الرجاء تصحيح الأخطاء أدناه."
+msgstr[5] "الرجاء تصحيح الأخطاء أدناه."

@@ -1,0 +1,25 @@
+{% extends "admin/base_site.html" %}
+{% load i18n unfold %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+    <div class="border border-base-200 rounded-default shadow-xs p-6 dark:border-base-800 dashboard-narrow">
+        <p class="leading-relaxed mb-4">
+            {% translate "Your account has more than one role. Choose the role to work in now; you can switch it later from your account menu." %}
+        </p>
+
+        <form method="post" class="flex flex-col gap-3">
+            {% csrf_token %}
+            {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+
+            {% for code, role_label in roles %}
+                {% if code == active_role %}
+                    {% component "unfold/components/button.html" with submit=1 name="role" value=code %}{{ role_label }} ✓{% endcomponent %}
+                {% else %}
+                    {% component "unfold/components/button.html" with submit=1 name="role" value=code variant="default" %}{{ role_label }}{% endcomponent %}
+                {% endif %}
+            {% endfor %}
+        </form>
+    </div>
+{% endblock %}

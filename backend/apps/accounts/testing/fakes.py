@@ -6,10 +6,17 @@ never reused, a revoked token stays revoked), so a service behaves the same with
 
 import itertools
 from collections.abc import Iterable, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime
 
-from apps.accounts.application.dtos import AuthContext, DeviceDTO, NewAccount, TokenPair, UserDTO
+from apps.accounts.application.dtos import (
+    AuthContext,
+    DeviceDTO,
+    NewAccount,
+    TokenPair,
+    UserDetails,
+    UserDTO,
+)
 from apps.accounts.domain.accounts import Account
 from apps.accounts.domain.errors import InvalidTokenError
 from apps.accounts.domain.roles import ALL_ROLES
@@ -87,8 +94,42 @@ class InMemoryAccountRepository:
     def username_exists(self, username: str) -> bool:
         return any(s.account.username == username for s in self.users.values())
 
-    def university_id_exists(self, university_id: str) -> bool:
-        return any(s.account.university_id == university_id for s in self.users.values())
+    def university_id_exists(
+        self, university_id: str, *, exclude_user_id: int | None = None
+    ) -> bool:
+        return any(
+            s.account.university_id == university_id and s.account.id != exclude_user_id
+            for s in self.users.values()
+        )
+
+    def details_of(self, user_id: int) -> UserDetails | None:
+        stored = self.users.get(user_id)
+        if stored is None or not stored.is_active:
+            return None
+        account = stored.account
+        return UserDetails(
+            full_name_ar=account.full_name_ar,
+            full_name_en=account.full_name_en,
+            phone=stored.phone,
+            university_id=account.university_id,
+        )
+
+    def update_details(self, user_id: int, details: UserDetails) -> None:
+        stored = self.users[user_id]
+        stored.account = replace(
+            stored.account,
+            full_name_ar=details.full_name_ar,
+            full_name_en=details.full_name_en,
+            university_id=details.university_id,
+        )
+        stored.phone = details.phone
+
+    def deactivate(self, user_id: int) -> None:
+        self.users[user_id].is_active = False
+
+    def is_active(self, user_id: int) -> bool:
+        """Test helper."""
+        return self.users[user_id].is_active
 
     def roles_of(self, user_id: int) -> frozenset[str]:
         stored = self.users.get(user_id)
