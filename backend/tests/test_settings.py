@@ -29,6 +29,8 @@ print(json.dumps({
     "ALLOWED_HOSTS": settings.ALLOWED_HOSTS,
     "SESSION_COOKIE_SECURE": getattr(settings, "SESSION_COOKIE_SECURE", False),
     "HSTS": settings.SECURE_HSTS_SECONDS,
+    "AUTH_USER_MODEL": settings.AUTH_USER_MODEL,
+    "JWT_SIGNING_KEY": settings.SIMPLE_JWT["SIGNING_KEY"],
 }))
 """
 
@@ -41,6 +43,7 @@ SERVER_ENV = {
     "REDIS_URL": "redis://redis:6379/0",
     "S3_ACCESS_KEY_ID": "GK1234567890abcdef12345678",
     "S3_SECRET_ACCESS_KEY": "f" * 64,
+    "JWT_SIGNING_KEY": "jwt-Qm4!vX8#pL2@rT6$wZ9&nB3^cY7*eH1(uJ5)oF0",
 }
 
 
@@ -87,6 +90,7 @@ def test_settings_module_loads_with_shared_defaults(module, extra_env):
     assert loaded["DB_ENGINE"] == "django.db.backends.postgresql"
     assert loaded["BROKER"].startswith("redis://")
     assert loaded["CACHE_BACKEND"] == "django.core.cache.backends.redis.RedisCache"
+    assert loaded["AUTH_USER_MODEL"] == "accounts.User"
 
 
 def test_dev_starts_without_any_environment_variables():
@@ -107,6 +111,7 @@ def test_server_settings_take_secrets_from_the_environment(module):
     assert loaded["BROKER"] == "redis://redis:6379/0"
     assert loaded["ALLOWED_HOSTS"] == ["dental.example.org"]
     assert loaded["SESSION_COOKIE_SECURE"] is True
+    assert loaded["JWT_SIGNING_KEY"] == SERVER_ENV["JWT_SIGNING_KEY"]
 
 
 def test_production_uses_a_one_year_hsts_period():
@@ -122,6 +127,7 @@ def test_production_uses_a_one_year_hsts_period():
         "POSTGRES_PASSWORD",
         "S3_ACCESS_KEY_ID",
         "S3_SECRET_ACCESS_KEY",
+        "JWT_SIGNING_KEY",
     ],
 )
 def test_server_settings_refuse_to_start_without_a_required_variable(module, missing):

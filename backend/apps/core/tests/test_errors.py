@@ -160,7 +160,7 @@ class TestOtherApiErrors:
     def test_not_logged_in(self):
         response = get(APIClient(), "/api/v1/test/domain-error/", "en")
 
-        assert response.status_code == 403  # session auth; JWT (P0.3) makes this 401
+        assert response.status_code == 401  # JWT bearer authentication (P0.3)
         assert response.json() == {
             "code": "not_authenticated",
             "message": "Authentication credentials were not provided.",

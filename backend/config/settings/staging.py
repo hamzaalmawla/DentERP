@@ -26,4 +26,7 @@ SECURE_HSTS_SECONDS = env_int("DJANGO_HSTS_SECONDS", 60 * 60)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = False
 SECURE_HSTS_PRELOAD = False
 
+# The JWT key is its own secret on servers (it never falls back to DJANGO_SECRET_KEY).
+SIMPLE_JWT = {**SIMPLE_JWT, "SIGNING_KEY": env("JWT_SIGNING_KEY")}
+
 STATIC_ROOT = env("DJANGO_STATIC_ROOT", str(BASE_DIR / "staticfiles"))
