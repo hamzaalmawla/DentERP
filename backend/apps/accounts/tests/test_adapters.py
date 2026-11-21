@@ -66,7 +66,9 @@ class TestTokenIssuer:
         pair = self.issuer.issue(make_user("sara").pk)
 
         access, refresh = AccessToken(pair.access), JwtRefreshToken(pair.refresh)
-        assert access["exp"] - access["iat"] == 15 * 60
+        # Both expiries count from the refresh token's creation time; the access token's own
+        # "iat" is stamped a moment later and may fall in the next second.
+        assert access["exp"] - refresh["iat"] == 15 * 60
         assert refresh["exp"] - refresh["iat"] == 30 * 24 * 60 * 60
         assert settings.SIMPLE_JWT["ROTATE_REFRESH_TOKENS"] is True
 
