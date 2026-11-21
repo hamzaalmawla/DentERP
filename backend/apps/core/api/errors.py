@@ -39,6 +39,17 @@ def error_body(code: str, message: Any, details: Mapping[str, Any] | None = None
     return {"code": code, "message": str(message), "details": dict(details or {})}
 
 
+def localized_message(exc: DomainError) -> str:
+    """The error's message in the active language, with its placeholders filled from
+    ``details``. Also used by the dashboard to show service errors on its forms."""
+    message = gettext(exc.message)
+    if exc.details and "%(" in message:
+        # A translation with a broken placeholder still shows its text.
+        with suppress(KeyError, TypeError, ValueError):
+            message = message % exc.details
+    return message
+
+
 def exception_handler(exc: Exception, context: dict) -> Response | None:
     if isinstance(exc, DomainError):
         return _domain_error_response(exc)
@@ -64,14 +75,8 @@ def _domain_error_response(exc: DomainError) -> Response:
         status.HTTP_400_BAD_REQUEST,
     )
 
-    message = gettext(exc.message)
-    if exc.details and "%(" in message:
-        # A translation with a broken placeholder still shows its text.
-        with suppress(KeyError, TypeError, ValueError):
-            message = message % exc.details
-
     set_rollback()
-    return Response(error_body(exc.code, message, exc.details), status=status_code)
+    return Response(error_body(exc.code, localized_message(exc), exc.details), status=status_code)
 
 
 def _api_exception_response(exc: exceptions.APIException) -> Response:

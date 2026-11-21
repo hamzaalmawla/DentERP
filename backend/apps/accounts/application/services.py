@@ -5,16 +5,18 @@ DTOs. Every login, failed login and password change is written to the audit log 
 """
 
 from collections.abc import Iterable, Sequence
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 from apps.accounts.domain.accounts import normalize_username
 from apps.accounts.domain.devices import validate_device
 from apps.accounts.domain.errors import (
     AccountLockedError,
     AccountNotLockedError,
+    DashboardNotAllowedError,
     InvalidCredentialsError,
     InvalidTokenError,
     NoRoleError,
+    OwnAccountError,
     OwnAdminRoleError,
     PasswordInvalidError,
     PasswordUnchangedError,
@@ -25,7 +27,7 @@ from apps.accounts.domain.errors import (
     UsernameTakenError,
     WrongPasswordError,
 )
-from apps.accounts.domain.roles import RoleCode
+from apps.accounts.domain.roles import DASHBOARD_ROLES, RoleCode
 from apps.accounts.domain.users import validate_full_name, validate_username
 from apps.core.application.dtos import Actor
 from apps.core.application.ports import AuditLogger, Clock, UnitOfWork
@@ -38,7 +40,9 @@ from .dtos import (
     NewAccount,
     TemporaryPasswordResult,
     TokenPair,
+    UserDetails,
     UserDTO,
+    VerifiedUser,
 )
 from .ports import (
     AccountRepository,
@@ -86,38 +90,42 @@ def _valid_roles(roles: Iterable[str], known: frozenset[str]) -> frozenset[str]:
 
 
 @dataclass(frozen=True, slots=True)
-class LoginCommand:
+class VerifyCredentialsCommand:
     username: str
     password: str
+    # The dashboard is open only to DASHBOARD_ROLES (design section 8).
+    for_dashboard: bool = False
 
 
-class Login:
-    """Username and password → tokens and roles. Five failed logins in a row lock the account
-    for 15 minutes; a locked account is refused even with the right password."""
+class VerifyCredentials:
+    """Checks a username and password with the login rules (SYS-01), for the API login and
+    the dashboard login alike.
+
+    Five failed logins in a row lock the account for 15 minutes; a locked account is refused
+    even with the right password; a user without a role is refused. Every login and failed
+    login is audited. A refused login still records the failure, so the error is raised after
+    the unit of work has committed.
+    """
 
     def __init__(
         self,
         accounts: AccountRepository,
         hasher: PasswordHasher,
-        tokens: TokenIssuer,
         clock: Clock,
         audit: AuditLogger,
         uow: UnitOfWork,
     ) -> None:
         self._accounts = accounts
         self._hasher = hasher
-        self._tokens = tokens
         self._clock = clock
         self._audit = audit
         self._uow = uow
 
-    def execute(self, command: LoginCommand) -> LoginResult:
+    def execute(self, command: VerifyCredentialsCommand) -> VerifiedUser:
         username = normalize_username(command.username)
         now = self._clock.now()
-        # A refused login still records the failure, so the error is raised after the
-        # unit of work has committed.
         error: DomainError | None = None
-        result: LoginResult | None = None
+        result: VerifiedUser | None = None
         with self._uow:
             account = self._accounts.get_by_username(username, for_update=True)
             if account is None:
@@ -139,18 +147,19 @@ class Login:
             elif not (roles := self._accounts.roles_of(account.id)):
                 self._failed(account.id, username, "no_role")
                 error = NoRoleError()
+            elif command.for_dashboard and not roles & DASHBOARD_ROLES:
+                self._failed(account.id, username, "dashboard_not_allowed")
+                error = DashboardNotAllowedError()
             else:
                 account = account.after_successful_login(now)
                 self._accounts.save(account)
-                tokens = self._tokens.issue(account.id)
                 self._audit.log(
                     AuditAction.LOGIN, model=USER_MODEL, object_id=account.id, user_id=account.id
                 )
-                result = LoginResult(
-                    access=tokens.access,
-                    refresh=tokens.refresh,
+                result = VerifiedUser(
+                    user_id=account.id,
+                    roles=roles,
                     must_change_password=account.must_change_password,
-                    roles=tuple(sorted(roles)),
                 )
         if error is not None:
             raise error
@@ -164,6 +173,41 @@ class Login:
             object_id=user_id,
             changes={"username": username, "reason": reason},
             user_id=user_id,
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class LoginCommand:
+    username: str
+    password: str
+
+
+class Login:
+    """Username and password → tokens and roles (the API login). The credentials are checked
+    by ``VerifyCredentials``, the same rules the dashboard login uses."""
+
+    def __init__(
+        self,
+        accounts: AccountRepository,
+        hasher: PasswordHasher,
+        tokens: TokenIssuer,
+        clock: Clock,
+        audit: AuditLogger,
+        uow: UnitOfWork,
+    ) -> None:
+        self._verify = VerifyCredentials(accounts, hasher, clock, audit, uow)
+        self._tokens = tokens
+        self._uow = uow
+
+    def execute(self, command: LoginCommand) -> LoginResult:
+        user = self._verify.execute(VerifyCredentialsCommand(command.username, command.password))
+        with self._uow:
+            tokens = self._tokens.issue(user.user_id)
+        return LoginResult(
+            access=tokens.access,
+            refresh=tokens.refresh,
+            must_change_password=user.must_change_password,
+            roles=tuple(sorted(user.roles)),
         )
 
 
@@ -462,6 +506,84 @@ class UnlockAccount:
                 ),
             )
             return _found(self._accounts.to_dto(user_id))
+
+
+@dataclass(frozen=True, slots=True)
+class UpdateUserCommand:
+    user_id: int
+    full_name_ar: str
+    full_name_en: str = ""
+    phone: str = ""
+    university_id: str = ""
+
+
+class UpdateUser:
+    """Changes a user's names, phone and university ID (DB-02). The username never changes;
+    roles change through ``AssignRoles``."""
+
+    def __init__(self, accounts: AccountRepository, audit: AuditLogger, uow: UnitOfWork) -> None:
+        self._accounts = accounts
+        self._audit = audit
+        self._uow = uow
+
+    def execute(self, actor: Actor, command: UpdateUserCommand) -> UserDTO:
+        _ensure_user_manager(actor, self._accounts)
+        details = UserDetails(
+            full_name_ar=validate_full_name(command.full_name_ar),
+            full_name_en=command.full_name_en.strip(),
+            phone=command.phone.strip(),
+            university_id=command.university_id.strip() or None,
+        )
+        with self._uow:
+            _found(self._accounts.get(command.user_id, for_update=True))
+            before = _found(self._accounts.details_of(command.user_id))
+            if details.university_id and self._accounts.university_id_exists(
+                details.university_id, exclude_user_id=command.user_id
+            ):
+                raise UniversityIdTakenError(details.university_id)
+            changes = diff(asdict(before), asdict(details))
+            if changes:
+                self._accounts.update_details(command.user_id, details)
+                self._audit.log(
+                    AuditAction.UPDATE,
+                    model=USER_MODEL,
+                    object_id=command.user_id,
+                    changes=changes,
+                )
+            return _found(self._accounts.to_dto(command.user_id))
+
+
+class DeactivateUser:
+    """Deactivates a user (DB-02): they can no longer log in, every token they hold is revoked,
+    and their records stay (users are never deleted, SYS-10). The username is never reused.
+    The administrator cannot deactivate their own account."""
+
+    def __init__(
+        self,
+        accounts: AccountRepository,
+        tokens: TokenIssuer,
+        audit: AuditLogger,
+        uow: UnitOfWork,
+    ) -> None:
+        self._accounts = accounts
+        self._tokens = tokens
+        self._audit = audit
+        self._uow = uow
+
+    def execute(self, actor: Actor, user_id: int) -> None:
+        _ensure_user_manager(actor, self._accounts)
+        if user_id == actor.user_id:
+            raise OwnAccountError()
+        with self._uow:
+            _found(self._accounts.get(user_id, for_update=True))
+            self._accounts.deactivate(user_id)
+            self._tokens.revoke_all(user_id)
+            self._audit.log(
+                AuditAction.DEACTIVATE,
+                model=USER_MODEL,
+                object_id=user_id,
+                changes=diff({"is_active": True}, {"is_active": False}),
+            )
 
 
 # --- Development data -----------------------------------------------------------------

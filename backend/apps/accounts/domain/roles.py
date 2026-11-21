@@ -19,6 +19,12 @@ class RoleCode(StrEnum):
 
 ALL_ROLES: frozenset[str] = frozenset(RoleCode)
 
+# The roles that may log in to the web dashboard (design section 8). Students and maintenance
+# technicians use the mobile app only.
+DASHBOARD_ROLES: frozenset[str] = frozenset(
+    {RoleCode.SUPER_ADMIN, RoleCode.MANAGEMENT, RoleCode.RECEPTION, RoleCode.SUPERVISOR}
+)
+
 
 def resolve_active_role(held: Iterable[str], requested: str | None) -> str | None:
     """The role the user is acting in now (``X-Active-Role``).

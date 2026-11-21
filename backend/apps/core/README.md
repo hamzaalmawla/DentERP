@@ -23,7 +23,7 @@ apps/<module>/
 ├── testing/           # In-memory fakes of this module's ports, for its service tests
 ├── tests/             # pytest: services with fakes; repositories and API against PostgreSQL
 ├── migrations/
-├── admin.py           # Unfold dashboard screens; actions call the same services
+├── admin.py           # Dashboard screens (DashboardModelAdmin); forms and actions call services
 ├── apps.py
 ├── container.py       # Builds the services, passing the real adapters to their constructors
 └── models.py          # Django models (part of the persistence adapter; services never import it)
@@ -34,7 +34,7 @@ apps/<module>/
 | `domain/` | Python only (and `apps.core.domain`) |
 | `application/` | its own `domain/`, `apps.core.domain`, `apps.core.application` |
 | `infrastructure/`, `models.py` | `application/` and `domain/`, Django, outside libraries |
-| `api/`, `admin.py` | `application/`, `container.py`, `apps.core.api` |
+| `api/`, `admin.py` | `application/`, `container.py`, `apps.core.api`, `apps.core.dashboard`, `apps.accounts.dashboard` (not core) |
 
 A module never imports another module's `models.py` or `infrastructure/`; it calls that
 module's application services. Register the API with one line in `config/api_v1.py`.
@@ -52,6 +52,8 @@ module's application services. Register the API with one line in `config/api_v1.
 | Rows the user may see (section 8) | ORM: a `RoleScope({role: rule})` per repository (a role without a rule sees nothing). Application: subclass `ScopedQueryService` so a row outside scope is a 404 |
 | API lists | Pagination (`?page=`, `?page_size=`, 20 by default, 100 at most), django-filter (`filterset_fields`) and `?ordering=` are on by default. Serializers extend `BaseModelSerializer` so date-times go out in UTC |
 | Errors in the schema | `extend_schema(responses={400: ErrorSerializer})` with `apps.core.api.serializers.ErrorSerializer` |
+| A dashboard screen | Inherit `apps.core.dashboard.DashboardModelAdmin` and register it with `register_screen()` (see [accounts' README](../accounts/README.md#the-dashboard-dashboard-p04)). Show a service error on a form with `apps.core.api.errors.localized_message(error)` |
+| The audit log viewer (DB-17) | `/dashboard/core/auditlog/`, read-only, filtered by user, record type, action and date |
 
 ## The error format
 

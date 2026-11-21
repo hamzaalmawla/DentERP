@@ -127,3 +127,92 @@ and background jobs; and test core the way real modules will use it.
 **Reason.** Follow the security design (section 8) on every endpoint while keeping JWT
 authentication inside DRF; give the app stable codes for each login state; keep core free of
 accounts so the dependency between them runs one way.
+
+## 2026-11-21 — Dashboard shell and users (P0.4)
+
+**Decision.**
+
+1. **Where the shell lives.** The dashboard shell is `apps/accounts/dashboard/`, a driving
+   adapter next to `api/`, because who sees what depends on the roles accounts owns (as with
+   the API permission classes, P0.3 #6). The base of every screen,
+   `apps.core.dashboard.DashboardModelAdmin`, is in core so core's own screen (the audit log)
+   needs no import of accounts: it asks the site for the role check (`admin_site.allows`).
+   The dashboard site is Django's default admin site through
+   `config.apps.DashboardAdminConfig`, so modules register with `@admin.register`. Unfold is
+   installed as `unfold.apps.BasicAppConfig`, because its default config replaces
+   `admin.site` with its own site.
+2. **One login check.** `VerifyCredentials` holds the lockout, the audit entries and the
+   `no_role` refusal; `Login` (API, constructor unchanged) and `DashboardBackend` (the only
+   entry in `AUTHENTICATION_BACKENDS`; `ModelBackend` is gone) both use it. With
+   `for_dashboard` it also refuses users who hold no dashboard role (`dashboard_not_allowed`,
+   audited as `login_failed`; it is not counted as a failed attempt, the password was right).
+   `Login` now checks the credentials and issues the tokens in two transactions. Roles, not
+   `is_staff` or `is_superuser`, open the dashboard (the user model has no `is_staff`).
+3. **Active role on the dashboard.** Kept in the session. A user with one dashboard role acts
+   in it; a user with several chooses one at `/dashboard/role/` and can switch from the account
+   menu (US-04). A student or technician role does not count. Roles are read again on every
+   request, so a removed role or a deactivated user takes effect at once.
+4. **Gates.** Before any other page: first the temporary password (through the
+   `ChangePassword` service, so it is audited and revokes the app's tokens), then the role
+   choice. While a gate is closed the sidebar shows only the page that opens it.
+5. **Role map.** `navigation.ROLE_GROUPS` is the single role → groups map of section 11
+   (super admin: every group). Modules add screens with `register_screen(group, ...)`, which
+   may narrow a screen to some roles of its group but never widen it. The same map decides the
+   sidebar and the permission check of every admin view, so a hidden screen also answers 403
+   by URL. A model on no screen opens for nobody. Empty groups are hidden. A role without the
+   Home group (reception) lands on its first screen.
+6. **Screens.** The site accepts only `DashboardModelAdmin` subclasses (a module screen that is
+   not one is an error; library screens such as auth groups, Celery beat and the token
+   blacklist are not mounted) and adds `ReadOnlyForManagement` to any screen that leaves it
+   out. Read-only for management follows the role the user is acting in. Nothing has a delete
+   permission. Django's own admin log (`LogEntry`) is not written and Unfold's history button
+   is hidden: `AuditLog`, written by the services, is the one record (DB-17).
+7. **User screens.** Every change calls a service: `CreateUser`, `UpdateUser` (new: names,
+   phone and university ID, for "edit" in DB-02), `AssignRoles`, `ResetPassword`,
+   `UnlockAccount` and `DeactivateUser` (new: revokes every token; the administrator cannot
+   deactivate themselves). The forms call the services in `clean()` so each service error
+   shows on its field; a change of details and roles runs in one unit of work. Deactivated
+   users stay in the list (filter "active") and are read-only. The temporary password is shown
+   once, in the response itself (never in a message cookie), on a page that is not cached.
+   Reset, unlock and deactivate ask for confirmation first (Unfold's detail actions are GET
+   links; the action runs only on POST). The Roles screen is read-only, with the number of
+   users per role. Department on users still waits for the setup module (P0.3 #15).
+8. **Sessions.** Idle timeout of 2 hours: `SESSION_COOKIE_AGE = 7200` with
+   `SESSION_SAVE_EVERY_REQUEST`. Only the dashboard uses sessions. `LOGIN_REDIRECT_URL` is the
+   dashboard home, because Unfold's login page sends no `next` when there is none.
+9. **Language.** On `/dashboard/` the language is Arabic until the user picks another with
+   the language switch (`DashboardLanguageMiddleware` ignores the browser's
+   `Accept-Language`); the API still follows `Accept-Language`. The switch posts to
+   `/i18n/setlang/`. Unfold ships no translations, so its texts that the dashboard shows are
+   listed in `apps/accounts/dashboard/unfold_messages.py` and translated in `locale/ar`.
+10. **Theme.** `SPU_BRAND` in `config/settings/base.py` is the one place for the name, the logo
+    (`static/dashboard/spu-logo.svg`, also the favicon) and the primary colour scale. All are
+    placeholders until the university's identity files arrive.
+11. **Audit log viewer.** Filters by user (autocomplete), record type, action and a date range.
+    Unfold's date range filter compares a date-time column with midnight and so leaves out the
+    "to" day; the viewer uses its own `DayRangeFilter` (both days included, clinic time zone).
+
+**Right-to-left check.** Checked in Chromium (Playwright) in Arabic and English at
+1366×860, and in Arabic at 390×800: login page and its errors, sidebar (groups, active item,
+account menu), header and breadcrumbs, search, the filters panel (users and audit log, with
+dropdowns, autocomplete and date range), the list table and its status labels, the
+bulk-actions bar, the add and change forms (text fields, role checkboxes, read-only fields,
+field errors, the sticky save bar), the detail action buttons, the confirmation page, the
+temporary password page, the password change page and the role choice page.
+
+- Already right in Unfold 0.110.1: `dir="rtl"` from the active language, sidebar on the right,
+  mirrored breadcrumb chevrons, filters panel opening from the left, right-aligned tables and
+  forms, the actions bar.
+- Fixed: Unfold texts shown in English (translated, item 9); the error summary read "no errors
+  to correct" in Arabic because Unfold counts `errors.items`, which is 0 for the admin's error
+  list (template `templates/unfold/helpers/messages/errornote.html`); the login button's arrow
+  pointed right; left-to-right values (usernames, passwords) lined up on the left in Arabic
+  pages; Arabic font fallback. The CSS fixes are in `static/dashboard/dashboard.css`.
+- Left as is: the date picker's time-zone warning icon (Django shows it when the browser's
+  time zone differs from the server's); wide tables scroll sideways on a phone.
+
+**Reason.** Apply the API's login rules and the role checks of section 8 to the dashboard
+without a second copy of them; let each later module add its screens in one line while the
+server, not the menu, enforces the roles; keep every change behind a service so the app and
+the dashboard can never apply different rules; and have the dashboard work in Arabic, right to
+left, from the first screen.

@@ -1,0 +1,17 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% comment %}Home (design section 11). A placeholder: the key figures come in P1.11.{% endcomment %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+    <div class="border border-base-200 rounded-default shadow-xs p-6 dark:border-base-800">
+        <h2 class="font-semibold mb-2 text-font-important-light dark:text-font-important-dark">
+            {% translate "Welcome" %}{% if active_role_name %} — {{ active_role_name }}{% endif %}
+        </h2>
+        <p class="leading-relaxed">
+            {% translate "The key figures of the clinics will appear here. Use the menu to open your screens." %}
+        </p>
+    </div>
+{% endblock %}

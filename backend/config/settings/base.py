@@ -20,10 +20,15 @@ ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS")
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
 
 # Applications -------------------------------------------------------------
-# django.contrib.admin (with Unfold) and import-export are added by the prompts that use
-# them (P0.4 and later).
+# import-export is added by the prompt that uses it (P1.x).
 
 DJANGO_APPS = [
+    # Unfold's templates come before the admin's. BasicAppConfig, because Unfold's default
+    # config replaces admin.site with its own site; the admin's app config makes the dashboard
+    # site (apps/accounts/dashboard) the default site instead.
+    "unfold.apps.BasicAppConfig",
+    "unfold.contrib.filters",
+    "config.apps.DashboardAdminConfig",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -51,6 +56,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
+    "apps.accounts.dashboard.middleware.DashboardLanguageMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -99,6 +105,18 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Users ----------------------------------------------------------------------
 
 AUTH_USER_MODEL = "accounts.User"
+
+# The dashboard's only login backend: the API's login rules (lockout, roles, audit), and only
+# the dashboard roles. The API authenticates with JWT and does not use backends.
+AUTHENTICATION_BACKENDS = ["apps.accounts.dashboard.backends.DashboardBackend"]
+LOGIN_URL = "admin:login"
+# Unfold's login page does not send "next" when there is none; land on the dashboard.
+LOGIN_REDIRECT_URL = "admin:index"
+
+# Dashboard sessions end after 2 hours without a request (design section 8). Only the
+# dashboard uses sessions.
+SESSION_COOKIE_AGE = 2 * 60 * 60
+SESSION_SAVE_EVERY_REQUEST = True
 
 # Redis: Celery broker and cache -------------------------------------------
 
@@ -159,6 +177,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 STORAGES = {
     "default": {"BACKEND": "storages.backends.s3.S3Storage"},
@@ -248,6 +267,63 @@ SPECTACULAR_SETTINGS = {
         "RoleEnum": "apps.accounts.api.serializers.ROLE_CHOICES",
         "PlatformEnum": "apps.accounts.api.serializers.PLATFORM_CHOICES",
     },
+}
+
+# Dashboard (design section 11) ------------------------------------------------
+# SPU's visual identity, in this one place. These are placeholders until the university's
+# identity files arrive: replace the files in static/dashboard/ and the colour scale below
+# (Tailwind-style steps 50 to 950, lightest to darkest; 600 is the main colour).
+
+SPU_BRAND = {
+    "name": _("SPU Dental Clinic System"),  # browser title and login page
+    "short_name": _("SPU Dental Clinics"),  # sidebar header
+    "subtitle": _("Faculty of Dentistry"),
+    "logo": "dashboard/spu-logo.svg",  # square mark, also the favicon
+    "primary": {
+        "50": "oklch(97.1% 0.013 240)",
+        "100": "oklch(93.6% 0.032 240)",
+        "200": "oklch(88.2% 0.059 240)",
+        "300": "oklch(80.9% 0.105 240)",
+        "400": "oklch(70.7% 0.165 240)",
+        "500": "oklch(62.3% 0.188 245)",
+        "600": "oklch(54.6% 0.165 248)",
+        "700": "oklch(48.8% 0.143 250)",
+        "800": "oklch(42.4% 0.119 252)",
+        "900": "oklch(37.9% 0.096 254)",
+        "950": "oklch(28.2% 0.075 256)",
+    },
+}
+
+
+def _static(name):
+    def url(request):
+        from django.templatetags.static import static
+
+        return static(name)
+
+    return url
+
+
+UNFOLD = {
+    "SITE_TITLE": SPU_BRAND["name"],
+    "SITE_HEADER": SPU_BRAND["short_name"],
+    "SITE_SUBHEADER": SPU_BRAND["subtitle"],
+    "SITE_URL": "/dashboard/",
+    "SITE_ICON": {"light": _static(SPU_BRAND["logo"]), "dark": _static(SPU_BRAND["logo"])},
+    "SITE_FAVICONS": [
+        {"rel": "icon", "type": "image/svg+xml", "href": _static(SPU_BRAND["logo"])},
+    ],
+    "SHOW_HISTORY": False,  # AuditLog is the history (DB-17)
+    "SHOW_VIEW_ON_SITE": False,
+    "SHOW_LANGUAGES": True,
+    "COLORS": {"primary": SPU_BRAND["primary"]},
+    "STYLES": [_static("dashboard/dashboard.css")],
+    "SIDEBAR": {
+        "show_search": False,
+        "show_all_applications": False,
+        "navigation": "apps.accounts.dashboard.navigation.sidebar",
+    },
+    "ACCOUNT": {"navigation": "apps.accounts.dashboard.navigation.account_links"},
 }
 
 # Security shared by every environment ------------------------------------

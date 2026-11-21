@@ -8,12 +8,15 @@ from .application.services import (
     ChangePassword,
     CreateDemoUsers,
     CreateUser,
+    DeactivateUser,
     Login,
     Logout,
     RefreshToken,
     RegisterDevice,
     ResetPassword,
     UnlockAccount,
+    UpdateUser,
+    VerifyCredentials,
 )
 from .infrastructure.passwords import (
     DjangoPasswordHasher,
@@ -34,6 +37,16 @@ def login() -> Login:
         OrmAccountRepository(),
         DjangoPasswordHasher(),
         SimpleJwtTokenIssuer(),
+        core.clock(),
+        core.audit_logger(),
+        core.unit_of_work(),
+    )
+
+
+def verify_credentials() -> VerifyCredentials:
+    return VerifyCredentials(
+        OrmAccountRepository(),
+        DjangoPasswordHasher(),
         core.clock(),
         core.audit_logger(),
         core.unit_of_work(),
@@ -96,6 +109,16 @@ def reset_password() -> ResetPassword:
 def unlock_account() -> UnlockAccount:
     return UnlockAccount(
         OrmAccountRepository(), core.clock(), core.audit_logger(), core.unit_of_work()
+    )
+
+
+def update_user() -> UpdateUser:
+    return UpdateUser(OrmAccountRepository(), core.audit_logger(), core.unit_of_work())
+
+
+def deactivate_user() -> DeactivateUser:
+    return DeactivateUser(
+        OrmAccountRepository(), SimpleJwtTokenIssuer(), core.audit_logger(), core.unit_of_work()
     )
 
 

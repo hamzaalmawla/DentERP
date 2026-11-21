@@ -35,6 +35,17 @@ class NoRoleError(AccessDeniedError):
         )
 
 
+class DashboardNotAllowedError(AccessDeniedError):
+    def __init__(self) -> None:
+        super().__init__(
+            "dashboard_not_allowed",
+            _(
+                "Students and maintenance technicians use the mobile app. "
+                "Your account cannot log in to the dashboard."
+            ),
+        )
+
+
 class RoleNotHeldError(AccessDeniedError):
     def __init__(self, role: str) -> None:
         super().__init__(
@@ -117,6 +128,11 @@ class OwnAdminRoleError(DomainError):
             "own_admin_role",
             _("You cannot remove the system administrator role from your own account."),
         )
+
+
+class OwnAccountError(DomainError):
+    def __init__(self) -> None:
+        super().__init__("own_account", _("You cannot deactivate your own account."))
 
 
 class AccountNotLockedError(ConflictError):

@@ -1,0 +1,31 @@
+/*
+ * Small fixes on top of Unfold for the SPU dashboard. Right-to-left fixes are listed in
+ * docs/decisions.md (P0.4) with what was checked.
+ */
+
+/* Arabic text: a font with Arabic glyphs before Unfold's Latin font. */
+html[lang="ar"] body {
+    font-family: "Noto Sans Arabic", "Segoe UI", Tahoma, "Inter", sans-serif;
+}
+
+/* Narrow single-column pages (choose role, confirmations, temporary password). */
+.dashboard-narrow {
+    max-width: 36rem;
+}
+
+/* A temporary password: large, monospaced, easy to read out. */
+.dashboard-secret {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 1.5rem;
+    letter-spacing: 0.08em;
+}
+
+/* RTL: Unfold's login button arrow ("arrow_forward") is not mirrored; point it the reading way. */
+[dir="rtl"] #login-form .material-symbols-outlined {
+    transform: scaleX(-1);
+}
+
+/* RTL: left-to-right values (usernames, passwords) keep their order but line up on the right. */
+[dir="rtl"] .dashboard-narrow [dir="ltr"] {
+    text-align: right;
+}

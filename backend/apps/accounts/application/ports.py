@@ -6,7 +6,7 @@ from typing import Protocol, runtime_checkable
 
 from apps.accounts.domain.accounts import Account
 
-from .dtos import AuthContext, DeviceDTO, NewAccount, TokenPair, UserDTO
+from .dtos import AuthContext, DeviceDTO, NewAccount, TokenPair, UserDetails, UserDTO
 
 
 @runtime_checkable
@@ -31,7 +31,20 @@ class AccountRepository(Protocol):
         """Also true for deactivated users: a username is never reused."""
         ...
 
-    def university_id_exists(self, university_id: str) -> bool: ...
+    def university_id_exists(
+        self, university_id: str, *, exclude_user_id: int | None = None
+    ) -> bool:
+        """Also true for deactivated users. ``exclude_user_id`` leaves that user out."""
+        ...
+
+    def details_of(self, user_id: int) -> UserDetails | None: ...
+
+    def update_details(self, user_id: int, details: UserDetails) -> None: ...
+
+    def deactivate(self, user_id: int) -> None:
+        """Hide the user: they can no longer log in and are no longer found. Nothing is
+        deleted (SYS-10)."""
+        ...
 
     def roles_of(self, user_id: int) -> frozenset[str]: ...
 
