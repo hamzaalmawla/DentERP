@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: spu-dental-backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-21 01:24+0300\n"
+"POT-Creation-Date: 2026-11-21 07:45+0300\n"
 "PO-Revision-Date: 2026-11-21 00:55+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
@@ -12,6 +12,223 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: apps/accounts/api/serializers.py:16 apps/accounts/models.py:73
+msgid "username"
+msgstr "اسم المستخدم"
+
+#: apps/accounts/api/serializers.py:18
+msgid "password"
+msgstr "كلمة المرور"
+
+#: apps/accounts/api/serializers.py:40
+msgid "refresh token"
+msgstr "رمز التجديد"
+
+#: apps/accounts/api/serializers.py:65
+msgid "current password"
+msgstr "كلمة المرور الحالية"
+
+#: apps/accounts/api/serializers.py:68
+msgid "new password"
+msgstr "كلمة المرور الجديدة"
+
+#: apps/accounts/api/serializers.py:74 apps/accounts/models.py:168
+msgid "platform"
+msgstr "المنصة"
+
+#: apps/accounts/api/serializers.py:76
+msgid "push token"
+msgstr "رمز الإشعارات"
+
+#: apps/accounts/apps.py:8
+msgid "Accounts"
+msgstr "الحسابات"
+
+#: apps/accounts/domain/errors.py:19
+msgid "The username or password is incorrect."
+msgstr "اسم المستخدم أو كلمة المرور غير صحيحة."
+
+#: apps/accounts/domain/errors.py:26
+msgid "The account is locked after too many failed logins. Try again later."
+msgstr "الحساب مقفل بعد محاولات دخول فاشلة كثيرة. حاول مرة أخرى لاحقاً."
+
+#: apps/accounts/domain/errors.py:34
+msgid "Your account has no role yet. Ask the system administrator."
+msgstr "لم يُمنح حسابك أي دور بعد. راجع مدير النظام."
+
+#: apps/accounts/domain/errors.py:41
+msgid "You do not hold the role you selected."
+msgstr "أنت لا تملك الدور الذي اخترته."
+
+#: apps/accounts/domain/errors.py:49
+msgid "You hold more than one role. Choose the role to use first."
+msgstr "لديك أكثر من دور. اختر الدور الذي تريد استخدامه أولاً."
+
+#: apps/accounts/domain/errors.py:56
+msgid "Change your temporary password to continue."
+msgstr "غيّر كلمة المرور المؤقتة للمتابعة."
+
+#: apps/accounts/domain/errors.py:62
+msgid "The current password is incorrect."
+msgstr "كلمة المرور الحالية غير صحيحة."
+
+#: apps/accounts/domain/errors.py:68
+msgid "The new password must be different from the current one."
+msgstr "يجب أن تختلف كلمة المرور الجديدة عن الحالية."
+
+#: apps/accounts/domain/errors.py:76
+msgid "The new password does not meet the password rules."
+msgstr "كلمة المرور الجديدة لا تحقق قواعد كلمات المرور."
+
+#: apps/accounts/domain/errors.py:83
+msgid "The session has expired. Log in again."
+msgstr "انتهت الجلسة. سجّل الدخول مرة أخرى."
+
+#: apps/accounts/domain/errors.py:89 apps/accounts/models.py:77
+msgid "This username is already used."
+msgstr "اسم المستخدم هذا مستخدم من قبل."
+
+#: apps/accounts/domain/errors.py:97
+msgid "This university ID belongs to another user."
+msgstr "الرقم الجامعي هذا يخص مستخدماً آخر."
+
+#: apps/accounts/domain/errors.py:104
+msgid "Give the user at least one role."
+msgstr "امنح المستخدم دوراً واحداً على الأقل."
+
+#: apps/accounts/domain/errors.py:110
+msgid "One of the roles does not exist."
+msgstr "أحد الأدوار غير موجود."
+
+#: apps/accounts/domain/errors.py:118
+msgid "You cannot remove the system administrator role from your own account."
+msgstr "لا يمكنك إزالة دور مدير النظام من حسابك."
+
+#: apps/accounts/domain/errors.py:124
+msgid "The account is not locked."
+msgstr "الحساب غير مقفل."
+
+#: apps/accounts/domain/errors.py:130
+msgid "Only the system administrator can manage users."
+msgstr "إدارة المستخدمين لمدير النظام فقط."
+
+#: apps/accounts/domain/errors.py:138
+msgid "A username may only contain letters, digits and . @ + - _ characters."
+msgstr "يمكن أن يحتوي اسم المستخدم على أحرف وأرقام والرموز . @ + - _ فقط."
+
+#: apps/accounts/domain/errors.py:144
+msgid "Enter the user's full name in Arabic."
+msgstr "أدخل الاسم الكامل للمستخدم بالعربية."
+
+#: apps/accounts/domain/errors.py:149
+msgid "The device details are not valid."
+msgstr "بيانات الجهاز غير صالحة."
+
+#: apps/accounts/models.py:19
+msgid "System administrator"
+msgstr "مدير النظام"
+
+#: apps/accounts/models.py:20
+msgid "Management"
+msgstr "الإدارة"
+
+#: apps/accounts/models.py:21
+msgid "Reception"
+msgstr "الاستقبال"
+
+#: apps/accounts/models.py:22
+msgid "Supervisor"
+msgstr "مشرف"
+
+#: apps/accounts/models.py:23
+msgid "Student"
+msgstr "طالب"
+
+#: apps/accounts/models.py:24
+msgid "Maintenance technician"
+msgstr "فني صيانة"
+
+#: apps/accounts/models.py:79
+msgid "full name (Arabic)"
+msgstr "الاسم الكامل (بالعربية)"
+
+#: apps/accounts/models.py:80
+msgid "full name (English)"
+msgstr "الاسم الكامل (بالإنجليزية)"
+
+#: apps/accounts/models.py:81
+msgid "phone"
+msgstr "الهاتف"
+
+#: apps/accounts/models.py:82
+msgid "university ID"
+msgstr "الرقم الجامعي"
+
+#: apps/accounts/models.py:83
+msgid "must change password"
+msgstr "يجب تغيير كلمة المرور"
+
+#: apps/accounts/models.py:84
+msgid "failed logins"
+msgstr "محاولات الدخول الفاشلة"
+
+#: apps/accounts/models.py:85
+msgid "locked until"
+msgstr "مقفل حتى"
+
+#: apps/accounts/models.py:94 apps/accounts/models.py:145
+#: apps/accounts/models.py:166 apps/core/models.py:111
+msgid "user"
+msgstr "المستخدم"
+
+#: apps/accounts/models.py:95
+msgid "users"
+msgstr "المستخدمون"
+
+#: apps/accounts/models.py:127
+msgid "code"
+msgstr "الرمز"
+
+#: apps/accounts/models.py:128
+msgid "name (Arabic)"
+msgstr "الاسم (بالعربية)"
+
+#: apps/accounts/models.py:129
+msgid "name (English)"
+msgstr "الاسم (بالإنجليزية)"
+
+#: apps/accounts/models.py:132 apps/accounts/models.py:148
+msgid "role"
+msgstr "الدور"
+
+#: apps/accounts/models.py:133
+msgid "roles"
+msgstr "الأدوار"
+
+#: apps/accounts/models.py:152
+msgid "user role"
+msgstr "دور المستخدم"
+
+#: apps/accounts/models.py:153
+msgid "user roles"
+msgstr "أدوار المستخدمين"
+
+#: apps/accounts/models.py:169
+msgid "token"
+msgstr "الرمز"
+
+#: apps/accounts/models.py:170
+msgid "last seen"
+msgstr "آخر ظهور"
+
+#: apps/accounts/models.py:173
+msgid "device"
+msgstr "الجهاز"
+
+#: apps/accounts/models.py:174
+msgid "devices"
+msgstr "الأجهزة"
 
 #: apps/core/api/errors.py:88
 msgid "The data sent is not valid."
@@ -53,10 +270,6 @@ msgstr "عدّله"
 msgid "active"
 msgstr "فعّال"
 
-#: apps/core/models.py:111
-msgid "user"
-msgstr "المستخدم"
-
 #: apps/core/models.py:117
 msgid "action"
 msgstr "الإجراء"
@@ -89,10 +302,10 @@ msgstr "قيد سجل التدقيق"
 msgid "audit log"
 msgstr "سجل التدقيق"
 
-#: config/settings/base.py:136
+#: config/settings/base.py:148
 msgid "Arabic"
 msgstr "العربية"
 
-#: config/settings/base.py:137
+#: config/settings/base.py:149
 msgid "English"
 msgstr "الإنجليزية"

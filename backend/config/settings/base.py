@@ -5,6 +5,7 @@ only what differs. Secrets and per-server values come from environment variables
 deploy/.env.example lists all of them.
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
@@ -20,7 +21,7 @@ CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
 
 # Applications -------------------------------------------------------------
 # django.contrib.admin (with Unfold) and import-export are added by the prompts that use
-# them (P0.4 and later), after the custom user model exists (P0.3).
+# them (P0.4 and later).
 
 DJANGO_APPS = [
     "django.contrib.auth",
@@ -32,6 +33,7 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "rest_framework_simplejwt.token_blacklist",
     "django_filters",
     "drf_spectacular",
     "django_celery_beat",
@@ -40,6 +42,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "apps.core",
+    "apps.accounts",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -93,6 +96,10 @@ DATABASES = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Users ----------------------------------------------------------------------
+
+AUTH_USER_MODEL = "accounts.User"
+
 # Redis: Celery broker and cache -------------------------------------------
 
 REDIS_URL = env("REDIS_URL", "redis://localhost:6379/0")
@@ -119,7 +126,12 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 # Passwords ----------------------------------------------------------------
 
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "OPTIONS": {
+            "user_attributes": ("username", "full_name_ar", "full_name_en", "university_id"),
+        },
+    },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
         "OPTIONS": {"min_length": 8},
@@ -173,13 +185,19 @@ NUM_PROXIES = env_int("DJANGO_NUM_PROXIES", 0)
 
 # REST API -----------------------------------------------------------------
 # Conventions in docs/system-design.md section 7; the pieces live in apps/core/api.
-# JWT authentication and the throttles are added with accounts (P0.3).
+# Authentication, roles and throttles: apps/accounts/api (design section 8).
 
 REST_FRAMEWORK = {
+    # JWT only. The authentication class also checks X-Active-Role and the
+    # password-change gate (apps/accounts/api/authentication.py).
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
+        "apps.accounts.api.authentication.AccountJWTAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    # Login: 10 a minute per IP; every other endpoint: 120 a minute per user (per IP when
+    # anonymous). The rates are read from the shared cache (Redis).
+    "DEFAULT_THROTTLE_CLASSES": ["rest_framework.throttling.UserRateThrottle"],
+    "DEFAULT_THROTTLE_RATES": {"login": "10/min", "user": "120/min"},
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
     "DEFAULT_PARSER_CLASSES": [
         "rest_framework.parsers.JSONParser",
@@ -198,13 +216,38 @@ REST_FRAMEWORK = {
     "NUM_PROXIES": NUM_PROXIES or None,
 }
 
+# JWT (design sections 7 and 8): access 15 minutes, refresh 30 days, rotated on each use;
+# the old refresh token is blacklisted. A password change revokes every token issued before it.
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "UPDATE_LAST_LOGIN": False,  # the Login service records it
+    "CHECK_REVOKE_TOKEN": True,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": env("JWT_SIGNING_KEY", SECRET_KEY),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "USER_ID_FIELD": "id",
+    "USER_ID_CLAIM": "user_id",
+}
+
+# Development only: the create_demo_users command refuses to run when this is off.
+DEMO_USERS_ALLOWED = False
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "SPU Dental Clinic System API",
     "DESCRIPTION": "API for the student, supervisor and maintenance mobile interfaces.",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    # The schema and docs are public (SYS-09); a token sent with them is ignored.
+    "SERVE_AUTHENTICATION": [],
     "SCHEMA_PATH_PREFIX": r"/api/v1",
     "COMPONENT_SPLIT_REQUEST": True,
+    "ENUM_NAME_OVERRIDES": {
+        "RoleEnum": "apps.accounts.api.serializers.ROLE_CHOICES",
+        "PlatformEnum": "apps.accounts.api.serializers.PLATFORM_CHOICES",
+    },
 }
 
 # Security shared by every environment ------------------------------------
