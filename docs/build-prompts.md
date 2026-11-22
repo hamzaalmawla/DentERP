@@ -69,6 +69,12 @@ Rules for this task:
 - Run ruff + pytest (backend) or flutter analyze + flutter test (mobile). All must pass before you finish.
   Paste the test summary in the pull request description.
 - Every user-facing string is translatable, with the Arabic translation added.
+- Update README.md in the same pull request: set this prompt's row in the Status table, and change
+  "Running everything" for anything you added or changed (a service, port, command or make target,
+  environment variable, seed or demo command, URL or folder). README.md is the one place that says
+  how to run the project.
+- Module boundaries: call other modules only through their facades (docs/contracts.md). If you change
+  a facade, change its Protocol, service, fake and docs/contracts.md together.
 - End with: what you built, the requirement and US ids covered, how you tested it, and anything left open.
 ```
 

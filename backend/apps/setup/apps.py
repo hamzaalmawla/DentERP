@@ -1,0 +1,8 @@
+from django.apps import AppConfig
+from django.utils.translation import gettext_lazy as _
+
+
+class SetupConfig(AppConfig):
+    name = "apps.setup"
+    label = "setup"
+    verbose_name = _("Setup")

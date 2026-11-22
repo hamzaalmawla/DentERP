@@ -216,3 +216,48 @@ without a second copy of them; let each later module add its screens in one line
 server, not the menu, enforces the roles; keep every change behind a service so the app and
 the dashboard can never apply different rules; and have the dashboard work in Arabic, right to
 left, from the first screen.
+
+## 2026-11-22 — Module skeletons and contracts (P0.5)
+
+**Decision.**
+
+1. **Facades.** Each module's public functions are a `typing.Protocol` (`<Module>Facade`) in
+   `application/facade.py`, implemented by `<Module>FacadeService` (raising
+   `NotImplementedError` until the module is built) and faked by `InMemory<Module>Facade` in
+   `testing/fakes.py`. The three must have the same signatures (`tests/test_contracts.py`).
+   The agreement between the tracks is [contracts.md](contracts.md).
+2. **Cross-module imports.** Only another module's `application/facade.py` and
+   `application/dtos.py`; another module's `container` only from `container.py` (to build the
+   port); `apps.accounts.api` from `api/`; `apps.accounts.dashboard.navigation` from
+   `admin.py`; `apps.core` from anywhere, and core imports no other module. A facade file
+   imports only its own DTOs and core, so facades can depend on each other at run time without
+   import cycles. `tests/test_import_rules.py` enforces this for the whole project (tests and
+   migrations are not checked).
+3. **Enums in DTOs.** Status and type enums (`ClinicType`, `ChairStatus`, `PlanItemStatus`, …)
+   live in each module's `domain/values.py` and are re-exported by its `dtos.py`, the only
+   place other modules read them from.
+4. **`current_term` is on the setup facade**, not academics as the P0.5 prompt listed: setup
+   owns the `Term` table (section 5). `patient_alerts` is not a patients function:
+   `GET /patients/{id}/` reads `DiagnosisFacade.medical_alerts`, which owns the answers.
+5. **Notifications.** Services keep sending through core's `Notifier` port (fake:
+   `FakeNotifier`). `NotificationsFacade` extends `Notifier` with `unread_count`; P1.10 makes
+   its container's facade the real adapter that other containers pass as `Notifier`.
+6. **Facade additions beyond the prompt** (needed by later prompts): scope checks
+   (`can_read_patient`, `can_read_diagnosis`, `can_read_case`, `can_read_ticket`) for media
+   (P1.5); counts for the home figures (P1.11); `mark_in_treatment` and `complete_referral`
+   for the case flow (P1.6, P1.7); `reports.home_figures` for the dashboard home.
+7. **API outline.** The Release 1 endpoints of section 7 are routed now with
+   `apps.core.api.placeholders.planned_view`: the role check is the real one (roles from
+   section 7, permission classes from `apps.accounts.api.permissions`, which now also exports
+   `AnyRole` and `RoleCode`), then 501 `not_implemented` with `details.planned_in`. Deferred
+   endpoints (`POST /cases/`, `/logbook/`, `/case-finder/`) are not routed. Changes to
+   section 7: `GET /diagnoses/{id}/` also allows supervisors (they review the diagnosis);
+   `GET /clinics/` is served by setup for every role, including `?with=chair_status`, because
+   chair status is setup data; `GET /chairs/{id}/history/` (P1.9) is added.
+8. **No models, no migrations.** Every new module has an empty `models.py` and an empty
+   `migrations/` package, so each track creates its own first migration. No dashboard screen
+   is registered yet; contracts.md names the sidebar group of each module's screens.
+
+**Reason.** Let Track A and Track B build their modules in parallel against fixed, tested
+contracts, with fakes that behave like the real modules, and keep the module boundaries
+checked by a test rather than by review alone.

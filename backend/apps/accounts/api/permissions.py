@@ -18,6 +18,18 @@ from apps.core.domain.errors import AccessDeniedError
 
 from .context import request_auth
 
+__all__ = [
+    "AnyRole",
+    "HasAnyRole",
+    "IsManagement",
+    "IsReception",
+    "IsStudent",
+    "IsSuperAdmin",
+    "IsSupervisor",
+    "IsTechnician",
+    "RoleCode",
+]
+
 
 class _RolePermission(BasePermission):
     allowed_roles: frozenset[str] = frozenset()
@@ -46,3 +58,5 @@ IsReception = HasAnyRole(RoleCode.RECEPTION)
 IsSupervisor = HasAnyRole(RoleCode.SUPERVISOR)
 IsStudent = HasAnyRole(RoleCode.STUDENT)
 IsTechnician = HasAnyRole(RoleCode.TECHNICIAN)
+# Every role (the "All" rows of design section 7); the user must still be acting in a role.
+AnyRole = HasAnyRole(*RoleCode)

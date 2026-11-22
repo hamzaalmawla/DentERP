@@ -45,9 +45,22 @@ THIRD_PARTY_APPS = [
     "simple_history",
 ]
 
+# One app per module (design section 5). P0.5 added the skeletons; each module adds its
+# models in its own build prompt.
 LOCAL_APPS = [
     "apps.core",
     "apps.accounts",
+    "apps.setup",
+    "apps.academics",
+    "apps.patients",
+    "apps.diagnosis",
+    "apps.referrals",
+    "apps.workcards",
+    "apps.media",
+    "apps.scheduling",
+    "apps.maintenance",
+    "apps.notifications",
+    "apps.reports",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
