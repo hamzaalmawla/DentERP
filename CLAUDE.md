@@ -91,3 +91,9 @@ Library versions are pinned exactly in `backend/pyproject.toml` and locked in `b
   requirement IDs and how they were tested.
 - Before merging, a developer reviews the diff, runs it on staging, and checks it in Arabic.
 - `docs/decisions.md` records every decision that changes this design, with its date and reason.
+- `README.md` says how to run everything. Every task updates it in the same pull request: its
+  row in the Status table, and "Running everything" for any service, port, command, `make`
+  target, environment variable, seed command, URL or folder it adds or changes.
+- Modules call each other only through their facades; [docs/contracts.md](docs/contracts.md)
+  lists them and which track owns each module. A facade change updates its Protocol, service,
+  fake and contracts.md together (`tests/test_contracts.py` checks they match).

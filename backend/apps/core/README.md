@@ -16,11 +16,14 @@ apps/<module>/
 ├── application/
 │   ├── ports.py       # typing.Protocol interfaces the services need (repositories, …)
 │   ├── dtos.py        # Frozen dataclasses returned to callers; never model instances
+│   ├── facade.py      # The functions other modules may call: <Module>Facade (Protocol) and
+│                      # <Module>FacadeService; listed in docs/contracts.md
 │   ├── services.py    # One class per use case: __init__(ports) + execute(command) -> DTO
 │   └── queries.py     # Query services: reads that depend on the user go through the scope
 ├── infrastructure/    # Adapters that implement the ports: ORM repositories, S3, FCM, …
 ├── api/               # DRF serializers, views and urls.py; a view calls one service
-├── testing/           # In-memory fakes of this module's ports, for its service tests
+├── testing/           # In-memory fakes: InMemory<Module>Facade for other modules' tests,
+│                      # and fakes of this module's own ports
 ├── tests/             # pytest: services with fakes; repositories and API against PostgreSQL
 ├── migrations/
 ├── admin.py           # Dashboard screens (DashboardModelAdmin); forms and actions call services
@@ -34,10 +37,15 @@ apps/<module>/
 | `domain/` | Python only (and `apps.core.domain`) |
 | `application/` | its own `domain/`, `apps.core.domain`, `apps.core.application` |
 | `infrastructure/`, `models.py` | `application/` and `domain/`, Django, outside libraries |
-| `api/`, `admin.py` | `application/`, `container.py`, `apps.core.api`, `apps.core.dashboard`, `apps.accounts.dashboard` (not core) |
+| `api/` | `application/`, `container.py`, `apps.core.api`, `apps.accounts.api` (not core) |
+| `admin.py` | `application/`, `container.py`, `apps.core.dashboard`, `apps.accounts.dashboard.navigation` (not core) |
 
-A module never imports another module's `models.py` or `infrastructure/`; it calls that
-module's application services. Register the API with one line in `config/api_v1.py`.
+A module never imports another module's `models.py`, `infrastructure/` or services: it imports
+only the other module's `application/facade.py` and `application/dtos.py`, and its
+`container.py` may call the other module's `container.facade()` to build the port.
+`tests/test_import_rules.py` checks this. Register the API with one line in `config/api_v1.py`;
+an endpoint that is planned but not built uses `apps.core.api.placeholders.planned_view`
+(501 `not_implemented`).
 
 ## What core gives every module
 

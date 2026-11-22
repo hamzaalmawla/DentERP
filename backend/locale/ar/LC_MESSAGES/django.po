@@ -4,70 +4,79 @@ msgid ""
 msgstr ""
 "Project-Id-Version: spu-dental-backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-22 00:39+0300\n"
+"POT-Creation-Date: 2026-11-22 14:55+0300\n"
 "PO-Revision-Date: 2026-11-21 00:55+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: apps/accounts/admin.py:51 apps/accounts/admin.py:288
-#: apps/accounts/admin.py:476
+#: apps/academics/apps.py:8
+msgid "Academics"
+msgstr "الشؤون الأكاديمية"
+
+#: apps/academics/testing/fakes.py:122
+msgid "The grade does not fit the grading scheme."
+msgstr "الدرجة لا تناسب نظام التقييم."
+
+#: apps/accounts/admin.py:51 apps/accounts/admin.py:294
+#: apps/accounts/admin.py:482
 msgid "Roles"
 msgstr "الأدوار"
 
-#: apps/accounts/admin.py:138 apps/accounts/models.py:135
+#: apps/accounts/admin.py:144 apps/accounts/models.py:135
 #: apps/accounts/models.py:151
 msgid "role"
 msgstr "الدور"
 
-#: apps/accounts/admin.py:153
+#: apps/accounts/admin.py:159
 msgid "locked"
 msgstr "مقفل"
 
-#: apps/accounts/admin.py:157
+#: apps/accounts/admin.py:163
 msgid "Locked now"
 msgstr "مقفل الآن"
 
-#: apps/accounts/admin.py:210
+#: apps/accounts/admin.py:216
 msgid "Login"
 msgstr "تسجيل الدخول"
 
-#: apps/accounts/admin.py:283
+#: apps/accounts/admin.py:289
 msgid "The user was created with these login details."
 msgstr "أُنشئ المستخدم ببيانات الدخول هذه."
 
-#: apps/accounts/admin.py:296
+#: apps/accounts/admin.py:302
 msgid "Status"
 msgstr "الحالة"
 
-#: apps/accounts/admin.py:297 apps/accounts/admin.py:304
+#: apps/accounts/admin.py:303 apps/accounts/admin.py:310
 msgid "Active"
 msgstr "فعّال"
 
-#: apps/accounts/admin.py:297 apps/accounts/admin.py:303
+#: apps/accounts/admin.py:303 apps/accounts/admin.py:309
 msgid "Locked"
 msgstr "مقفل"
 
-#: apps/accounts/admin.py:297 apps/accounts/admin.py:301
+#: apps/accounts/admin.py:303 apps/accounts/admin.py:307
 msgid "Deactivated"
 msgstr "معطّل"
 
-#: apps/accounts/admin.py:308
+#: apps/accounts/admin.py:314
 msgid "Unlock the selected accounts"
 msgstr "فك قفل الحسابات المحددة"
 
-#: apps/accounts/admin.py:321
+#: apps/accounts/admin.py:327
 #, python-format
 msgid "Accounts unlocked: %(count)d."
 msgstr "عدد الحسابات التي فُك قفلها: %(count)d."
 
-#: apps/accounts/admin.py:325 apps/accounts/admin.py:338
+#: apps/accounts/admin.py:331 apps/accounts/admin.py:344
 msgid "Reset password"
 msgstr "إعادة تعيين كلمة المرور"
 
-#: apps/accounts/admin.py:336
+#: apps/accounts/admin.py:342
 #, python-format
 msgid ""
 "Give %(name)s a new temporary password? Their current password stops working."
@@ -75,56 +84,56 @@ msgstr ""
 "هل تريد إعطاء %(name)s كلمة مرور مؤقتة جديدة؟ ستتوقف كلمة المرور الحالية عن "
 "العمل."
 
-#: apps/accounts/admin.py:345
+#: apps/accounts/admin.py:351
 msgid "The password was reset. The account is also unlocked."
 msgstr "أُعيد تعيين كلمة المرور، وفُك قفل الحساب أيضاً."
 
-#: apps/accounts/admin.py:349 apps/accounts/admin.py:361
+#: apps/accounts/admin.py:355 apps/accounts/admin.py:367
 msgid "Unlock account"
 msgstr "فك قفل الحساب"
 
-#: apps/accounts/admin.py:360
+#: apps/accounts/admin.py:366
 #, python-format
 msgid "Unlock the account of %(name)s?"
 msgstr "هل تريد فك قفل حساب %(name)s؟"
 
-#: apps/accounts/admin.py:367
+#: apps/accounts/admin.py:373
 msgid "The account was unlocked."
 msgstr "فُك قفل الحساب."
 
-#: apps/accounts/admin.py:371 apps/accounts/admin.py:387
+#: apps/accounts/admin.py:377 apps/accounts/admin.py:393
 msgid "Deactivate user"
 msgstr "تعطيل المستخدم"
 
-#: apps/accounts/admin.py:383
+#: apps/accounts/admin.py:389
 #, python-format
 msgid ""
 "Deactivate %(name)s? They can no longer log in, and they are logged out of "
 "the app. Their records are kept."
 msgstr ""
-"هل تريد تعطيل %(name)s؟ لن يتمكن من تسجيل الدخول، وسيُسجَّل خروجه من التطبيق."
-" تبقى سجلاته محفوظة."
+"هل تريد تعطيل %(name)s؟ لن يتمكن من تسجيل الدخول، وسيُسجَّل خروجه من التطبيق. "
+"تبقى سجلاته محفوظة."
 
-#: apps/accounts/admin.py:394
+#: apps/accounts/admin.py:400
 msgid "The user was deactivated."
 msgstr "عُطّل المستخدم."
 
-#: apps/accounts/admin.py:433
+#: apps/accounts/admin.py:439
 #: apps/accounts/templates/dashboard/temporary_password.html:14
 msgid "Temporary password"
 msgstr "كلمة المرور المؤقتة"
 
-#: apps/accounts/admin.py:463 apps/accounts/admin.py:475
+#: apps/accounts/admin.py:469 apps/accounts/admin.py:481
 #: apps/accounts/dashboard/navigation.py:56
 msgid "Users"
 msgstr "المستخدمون"
 
-#: apps/accounts/admin.py:474 apps/accounts/dashboard/navigation.py:45
+#: apps/accounts/admin.py:480 apps/accounts/dashboard/navigation.py:45
 #: apps/accounts/dashboard/site.py:45
 msgid "Home"
 msgstr "الرئيسية"
 
-#: apps/accounts/admin.py:479
+#: apps/accounts/admin.py:485
 msgid "Audit log"
 msgstr "سجل التدقيق"
 
@@ -176,7 +185,7 @@ msgstr "تأكيد كلمة المرور الجديدة"
 msgid "The two new passwords are not the same."
 msgstr "كلمتا المرور الجديدتان غير متطابقتين."
 
-#: apps/accounts/dashboard/navigation.py:46
+#: apps/accounts/dashboard/navigation.py:46 apps/patients/apps.py:8
 msgid "Patients"
 msgstr "المرضى"
 
@@ -188,11 +197,11 @@ msgstr "الموافقات"
 msgid "Clinical"
 msgstr "السريري"
 
-#: apps/accounts/dashboard/navigation.py:49
+#: apps/accounts/dashboard/navigation.py:49 apps/scheduling/apps.py:8
 msgid "Scheduling"
 msgstr "الجدولة"
 
-#: apps/accounts/dashboard/navigation.py:50
+#: apps/accounts/dashboard/navigation.py:50 apps/maintenance/apps.py:8
 msgid "Maintenance"
 msgstr "الصيانة"
 
@@ -212,7 +221,7 @@ msgstr "المرافق"
 msgid "Lists"
 msgstr "القوائم"
 
-#: apps/accounts/dashboard/navigation.py:55
+#: apps/accounts/dashboard/navigation.py:55 apps/reports/apps.py:8
 msgid "Reports"
 msgstr "التقارير"
 
@@ -712,6 +721,10 @@ msgstr "التغييرات"
 msgid "The data sent is not valid."
 msgstr "البيانات المرسلة غير صالحة."
 
+#: apps/core/api/placeholders.py:41
+msgid "This endpoint is planned but not built yet."
+msgstr "هذه الواجهة مخطط لها ولم تُبنَ بعد."
+
 #: apps/core/apps.py:8
 msgid "Core"
 msgstr "النواة"
@@ -768,23 +781,71 @@ msgstr "قيد سجل التدقيق"
 msgid "audit log"
 msgstr "سجل التدقيق"
 
-#: config/settings/base.py:166
+#: apps/diagnosis/apps.py:8
+msgid "Diagnosis"
+msgstr "التشخيص"
+
+#: apps/diagnosis/testing/fakes.py:64
+msgid "The diagnosis is not approved."
+msgstr "التشخيص غير معتمد."
+
+#: apps/diagnosis/testing/fakes.py:80
+msgid "A plan item cannot move to this status from its own."
+msgstr "لا يمكن نقل بند الخطة إلى هذه الحالة من حالته الحالية."
+
+#: apps/media/apps.py:8
+msgid "Media"
+msgstr "الصور والأشعة"
+
+#: apps/media/testing/fakes.py:40
+msgid "A photo is already attached to another record."
+msgstr "الصورة مرفقة بسجل آخر."
+
+#: apps/notifications/apps.py:8
+msgid "Notifications"
+msgstr "الإشعارات"
+
+#: apps/referrals/apps.py:8
+msgid "Referrals"
+msgstr "الإحالات"
+
+#: apps/referrals/testing/fakes.py:46
+msgid "The referral is not being treated."
+msgstr "الإحالة ليست قيد المعالجة."
+
+#: apps/setup/apps.py:8
+msgid "Setup"
+msgstr "التهيئة"
+
+#: apps/setup/testing/fakes.py:113
+msgid "A reason is required."
+msgstr "يجب ذكر السبب."
+
+#: apps/workcards/apps.py:8
+msgid "Work cards"
+msgstr "بطاقات العمل"
+
+#: apps/workcards/testing/fakes.py:68
+msgid "The student has no work card for this clinic."
+msgstr "ليس للطالب بطاقة عمل في هذه العيادة."
+
+#: config/settings/base.py:179
 msgid "Arabic"
 msgstr "العربية"
 
-#: config/settings/base.py:167
+#: config/settings/base.py:180
 msgid "English"
 msgstr "الإنجليزية"
 
-#: config/settings/base.py:278
+#: config/settings/base.py:291
 msgid "SPU Dental Clinic System"
 msgstr "نظام عيادات طب الأسنان - الجامعة السورية الخاصة"
 
-#: config/settings/base.py:279
+#: config/settings/base.py:292
 msgid "SPU Dental Clinics"
 msgstr "عيادات طب الأسنان"
 
-#: config/settings/base.py:280
+#: config/settings/base.py:293
 msgid "Faculty of Dentistry"
 msgstr "كلية طب الأسنان"
 
