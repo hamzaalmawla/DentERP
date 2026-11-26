@@ -72,6 +72,7 @@ class OrmAccountRepository:
             full_name_en=account.full_name_en,
             phone=account.phone,
             university_id=account.university_id,
+            department_id=account.department_id,
             password=account.password_hash,
             must_change_password=account.must_change_password,
         )
@@ -99,6 +100,7 @@ class OrmAccountRepository:
             full_name_en=user.full_name_en,
             phone=user.phone,
             university_id=user.university_id,
+            department_id=user.department_id,
         )
 
     def update_details(self, user_id: int, details: UserDetails) -> None:
@@ -107,7 +109,10 @@ class OrmAccountRepository:
         user.full_name_en = details.full_name_en
         user.phone = details.phone
         user.university_id = details.university_id
-        user.save(update_fields=["full_name_ar", "full_name_en", "phone", "university_id"])
+        user.department_id = details.department_id
+        user.save(
+            update_fields=["full_name_ar", "full_name_en", "phone", "university_id", "department"]
+        )
 
     def deactivate(self, user_id: int) -> None:
         User.objects.get(pk=user_id).deactivate()
@@ -154,6 +159,7 @@ class OrmAccountRepository:
             must_change_password=user.must_change_password,
             locked_until=user.locked_until,
             last_login=user.last_login,
+            department_id=user.department_id,
         )
 
     @staticmethod

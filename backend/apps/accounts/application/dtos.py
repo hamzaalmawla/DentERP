@@ -50,6 +50,7 @@ class UserDTO:
     must_change_password: bool
     locked_until: datetime | None
     last_login: datetime | None
+    department_id: int | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -80,6 +81,7 @@ class NewAccount:
     password_hash: str
     must_change_password: bool
     roles: frozenset[str]
+    department_id: int | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -90,3 +92,4 @@ class UserDetails:
     full_name_en: str
     phone: str
     university_id: str | None
+    department_id: int | None = None

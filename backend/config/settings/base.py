@@ -279,6 +279,12 @@ SPECTACULAR_SETTINGS = {
     "ENUM_NAME_OVERRIDES": {
         "RoleEnum": "apps.accounts.api.serializers.ROLE_CHOICES",
         "PlatformEnum": "apps.accounts.api.serializers.PLATFORM_CHOICES",
+        "ClinicTypeEnum": "apps.setup.api.serializers.CLINIC_TYPE_CHOICES",
+        "ChairStatusEnum": "apps.setup.api.serializers.CHAIR_STATUS_CHOICES",
+        "CaseKindEnum": "apps.setup.api.serializers.CASE_KIND_CHOICES",
+        "AnswerTypeEnum": "apps.setup.api.serializers.ANSWER_TYPE_CHOICES",
+        "IndexKindEnum": "apps.setup.api.serializers.INDEX_KIND_CHOICES",
+        "SurfaceEnum": "apps.setup.api.serializers.SURFACE_CHOICES",
     },
 }
 

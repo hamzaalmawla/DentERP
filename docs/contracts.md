@@ -55,33 +55,42 @@ raise `DomainError` with the code named in the table.
 | reports | Track B | P1.11 | `Group.REPORTS` (F8, chair status F6/F18, referral statistics) · figures on `Group.HOME` |
 
 `Group` is `apps.accounts.dashboard.navigation.Group`; the role → groups map is fixed there
-(design section 11). No screen is registered yet: there are no models. Department on users
-(P0.3 #15) is added by P1.1 once the `Department` table exists.
+(design section 11). A screen inherits `apps.core.dashboard.DashboardModelAdmin` (inlines:
+`DashboardTabularInline`) and passes `self.actor(request)` to its services. Department on users
+(P0.3 #15) was added by P1.1: accounts checks it through `SetupFacade.get_department`.
 
 ## setup
 
-`SetupFacade` · DTOs in `apps.setup.application.dtos` · fake `InMemorySetupFacade`
+`SetupFacade` · DTOs in `apps.setup.application.dtos` · fake `InMemorySetupFacade` · **built
+(P1.1)**
 
 | Function | Returns | Notes |
 | --- | --- | --- |
 | `current_term()` | `TermDTO` | The one current term. Here, not in academics, because setup owns `Term` |
+| `get_department(department_id)` | `DepartmentDTO` | P1.1: a user's department (accounts, DB-02) |
+| `list_departments()` | `Sequence[DepartmentDTO]` | P1.1: active departments by Arabic name |
 | `get_clinic(clinic_id)` | `ClinicDTO` | |
-| `list_clinics(*, type=None)` | `Sequence[ClinicDTO]` | By number; filter by `ClinicType` |
+| `list_clinics(*, type=None)` | `Sequence[ClinicDTO]` | By number (2 before 10); filter by `ClinicType` |
 | `get_chair(chair_id)` | `ChairDTO` | |
 | `list_chairs(clinic_id, *, in_service_only=False)` | `Sequence[ChairDTO]` | Out-of-service chairs left out on request (BR-12) |
-| `set_chair_status(chair_id, status, *, reason, by_user_id)` | `ChairDTO` | Writes history; `reason_required`; `by_user_id=None` for the system |
+| `set_chair_status(chair_id, status, *, reason, by_user_id)` | `ChairDTO` | Writes history; `reason_required`; `by_user_id=None` for the system; the caller checks the role |
 | `list_sessions(clinic_id)` | `Sequence[SessionDTO]` | The clinic's own sessions, or those of its clinic type |
 | `get_case_type(case_type_id)` | `CaseTypeDTO` | |
 | `get_treatment_type(treatment_type_id)` | `TreatmentTypeDTO` | Gives `department_id` and `case_type_id` |
 | `get_fault_category(category_id)` | `FaultCategoryDTO` | `blocks_chair` |
 | `list_checklist_items()` | `Sequence[ChecklistItemDTO]` | Round checklist in order |
-| `get_setting(key, default=None)` | JSON value | `SystemSetting` |
+| `get_setting(key, default=None)` | JSON value | `SystemSetting`: the keys are in `apps/setup/domain/settings.py` (`photo_max_mb`, `round_morning_start` "HH:MM", …) |
 | `get_lookups_version()` | `int` | Changes whenever a list changes |
 
-DTOs: `TermDTO`, `DepartmentDTO`, `ClinicDTO`, `ChairDTO`, `SessionDTO`, `CaseTypeDTO`,
-`TreatmentTypeDTO`, `FaultCategoryDTO`, `ChecklistItemDTO`. Enums: `ClinicType`
-(diagnosis, treatment, lab), `ChairStatus` (in_service, out_of_service), `CaseKind`.
-Uses: no other module.
+Missing and deactivated rows raise `NotFoundError`. A deactivated chair is left out of
+`list_chairs` altogether; its history stays.
+
+DTOs: `TermDTO`, `DepartmentDTO` (with `head_id`), `ClinicDTO`, `ChairDTO`, `SessionDTO`,
+`CaseTypeDTO`, `TreatmentTypeDTO`, `FaultCategoryDTO`, `ChecklistItemDTO`, and for
+`/lookups/`: `ToothCodeDTO`, `MedicalHistoryItemDTO`, `SoftTissueSiteDTO`,
+`IndexDefinitionDTO`, `LookupsDTO`. Enums: `ClinicType` (diagnosis, treatment, lab),
+`ChairStatus` (in_service, out_of_service), `CaseKind`, `AnswerType`, `IndexKind`, `Surface`.
+Uses: no other module. Used by: accounts (department of a user), and the modules listed below.
 
 ## academics
 
@@ -241,7 +250,8 @@ Uses: every facade above, read with the actor's scope.
 Every endpoint below is routed and in the schema at `/api/v1/schema/` (browse it at
 `/api/v1/docs/`). Until its module is built it checks the role, then answers **501** in the
 standard error format: `{"code": "not_implemented", "message": "…", "details": {"planned_in":
-"P1.x"}}`. Roles come from `apps.accounts.api.permissions`. Auth and `/me/` (P0.3) are built.
+"P1.x"}}`. Roles come from `apps.accounts.api.permissions`. Auth and `/me/` (P0.3) are built;
+`/lookups/` and `/clinics/` are built (P1.1).
 
 | Module | Method and path | Roles | Built in |
 | --- | --- | --- | --- |

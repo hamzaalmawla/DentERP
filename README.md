@@ -17,7 +17,8 @@ module will honour is in [docs/contracts.md](docs/contracts.md).
 | P0.3 | `accounts`: login (JWT), roles, lockout, password change, push tokens | Done |
 | P0.4 | Web dashboard shell (Unfold, Arabic RTL), users, roles, audit log viewer | Done |
 | P0.5 | Skeletons and facades of the 11 other modules, API outline, import rule | Done |
-| P1.1 – P1.12 | Backend modules and dashboard screens (setup and academics first, then tracks A and B) | Not started |
+| P1.1 | `setup`: terms, departments, clinics and chairs (status with history), sessions, lookup lists, system settings; `GET /lookups/` (ETag) and `GET /clinics/`; Facilities, Lists and Settings screens; `seed_defaults`; department on users | Done |
+| P1.2 – P1.12 | Backend modules and dashboard screens (academics next, then tracks A and B) | Not started |
 | P2.x | Flutter app (`mobile/`) | Not started |
 
 ## Running everything
@@ -36,7 +37,22 @@ example), builds the backend image, then starts PostgreSQL 18, Redis 8, Garage s
 creates its bucket), applies the migrations, compiles the Arabic translations, and starts the
 web server, the Celery worker and Celery beat. It returns when the web server is healthy.
 
-Then create users to log in with:
+Then load the default setup data, and create users to log in with:
+
+```bash
+make seed
+```
+
+`make seed` (`python manage.py seed_defaults`) loads the lists of SRS section 4 (tooth codes,
+medical history items, soft tissue sites, the index set, the chair checklist, fault
+categories, round times and the other system settings) and the Release 1 setup: the Oral
+Diagnosis and Endodontics departments, a diagnosis clinic (1) and an Endodontics clinic (2)
+with 12 chairs each, 5 sessions a day, a current term, and the Endodontics case and treatment
+types. The data is in `backend/apps/setup/seed/defaults.json`. It is safe to run again:
+records already there, including ones changed or deactivated in the dashboard, are left as
+they are. Tests never load it unless a test asks for it.
+
+
 
 ```bash
 docker compose -f deploy/docker-compose.yml run --rm web python manage.py create_demo_users
@@ -64,6 +80,10 @@ Ports can be changed with `WEB_PORT`, `DB_PORT` and `STORAGE_PORT` in your shell
 To try the API: log in with `POST /api/v1/auth/login/` (`{"username": "demo_student",
 "password": "Spu-Demo-2026"}`), then press **Authorize** in the docs page and paste the
 `access` token. A user with several roles also sends the `X-Active-Role` header.
+`GET /api/v1/lookups/` and `GET /api/v1/clinics/` answer after `make seed`; the other app
+endpoints answer 501 until their prompt builds them.
+
+The setup screens (Facilities, Lists, Settings) are in the dashboard for `demo_super_admin`.
 
 ### Everyday commands
 
@@ -74,6 +94,7 @@ To try the API: log in with `POST /api/v1/auth/login/` (`{"username": "demo_stud
 | `make test` | Run all backend tests against PostgreSQL and Redis; `make test ARGS="-k lookups -x"` for some |
 | `make lint` / `make format` | Check / fix code style (ruff) |
 | `make makemigrations` / `make migrate` | Create migrations after a model change / apply them (and compile translations) |
+| `make seed` | Load the default setup data (`seed_defaults`); safe to run again |
 | `make makemessages` | Collect new texts into `backend/locale/ar/LC_MESSAGES/django.po`; then write the Arabic `msgstr` and run `make migrate` (or `make compilemessages`) |
 | `make schema` | Build and validate the OpenAPI schema into `backend/schema.yml` |
 | `make shell` | Django shell |
@@ -99,8 +120,8 @@ uv run pytest
 ```
 
 `DJANGO_SETTINGS_MODULE` is unset so pytest uses `config.settings.test`. To run the server
-instead, keep `config.settings.dev` and run `uv run python manage.py migrate` then
-`uv run python manage.py runserver`.
+instead, keep `config.settings.dev` and run `uv run python manage.py migrate`,
+`uv run python manage.py seed_defaults`, then `uv run python manage.py runserver`.
 
 ### When something goes wrong
 
@@ -181,7 +202,9 @@ backend/           Django project: API, dashboard, Celery jobs
     core/          base model, soft delete, audit log, error format, shared ports
                    (its README is the template every module follows)
     accounts/      users, roles, login, the dashboard shell and its role map
-    setup/ academics/ patients/ diagnosis/ referrals/ workcards/ media/
+    setup/         terms, departments, clinics, chairs, sessions, lookup lists, settings;
+                   seed/defaults.json is the data of seed_defaults
+    academics/ patients/ diagnosis/ referrals/ workcards/ media/
     scheduling/ maintenance/ notifications/ reports/
                    one module each: domain/, application/ (ports, dtos, facade), api/,
                    infrastructure/, testing/ (fakes), tests/, admin.py, container.py

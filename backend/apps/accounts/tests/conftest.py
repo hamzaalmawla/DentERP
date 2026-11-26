@@ -16,6 +16,7 @@ from apps.accounts.testing import (
 )
 from apps.accounts.testing.api import login
 from apps.core.testing import FakeUnitOfWork, FixedClock, InMemoryAuditLogger
+from apps.setup.testing import InMemorySetupFacade
 
 PASSWORD = "Strong-Pass-2026"
 
@@ -27,6 +28,7 @@ PASSWORD = "Strong-Pass-2026"
 class Fakes:
     accounts: InMemoryAccountRepository = field(default_factory=InMemoryAccountRepository)
     roles: InMemoryRoleRepository = field(default_factory=InMemoryRoleRepository)
+    setup: InMemorySetupFacade = field(default_factory=InMemorySetupFacade)
     devices: InMemoryDeviceTokenRepository = field(default_factory=InMemoryDeviceTokenRepository)
     hasher: FakePasswordHasher = field(default_factory=FakePasswordHasher)
     policy: FakePasswordPolicy = field(default_factory=FakePasswordPolicy)

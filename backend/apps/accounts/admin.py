@@ -13,9 +13,10 @@ from django.http import Http404, HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
 from unfold.decorators import action, display
-from unfold.widgets import UnfoldAdminCheckboxSelectMultipleWidget
+from unfold.widgets import UnfoldAdminCheckboxSelectMultipleWidget, UnfoldAdminSelectWidget
 
 from apps.core import container as core_container
 from apps.core.api.errors import localized_message
@@ -43,7 +44,10 @@ _ERROR_FIELDS = {
     "role_required": "roles",
     "unknown_role": "roles",
     "own_admin_role": "roles",
+    "department_not_found": "department",
 }
+
+USER_FIELDS = ("full_name_ar", "full_name_en", "phone", "university_id", "department")
 
 
 def _roles_field() -> forms.MultipleChoiceField:
@@ -51,6 +55,29 @@ def _roles_field() -> forms.MultipleChoiceField:
         label=_("Roles"),
         choices=ROLE_CHOICES,
         widget=UnfoldAdminCheckboxSelectMultipleWidget,
+    )
+
+
+def _department_choices() -> list[tuple]:
+    """Active departments, from the setup module (through the accounts query)."""
+    english = (get_language() or "ar").startswith("en")
+    return [
+        ("", "—"),
+        *(
+            (d.id, d.name_en if english and d.name_en else d.name_ar)
+            for d in container.list_departments().execute()
+        ),
+    ]
+
+
+def _department_field() -> forms.TypedChoiceField:
+    return forms.TypedChoiceField(
+        label=_("Department"),
+        choices=_department_choices,
+        coerce=int,
+        empty_value=None,
+        required=False,
+        widget=UnfoldAdminSelectWidget,
     )
 
 
@@ -66,11 +93,12 @@ class _ServiceForm(forms.ModelForm):
 
 class UserCreateForm(_ServiceForm):
     roles = _roles_field()
+    department = _department_field()
     result = None
 
     class Meta:
         model = User
-        fields = ("username", "full_name_ar", "full_name_en", "phone", "university_id")
+        fields = ("username", *USER_FIELDS)
 
     def clean(self):
         cleaned = super().clean()
@@ -85,6 +113,7 @@ class UserCreateForm(_ServiceForm):
                     full_name_en=cleaned.get("full_name_en") or "",
                     phone=cleaned.get("phone") or "",
                     university_id=cleaned.get("university_id") or "",
+                    department_id=cleaned.get("department"),
                     roles=cleaned["roles"],
                 ),
             )
@@ -95,10 +124,11 @@ class UserCreateForm(_ServiceForm):
 
 class UserChangeForm(_ServiceForm):
     roles = _roles_field()
+    department = _department_field()
 
     class Meta:
         model = User
-        fields = ("full_name_ar", "full_name_en", "phone", "university_id")
+        fields = USER_FIELDS
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -123,6 +153,7 @@ class UserChangeForm(_ServiceForm):
                         full_name_en=cleaned.get("full_name_en") or "",
                         phone=cleaned.get("phone") or "",
                         university_id=cleaned.get("university_id") or "",
+                        department_id=cleaned.get("department"),
                     ),
                 )
                 if "roles" in self.changed_data:
@@ -175,11 +206,13 @@ class UserAdmin(ReadOnlyForManagement, DashboardModelAdmin):
         "full_name_ar",
         "full_name_en",
         "roles",
+        "department",
         "status",
         "last_login",
     )
     search_fields = ("username", "full_name_ar", "full_name_en", "university_id", "phone")
-    list_filter = (RoleListFilter, "is_active", LockedListFilter)
+    list_filter = (RoleListFilter, "department", "is_active", LockedListFilter)
+    list_select_related = ("department",)
     ordering = ("username",)
     actions = ["unlock_selected"]
     actions_detail = ["reset_password_action", "unlock_action", "deactivate_action"]
@@ -193,6 +226,7 @@ class UserAdmin(ReadOnlyForManagement, DashboardModelAdmin):
                     "full_name_en",
                     "phone",
                     "university_id",
+                    "department",
                     "roles",
                 )
             },
@@ -208,6 +242,7 @@ class UserAdmin(ReadOnlyForManagement, DashboardModelAdmin):
                     "full_name_en",
                     "phone",
                     "university_id",
+                    "department",
                     "roles",
                 )
             },

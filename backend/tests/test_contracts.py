@@ -11,7 +11,7 @@ from importlib import import_module
 
 import pytest
 
-from .modules import MODULES, contract_of
+from .modules import BUILT_MODULES, MODULES, contract_of
 
 CONTRACTS = [contract_of(module) for module in MODULES]
 
@@ -36,8 +36,11 @@ class TestFacadeContract:
     def test_the_fake_satisfies_the_protocol(self, contract):
         assert isinstance(contract.fake(), contract.protocol)
 
-    def test_the_service_satisfies_the_protocol(self, contract):
-        assert isinstance(contract.service(), contract.protocol)
+    def test_the_container_builds_the_service(self, contract):
+        service = contract.build()
+
+        assert isinstance(service, contract.service)
+        assert isinstance(service, contract.protocol)
 
     @pytest.mark.parametrize("implementation", ["fake", "service"])
     def test_signatures_match_the_protocol(self, contract, implementation):
@@ -47,20 +50,24 @@ class TestFacadeContract:
             actual = inspect.signature(getattr(cls, name))
             assert actual == expected, f"{cls.__name__}.{name}{actual} != {expected}"
 
-    def test_the_service_is_not_built_yet(self, contract):
-        service = contract.service()
-        for name in _functions(contract.protocol):
-            parameters = list(inspect.signature(getattr(service, name)).parameters.values())
-            arguments = [None] * sum(
-                p.kind is p.POSITIONAL_OR_KEYWORD and p.default is p.empty for p in parameters
-            )
-            keywords = {
-                p.name: None
-                for p in parameters
-                if p.kind is p.KEYWORD_ONLY and p.default is p.empty
-            }
-            with pytest.raises(NotImplementedError):
-                getattr(service, name)(*arguments, **keywords)
+
+@pytest.mark.parametrize(
+    "contract", [c for c in CONTRACTS if c.module not in BUILT_MODULES], ids=_ids
+)
+def test_a_service_not_built_yet_says_so(contract):
+    """Until its build prompt, every function of a facade raises ``NotImplementedError``
+    (built modules test their facade themselves)."""
+    service = contract.build()
+    for name in _functions(contract.protocol):
+        parameters = list(inspect.signature(getattr(service, name)).parameters.values())
+        arguments = [None] * sum(
+            p.kind is p.POSITIONAL_OR_KEYWORD and p.default is p.empty for p in parameters
+        )
+        keywords = {
+            p.name: None for p in parameters if p.kind is p.KEYWORD_ONLY and p.default is p.empty
+        }
+        with pytest.raises(NotImplementedError):
+            getattr(service, name)(*arguments, **keywords)
 
 
 @pytest.mark.parametrize("module", MODULES)

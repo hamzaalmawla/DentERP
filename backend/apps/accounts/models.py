@@ -83,6 +83,15 @@ class User(BaseModel, AbstractBaseUser, PermissionsMixin):
     university_id = models.CharField(  # noqa: DJ001
         _("university ID"), max_length=30, null=True, blank=True
     )
+    # Setup owns departments; the user refers to the table by name only (DB-02).
+    department = models.ForeignKey(
+        "setup.Department",
+        verbose_name=_("department"),
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="+",
+    )
     must_change_password = models.BooleanField(_("must change password"), default=False)
     failed_logins = models.PositiveSmallIntegerField(_("failed logins"), default=0)
     locked_until = models.DateTimeField(_("locked until"), null=True, blank=True)

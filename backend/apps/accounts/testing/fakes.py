@@ -28,6 +28,7 @@ class _StoredUser:
     phone: str = ""
     is_active: bool = True
     roles: set[str] = field(default_factory=set)
+    department_id: int | None = None
 
 
 class InMemoryAccountRepository:
@@ -48,8 +49,9 @@ class InMemoryAccountRepository:
     ) -> Account:
         user_id = next(self._ids)
         phone = values.pop("phone", "")
+        department_id = values.pop("department_id", None)
         account = Account(id=user_id, username=username, password_hash=password_hash, **values)
-        self.users[user_id] = _StoredUser(account, phone, is_active, set(roles))
+        self.users[user_id] = _StoredUser(account, phone, is_active, set(roles), department_id)
         return account
 
     def stored(self, user_id: int) -> Account:
@@ -88,6 +90,7 @@ class InMemoryAccountRepository:
             ),
             phone=account.phone,
             roles=set(account.roles),
+            department_id=account.department_id,
         )
         return user_id
 
@@ -112,6 +115,7 @@ class InMemoryAccountRepository:
             full_name_en=account.full_name_en,
             phone=stored.phone,
             university_id=account.university_id,
+            department_id=stored.department_id,
         )
 
     def update_details(self, user_id: int, details: UserDetails) -> None:
@@ -123,6 +127,7 @@ class InMemoryAccountRepository:
             university_id=details.university_id,
         )
         stored.phone = details.phone
+        stored.department_id = details.department_id
 
     def deactivate(self, user_id: int) -> None:
         self.users[user_id].is_active = False
@@ -154,6 +159,7 @@ class InMemoryAccountRepository:
             must_change_password=account.must_change_password,
             locked_until=account.locked_until,
             last_login=account.last_login,
+            department_id=stored.department_id,
         )
 
 

@@ -261,3 +261,84 @@ left, from the first screen.
 **Reason.** Let Track A and Track B build their modules in parallel against fixed, tested
 contracts, with fakes that behave like the real modules, and keep the module boundaries
 checked by a test rather than by review alone.
+
+## 2026-11-26 — Setup module (P1.1)
+
+**Decision.**
+
+1. **One pair of services for every configuration record.** The rules of each setup table
+   (its values and how each is checked, unique values, references to other records) are
+   written once in `apps/setup/domain/records.py`. `SaveRecord` (create or change) and
+   `SetRecordActive` (deactivate or activate) apply them to every table, instead of a
+   create, change and deactivate service per table (about 40 classes doing the same thing).
+   Use cases with their own behaviour have their own service: `AddChairs`, `SetChairStatus`,
+   `Reorder`, `UpdateSettings`, `SeedDefaults`. Every save is audited with its diff.
+2. **Unique values span deactivated records**, so a deactivated record can always be activated
+   again: clinic number, chair number per clinic, tooth code letter (design section 6), and,
+   added here, an index definition per index, tooth and surface. The database also enforces
+   one current term (partial unique index), a term ending after it starts, a session ending
+   after it starts and belonging to a clinic or a clinic type (not both), and an index score
+   range. Making a term current makes the previous one not current; the current term cannot
+   be deactivated (`term_is_current`).
+3. **Lists have an `order`.** `CaseType`, `TreatmentType` and `FaultCategory` get an `order`
+   like the other lists, so every list in the Lists group is sorted by dragging its rows
+   (design section 11). Case types are in the Lists group. Terms are in the Facilities group,
+   as contracts.md and the P1.1 prompt say (design section 11 put them under Academic setup).
+4. **Chairs.** Status changes are kept in `ChairStatusChange` (from, to, reason, by, time),
+   written only by `SetChairStatus`, which needs a reason and does nothing when the status
+   does not change. Setup does not check who may change a status: the dashboard allows the
+   super admin, and maintenance (P1.9) the technician and the system. A chair never moves to
+   another clinic. A deactivated chair is left out of `list_chairs` altogether (not only
+   with `in_service_only`), and its history stays. `AddChairs` numbers new chairs after the
+   clinic's highest chair, deactivated ones included; the clinic form has "Chairs to add".
+5. **Lookups.** `GET /lookups/` returns, in the request language and active rows only:
+   departments, case types, treatment types, tooth codes, medical history items, soft tissue
+   sites, index definitions, checklist items, fault categories, sessions, and the settings the
+   app needs (photo size limit, round times). The version is stored as the system setting
+   `lookups_version` and goes up by one on any change to those lists or settings. The ETag is
+   `"lookups-<version>-<language>"`; `If-None-Match` gets 304 without reading the lists;
+   `Cache-Control: private, no-cache` and `Vary: Accept-Language`. `GET /clinics/` is not
+   paginated (a handful of rows); `?with=chair_status` adds each clinic's active chairs with
+   their status and the counts in and out of service.
+6. **System settings** are key/value rows (design section 6) whose keys, types and checks are
+   listed in `apps/setup/domain/settings.py`: university and faculty names (AR and EN), default
+   language, largest photo (MB), push notifications on or off, and the morning and afternoon
+   round times. The dashboard shows them as one page. The logo stays in `SPU_BRAND` (static
+   files) in Release 1.
+7. **Facade.** `get_department` and `list_departments` are added to `SetupFacade` (for the
+   department of a user), and `DepartmentDTO` gets `head_id`. The fake now orders clinics by
+   number the way the database does (2 before 10). `SetupFacadeService` takes its ports in
+   its constructor; `tests/modules.py` builds each facade with its container and lists the
+   built modules (`BUILT_MODULES`), whose facades no longer answer `NotImplementedError`.
+8. **Dashboard.** A screen gets the acting user from `DashboardModelAdmin.actor(request)`,
+   which asks the site (as `allows` does, P0.4 #1), so `admin.py` still imports only
+   `navigation` from accounts. `apps.core.dashboard.DashboardTabularInline` is the base of
+   every inline: it opens for the roles of its screen and never deletes. A setup form calls
+   the service in `clean()`; when the page is shown again with any error (the form or an
+   inline), the view's transaction is rolled back, so nothing a service saved stays. Django's
+   admin log is not written (P0.4 #6).
+9. **Department on users (DB-02, P0.3 #15).** `User.department` refers to `"setup.Department"`
+   by name. `CreateUser` and `UpdateUser` check it with `SetupFacade.get_department`
+   (`department_not_found`); a user keeps a department that was deactivated later, but a new
+   choice must be active. The user screens offer the active departments (through the
+   `ListDepartments` query) and filter the list by department.
+10. **Default data.** `seed_defaults` reads `apps/setup/seed/defaults.json` (data, not code) and
+    saves through the same rules as the dashboard. It recognises a record it would create by
+    its key values (`SEED_KEYS`: name in English, number, letter, …), active or deactivated,
+    so running it again creates nothing and a deactivated default stays deactivated; a record
+    renamed in English in the dashboard would be created again. Settings already set keep
+    their value; a term is made current only when none is. No migration loads data, so tests
+    start empty.
+11. **To confirm with the clinic** (placeholders in the seed file, editable in the
+    dashboard): the meanings and colours of the tooth codes D M F N R E C I U P; the 19
+    medical history items (15 conditions plus smoking, pregnancy, medications, past surgeries)
+    and which are alerts; the 8 soft tissue sites; the 6 fault categories and which block the
+    chair; clinic numbers 1 (diagnosis) and 2 (Endodontics) with 12 chairs each; the 5 session
+    times (08:00 to 15:30, for each clinic type); the current term's name and dates.
+12. `make makemessages` leaves out `*/tests/*`, so test texts are not collected for
+    translation.
+
+**Reason.** Keep the setup rules in one place that the dashboard, the seed and later callers
+all go through; let the super admin change every list without a code change (NFR-13) and
+never lose a record's history (SYS-10); give the app one cached call for every list; and add
+the department of a user without breaking the module boundary.
