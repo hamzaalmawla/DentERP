@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: spu-dental-backend\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-22 14:55+0300\n"
+"POT-Creation-Date: 2026-11-26 14:30+0300\n"
 "PO-Revision-Date: 2026-11-21 00:55+0300\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
@@ -21,62 +21,71 @@ msgstr "الشؤون الأكاديمية"
 msgid "The grade does not fit the grading scheme."
 msgstr "الدرجة لا تناسب نظام التقييم."
 
-#: apps/accounts/admin.py:51 apps/accounts/admin.py:294
-#: apps/accounts/admin.py:482
+#: apps/accounts/admin.py:55 apps/accounts/admin.py:329
+#: apps/accounts/admin.py:517
 msgid "Roles"
 msgstr "الأدوار"
 
-#: apps/accounts/admin.py:144 apps/accounts/models.py:135
-#: apps/accounts/models.py:151
+#: apps/accounts/admin.py:75
+msgid "Department"
+msgstr "القسم"
+
+#: apps/accounts/admin.py:175 apps/accounts/models.py:144
+#: apps/accounts/models.py:160
 msgid "role"
 msgstr "الدور"
 
-#: apps/accounts/admin.py:159
+#: apps/accounts/admin.py:190
 msgid "locked"
 msgstr "مقفل"
 
-#: apps/accounts/admin.py:163
+#: apps/accounts/admin.py:194
 msgid "Locked now"
 msgstr "مقفل الآن"
 
-#: apps/accounts/admin.py:216
+#: apps/accounts/admin.py:251
 msgid "Login"
 msgstr "تسجيل الدخول"
 
-#: apps/accounts/admin.py:289
+#: apps/accounts/admin.py:324
 msgid "The user was created with these login details."
 msgstr "أُنشئ المستخدم ببيانات الدخول هذه."
 
-#: apps/accounts/admin.py:302
+#: apps/accounts/admin.py:337 apps/setup/admin.py:189 apps/setup/admin.py:297
+#: apps/setup/admin.py:370
 msgid "Status"
 msgstr "الحالة"
 
-#: apps/accounts/admin.py:303 apps/accounts/admin.py:310
+#: apps/accounts/admin.py:338 apps/accounts/admin.py:345
+#: apps/setup/admin.py:189 apps/setup/admin.py:191 apps/setup/admin.py:297
+#: apps/setup/admin.py:299
 msgid "Active"
 msgstr "فعّال"
 
-#: apps/accounts/admin.py:303 apps/accounts/admin.py:309
+#: apps/accounts/admin.py:338 apps/accounts/admin.py:344
 msgid "Locked"
 msgstr "مقفل"
 
-#: apps/accounts/admin.py:303 apps/accounts/admin.py:307
+#: apps/accounts/admin.py:338 apps/accounts/admin.py:342
+#: apps/setup/admin.py:189 apps/setup/admin.py:191 apps/setup/admin.py:297
+#: apps/setup/admin.py:299
 msgid "Deactivated"
 msgstr "معطّل"
 
-#: apps/accounts/admin.py:314
+#: apps/accounts/admin.py:349
 msgid "Unlock the selected accounts"
 msgstr "فك قفل الحسابات المحددة"
 
-#: apps/accounts/admin.py:327
+#: apps/accounts/admin.py:362
 #, python-format
 msgid "Accounts unlocked: %(count)d."
 msgstr "عدد الحسابات التي فُك قفلها: %(count)d."
 
-#: apps/accounts/admin.py:331 apps/accounts/admin.py:344
+#: apps/accounts/admin.py:366 apps/accounts/admin.py:379
 msgid "Reset password"
 msgstr "إعادة تعيين كلمة المرور"
 
-#: apps/accounts/admin.py:342
+#: apps/accounts/admin.py:377
 #, python-format
 msgid ""
 "Give %(name)s a new temporary password? Their current password stops working."
@@ -84,28 +93,28 @@ msgstr ""
 "هل تريد إعطاء %(name)s كلمة مرور مؤقتة جديدة؟ ستتوقف كلمة المرور الحالية عن "
 "العمل."
 
-#: apps/accounts/admin.py:351
+#: apps/accounts/admin.py:386
 msgid "The password was reset. The account is also unlocked."
 msgstr "أُعيد تعيين كلمة المرور، وفُك قفل الحساب أيضاً."
 
-#: apps/accounts/admin.py:355 apps/accounts/admin.py:367
+#: apps/accounts/admin.py:390 apps/accounts/admin.py:402
 msgid "Unlock account"
 msgstr "فك قفل الحساب"
 
-#: apps/accounts/admin.py:366
+#: apps/accounts/admin.py:401
 #, python-format
 msgid "Unlock the account of %(name)s?"
 msgstr "هل تريد فك قفل حساب %(name)s؟"
 
-#: apps/accounts/admin.py:373
+#: apps/accounts/admin.py:408
 msgid "The account was unlocked."
 msgstr "فُك قفل الحساب."
 
-#: apps/accounts/admin.py:377 apps/accounts/admin.py:393
+#: apps/accounts/admin.py:412 apps/accounts/admin.py:428
 msgid "Deactivate user"
 msgstr "تعطيل المستخدم"
 
-#: apps/accounts/admin.py:389
+#: apps/accounts/admin.py:424
 #, python-format
 msgid ""
 "Deactivate %(name)s? They can no longer log in, and they are logged out of "
@@ -114,26 +123,26 @@ msgstr ""
 "هل تريد تعطيل %(name)s؟ لن يتمكن من تسجيل الدخول، وسيُسجَّل خروجه من التطبيق. "
 "تبقى سجلاته محفوظة."
 
-#: apps/accounts/admin.py:400
+#: apps/accounts/admin.py:435
 msgid "The user was deactivated."
 msgstr "عُطّل المستخدم."
 
-#: apps/accounts/admin.py:439
+#: apps/accounts/admin.py:474
 #: apps/accounts/templates/dashboard/temporary_password.html:14
 msgid "Temporary password"
 msgstr "كلمة المرور المؤقتة"
 
-#: apps/accounts/admin.py:469 apps/accounts/admin.py:481
+#: apps/accounts/admin.py:504 apps/accounts/admin.py:516
 #: apps/accounts/dashboard/navigation.py:56
 msgid "Users"
 msgstr "المستخدمون"
 
-#: apps/accounts/admin.py:480 apps/accounts/dashboard/navigation.py:45
+#: apps/accounts/admin.py:515 apps/accounts/dashboard/navigation.py:45
 #: apps/accounts/dashboard/site.py:45
 msgid "Home"
 msgstr "الرئيسية"
 
-#: apps/accounts/admin.py:485
+#: apps/accounts/admin.py:520
 msgid "Audit log"
 msgstr "سجل التدقيق"
 
@@ -157,7 +166,7 @@ msgstr "كلمة المرور الحالية"
 msgid "new password"
 msgstr "كلمة المرور الجديدة"
 
-#: apps/accounts/api/serializers.py:70 apps/accounts/models.py:171
+#: apps/accounts/api/serializers.py:70 apps/accounts/models.py:180
 msgid "platform"
 msgstr "المنصة"
 
@@ -193,7 +202,7 @@ msgstr "المرضى"
 msgid "Approvals"
 msgstr "الموافقات"
 
-#: apps/accounts/dashboard/navigation.py:48
+#: apps/accounts/dashboard/navigation.py:48 apps/setup/models.py:37
 msgid "Clinical"
 msgstr "السريري"
 
@@ -234,7 +243,7 @@ msgid "Change password"
 msgstr "غيّر كلمة المرور"
 
 #: apps/accounts/dashboard/navigation.py:202
-#: apps/accounts/dashboard/site.py:158
+#: apps/accounts/dashboard/site.py:162
 msgid "Choose your role"
 msgstr "اختر دورك"
 
@@ -526,39 +535,44 @@ msgstr "اسم المستخدم هذا مستخدم من قبل."
 msgid "This university ID belongs to another user."
 msgstr "الرقم الجامعي هذا يخص مستخدماً آخر."
 
-#: apps/accounts/domain/errors.py:115
+#: apps/accounts/domain/errors.py:116 apps/setup/domain/records.py:415
+#: apps/setup/domain/records.py:439
+msgid "The department was not found or is deactivated."
+msgstr "القسم غير موجود أو معطّل."
+
+#: apps/accounts/domain/errors.py:122
 msgid "Give the user at least one role."
 msgstr "امنح المستخدم دوراً واحداً على الأقل."
 
-#: apps/accounts/domain/errors.py:121
+#: apps/accounts/domain/errors.py:128
 msgid "One of the roles does not exist."
 msgstr "أحد الأدوار غير موجود."
 
-#: apps/accounts/domain/errors.py:129
+#: apps/accounts/domain/errors.py:136
 msgid "You cannot remove the system administrator role from your own account."
 msgstr "لا يمكنك إزالة دور مدير النظام من حسابك."
 
-#: apps/accounts/domain/errors.py:135
+#: apps/accounts/domain/errors.py:142
 msgid "You cannot deactivate your own account."
 msgstr "لا يمكنك تعطيل حسابك."
 
-#: apps/accounts/domain/errors.py:140
+#: apps/accounts/domain/errors.py:147
 msgid "The account is not locked."
 msgstr "الحساب غير مقفل."
 
-#: apps/accounts/domain/errors.py:145
+#: apps/accounts/domain/errors.py:152
 msgid "Only the system administrator can manage users."
 msgstr "إدارة المستخدمين لمدير النظام فقط."
 
-#: apps/accounts/domain/errors.py:152
+#: apps/accounts/domain/errors.py:159
 msgid "A username may only contain letters, digits and . @ + - _ characters."
 msgstr "يمكن أن يحتوي اسم المستخدم على أحرف وأرقام والرموز . @ + - _ فقط."
 
-#: apps/accounts/domain/errors.py:158
+#: apps/accounts/domain/errors.py:165
 msgid "Enter the user's full name in Arabic."
 msgstr "أدخل الاسم الكامل للمستخدم بالعربية."
 
-#: apps/accounts/domain/errors.py:163
+#: apps/accounts/domain/errors.py:170
 msgid "The device details are not valid."
 msgstr "بيانات الجهاز غير صالحة."
 
@@ -602,64 +616,68 @@ msgstr "الهاتف"
 msgid "university ID"
 msgstr "الرقم الجامعي"
 
-#: apps/accounts/models.py:86
+#: apps/accounts/models.py:89 apps/setup/models.py:106 apps/setup/models.py:123
+msgid "department"
+msgstr "القسم"
+
+#: apps/accounts/models.py:95
 msgid "must change password"
 msgstr "يجب تغيير كلمة المرور"
 
-#: apps/accounts/models.py:87
+#: apps/accounts/models.py:96
 msgid "failed logins"
 msgstr "محاولات الدخول الفاشلة"
 
-#: apps/accounts/models.py:88
+#: apps/accounts/models.py:97
 msgid "locked until"
 msgstr "مقفل حتى"
 
-#: apps/accounts/models.py:97 apps/accounts/models.py:148
-#: apps/accounts/models.py:169 apps/core/models.py:111
+#: apps/accounts/models.py:106 apps/accounts/models.py:157
+#: apps/accounts/models.py:178 apps/core/models.py:111
 msgid "user"
 msgstr "المستخدم"
 
-#: apps/accounts/models.py:98
+#: apps/accounts/models.py:107
 msgid "users"
 msgstr "المستخدمون"
 
-#: apps/accounts/models.py:130
+#: apps/accounts/models.py:139
 msgid "code"
 msgstr "الرمز"
 
-#: apps/accounts/models.py:131
+#: apps/accounts/models.py:140 apps/setup/models.py:56
 msgid "name (Arabic)"
 msgstr "الاسم (بالعربية)"
 
-#: apps/accounts/models.py:132
+#: apps/accounts/models.py:141 apps/setup/models.py:60
 msgid "name (English)"
 msgstr "الاسم (بالإنجليزية)"
 
-#: apps/accounts/models.py:136
+#: apps/accounts/models.py:145
 msgid "roles"
 msgstr "الأدوار"
 
-#: apps/accounts/models.py:155
+#: apps/accounts/models.py:164
 msgid "user role"
 msgstr "دور المستخدم"
 
-#: apps/accounts/models.py:156
+#: apps/accounts/models.py:165
 msgid "user roles"
 msgstr "أدوار المستخدمين"
 
-#: apps/accounts/models.py:172
+#: apps/accounts/models.py:181
 msgid "token"
 msgstr "الرمز"
 
-#: apps/accounts/models.py:173
+#: apps/accounts/models.py:182
 msgid "last seen"
 msgstr "آخر ظهور"
 
-#: apps/accounts/models.py:176
+#: apps/accounts/models.py:185
 msgid "device"
 msgstr "الجهاز"
 
-#: apps/accounts/models.py:177
+#: apps/accounts/models.py:186
 msgid "devices"
 msgstr "الأجهزة"
 
@@ -672,6 +690,7 @@ msgstr ""
 "قائمة حسابك."
 
 #: apps/accounts/templates/dashboard/confirm_action.html:12
+#: apps/setup/templates/setup/dashboard/form_page.html:26
 msgid "Cancel"
 msgstr "إلغاء"
 
@@ -769,7 +788,7 @@ msgstr "رقم السجل"
 msgid "IP address"
 msgstr "عنوان IP"
 
-#: apps/core/models.py:122
+#: apps/core/models.py:122 apps/setup/models.py:181
 msgid "time"
 msgstr "الوقت"
 
@@ -781,7 +800,7 @@ msgstr "قيد سجل التدقيق"
 msgid "audit log"
 msgstr "سجل التدقيق"
 
-#: apps/diagnosis/apps.py:8
+#: apps/diagnosis/apps.py:8 apps/setup/models.py:28
 msgid "Diagnosis"
 msgstr "التشخيص"
 
@@ -813,13 +832,597 @@ msgstr "الإحالات"
 msgid "The referral is not being treated."
 msgstr "الإحالة ليست قيد المعالجة."
 
+#: apps/setup/admin.py:204
+#, python-format
+msgid "Records activated: %(count)d."
+msgstr "عدد السجلات التي فُعّلت: %(count)d."
+
+#: apps/setup/admin.py:204
+#, python-format
+msgid "Records deactivated: %(count)d."
+msgstr "عدد السجلات التي عُطّلت: %(count)d."
+
+#: apps/setup/admin.py:208
+msgid "Deactivate the selected records"
+msgstr "تعطيل السجلات المحددة"
+
+#: apps/setup/admin.py:212
+msgid "Activate the selected records"
+msgstr "تفعيل السجلات المحددة"
+
+#: apps/setup/admin.py:279 apps/setup/models.py:154
+msgid "chairs"
+msgstr "الكراسي"
+
+#: apps/setup/admin.py:291 apps/setup/admin.py:292 apps/setup/admin.py:396
+#: apps/setup/admin.py:397 apps/setup/models.py:33
+msgid "In service"
+msgstr "في الخدمة"
+
+#: apps/setup/admin.py:292 apps/setup/admin.py:397 apps/setup/models.py:34
+msgid "Out of service"
+msgstr "خارج الخدمة"
+
+#: apps/setup/admin.py:304
+msgid "Chairs to add"
+msgstr "عدد الكراسي المراد إضافتها"
+
+#: apps/setup/admin.py:307
+msgid "New chairs, in service, numbered after the clinic's highest chair."
+msgstr "كراسٍ جديدة في الخدمة، تُرقَّم بعد أعلى رقم كرسي في العيادة."
+
+#: apps/setup/admin.py:346
+msgid "Chairs in service"
+msgstr "الكراسي في الخدمة"
+
+#: apps/setup/admin.py:356
+msgid "status history"
+msgstr "سجل الحالة"
+
+#: apps/setup/admin.py:373
+msgid "Reason"
+msgstr "السبب"
+
+#: apps/setup/admin.py:408
+msgid "Put in or out of service"
+msgstr "إدخال إلى الخدمة أو إخراج منها"
+
+#: apps/setup/admin.py:439
+msgid "The chair's status was saved."
+msgstr "حُفظت حالة الكرسي."
+
+#: apps/setup/admin.py:445
+msgid "Chair status"
+msgstr "حالة الكرسي"
+
+#: apps/setup/admin.py:447 apps/setup/admin.py:624
+msgid "Save"
+msgstr "حفظ"
+
+#: apps/setup/admin.py:461
+msgid "For"
+msgstr "لـ"
+
+#: apps/setup/admin.py:489 apps/setup/models.py:252
+msgid "colour"
+msgstr "اللون"
+
+#: apps/setup/admin.py:548 config/settings/base.py:179
+msgid "Arabic"
+msgstr "العربية"
+
+#: apps/setup/admin.py:548 config/settings/base.py:180
+msgid "English"
+msgstr "الإنجليزية"
+
+#: apps/setup/admin.py:614
+msgid "The settings were saved."
+msgstr "حُفظت الإعدادات."
+
+#: apps/setup/admin.py:623 apps/setup/admin.py:662
+msgid "System settings"
+msgstr "إعدادات النظام"
+
+#: apps/setup/admin.py:644
+msgid "Departments"
+msgstr "الأقسام"
+
+#: apps/setup/admin.py:645
+msgid "Clinics"
+msgstr "العيادات"
+
+#: apps/setup/admin.py:646
+msgid "Chairs"
+msgstr "الكراسي"
+
+#: apps/setup/admin.py:647
+msgid "Sessions"
+msgstr "الجلسات"
+
+#: apps/setup/admin.py:648
+msgid "Terms"
+msgstr "الفصول الدراسية"
+
+#: apps/setup/admin.py:649
+msgid "Case types"
+msgstr "أنواع الحالات"
+
+#: apps/setup/admin.py:650
+msgid "Tooth codes"
+msgstr "رموز الأسنان"
+
+#: apps/setup/admin.py:654
+msgid "Medical history items"
+msgstr "بنود السوابق المرضية"
+
+#: apps/setup/admin.py:657
+msgid "Soft tissue sites"
+msgstr "مواقع النسج الرخوة"
+
+#: apps/setup/admin.py:658
+msgid "Index definitions"
+msgstr "تعريفات المشعرات"
+
+#: apps/setup/admin.py:659
+msgid "Treatment types"
+msgstr "أنواع المعالجة"
+
+#: apps/setup/admin.py:660
+msgid "Checklist items"
+msgstr "بنود قائمة التفقد"
+
+#: apps/setup/admin.py:661
+msgid "Fault categories"
+msgstr "فئات الأعطال"
+
 #: apps/setup/apps.py:8
 msgid "Setup"
 msgstr "التهيئة"
 
-#: apps/setup/testing/fakes.py:113
+#: apps/setup/domain/errors.py:29
+msgid "Only the system administrator can change the setup."
+msgstr "تعديل الإعدادات لمدير النظام فقط."
+
+#: apps/setup/domain/errors.py:35 apps/setup/testing/fakes.py:126
 msgid "A reason is required."
 msgstr "يجب ذكر السبب."
+
+#: apps/setup/domain/errors.py:42
+msgid ""
+"The current term cannot be deactivated. Make another term current first."
+msgstr "لا يمكن تعطيل الفصل الحالي. اجعل فصلًا آخر هو الحالي أولًا."
+
+#: apps/setup/domain/errors.py:50
+msgid "The number of chairs to add must be between 1 and 100."
+msgstr "يجب أن يكون عدد الكراسي المضافة بين 1 و100."
+
+#: apps/setup/domain/records.py:100 apps/setup/domain/settings.py:104
+#, python-format
+msgid "This value is too long (%(max)s characters at most)."
+msgstr "هذه القيمة طويلة جدًا (%(max)s محرفًا على الأكثر)."
+
+#: apps/setup/domain/records.py:110 apps/setup/domain/records.py:146
+#: apps/setup/domain/records.py:179 apps/setup/domain/records.py:181
+#: apps/setup/domain/records.py:227 apps/setup/domain/records.py:229
+#: apps/setup/domain/settings.py:100 apps/setup/domain/settings.py:134
+msgid "This value is required."
+msgstr "هذه القيمة مطلوبة."
+
+#: apps/setup/domain/records.py:119 apps/setup/domain/records.py:149
+#: apps/setup/domain/settings.py:112
+msgid "Choose one of the listed values."
+msgstr "اختر إحدى القيم المعروضة."
+
+#: apps/setup/domain/records.py:130 apps/setup/domain/settings.py:123
+#, python-format
+msgid "Enter a whole number from %(minimum)s to %(maximum)s."
+msgstr "أدخل عددًا صحيحًا من %(minimum)s إلى %(maximum)s."
+
+#: apps/setup/domain/records.py:184
+msgid "The term must end after it starts."
+msgstr "يجب أن ينتهي الفصل بعد بدايته."
+
+#: apps/setup/domain/records.py:222
+msgid "Choose either a clinic or a clinic type, not both."
+msgstr "اختر عيادة أو نوع عيادة، لا كليهما."
+
+#: apps/setup/domain/records.py:232
+msgid "The session must end after it starts."
+msgstr "يجب أن تنتهي الجلسة بعد بدايتها."
+
+#: apps/setup/domain/records.py:254
+msgid "The code is one Latin letter (A to Z)."
+msgstr "الرمز حرف لاتيني واحد (من A إلى Z)."
+
+#: apps/setup/domain/records.py:259
+msgid "Enter a colour as # and six hex digits, e.g. #d32f2f."
+msgstr "أدخل اللون بالشكل # متبوعًا بستة محارف ست عشرية، مثل ‎#d32f2f."
+
+#: apps/setup/domain/records.py:287
+msgid "Enter a permanent tooth in FDI notation (11 to 48)."
+msgstr "أدخل سنًّا دائمًا بترقيم FDI (من 11 إلى 48)."
+
+#: apps/setup/domain/records.py:294
+msgid "The highest score must be greater than the lowest."
+msgstr "يجب أن تكون أعلى درجة أكبر من أدنى درجة."
+
+#: apps/setup/domain/records.py:372
+msgid "Another clinic already has this number (it may be deactivated)."
+msgstr "هذا الرقم مستخدم لعيادة أخرى (قد تكون معطّلة)."
+
+#: apps/setup/domain/records.py:379
+msgid ""
+"This clinic already has a chair with this number (it may be deactivated)."
+msgstr "يوجد في هذه العيادة كرسي بهذا الرقم (قد يكون معطّلًا)."
+
+#: apps/setup/domain/records.py:386
+msgid "Another tooth code already uses this letter (it may be deactivated)."
+msgstr "هذا الحرف مستخدم لرمز سن آخر (قد يكون معطّلًا)."
+
+#: apps/setup/domain/records.py:393
+msgid "This index already has this tooth and surface (it may be deactivated)."
+msgstr "هذا المشعر يتضمن هذا السن وهذا السطح مسبقًا (قد يكون معطّلًا)."
+
+#: apps/setup/domain/records.py:423 apps/setup/domain/records.py:431
+msgid "The clinic was not found or is deactivated."
+msgstr "العيادة غير موجودة أو معطّلة."
+
+#: apps/setup/domain/records.py:445
+msgid "The case type was not found or is deactivated."
+msgstr "نوع الحالة غير موجود أو معطّل."
+
+#: apps/setup/domain/settings.py:45
+msgid "University name (Arabic)"
+msgstr "اسم الجامعة (بالعربية)"
+
+#: apps/setup/domain/settings.py:46
+msgid "University name (English)"
+msgstr "اسم الجامعة (بالإنجليزية)"
+
+#: apps/setup/domain/settings.py:47
+msgid "Faculty name (Arabic)"
+msgstr "اسم الكلية (بالعربية)"
+
+#: apps/setup/domain/settings.py:48
+msgid "Faculty name (English)"
+msgstr "اسم الكلية (بالإنجليزية)"
+
+#: apps/setup/domain/settings.py:49
+msgid "Default language"
+msgstr "اللغة الافتراضية"
+
+#: apps/setup/domain/settings.py:53
+msgid "Largest photo (MB)"
+msgstr "أكبر حجم للصورة (ميغابايت)"
+
+#: apps/setup/domain/settings.py:59
+msgid "Send push notifications"
+msgstr "إرسال الإشعارات الفورية"
+
+#: apps/setup/domain/settings.py:62
+msgid "Morning round starts"
+msgstr "بداية الجولة الصباحية"
+
+#: apps/setup/domain/settings.py:65
+msgid "Morning round ends"
+msgstr "نهاية الجولة الصباحية"
+
+#: apps/setup/domain/settings.py:68
+msgid "Afternoon round starts"
+msgstr "بداية الجولة المسائية"
+
+#: apps/setup/domain/settings.py:71
+msgid "Afternoon round ends"
+msgstr "نهاية الجولة المسائية"
+
+#: apps/setup/domain/settings.py:149
+msgid "This setting does not exist."
+msgstr "هذا الإعداد غير موجود."
+
+#: apps/setup/domain/settings.py:161
+msgid "The round must end after it starts."
+msgstr "يجب أن تنتهي الجولة بعد بدايتها."
+
+#: apps/setup/models.py:29
+msgid "Treatment"
+msgstr "معالجة"
+
+#: apps/setup/models.py:30 apps/setup/models.py:38
+msgid "Lab"
+msgstr "مخبر"
+
+#: apps/setup/models.py:41
+msgid "Yes / no"
+msgstr "نعم / لا"
+
+#: apps/setup/models.py:42
+msgid "Yes / no with details"
+msgstr "نعم / لا مع التفاصيل"
+
+#: apps/setup/models.py:43
+msgid "Text"
+msgstr "نص"
+
+#: apps/setup/models.py:46
+msgid "Calculus"
+msgstr "القلح"
+
+#: apps/setup/models.py:47
+msgid "Plaque"
+msgstr "اللويحة"
+
+#: apps/setup/models.py:50
+msgid "Buccal"
+msgstr "دهليزي"
+
+#: apps/setup/models.py:51
+msgid "Lingual"
+msgstr "لساني"
+
+#: apps/setup/models.py:64
+msgid "order"
+msgstr "الترتيب"
+
+#: apps/setup/models.py:68
+msgid "name"
+msgstr "الاسم"
+
+#: apps/setup/models.py:69
+msgid "start date"
+msgstr "تاريخ البداية"
+
+#: apps/setup/models.py:70
+msgid "end date"
+msgstr "تاريخ النهاية"
+
+#: apps/setup/models.py:71
+msgid "current term"
+msgstr "الفصل الحالي"
+
+#: apps/setup/models.py:74
+msgid "term"
+msgstr "فصل دراسي"
+
+#: apps/setup/models.py:75
+msgid "terms"
+msgstr "الفصول الدراسية"
+
+#: apps/setup/models.py:98
+msgid "head of department"
+msgstr "رئيس القسم"
+
+#: apps/setup/models.py:107
+msgid "departments"
+msgstr "الأقسام"
+
+#: apps/setup/models.py:115 apps/setup/models.py:143
+msgid "number"
+msgstr "الرقم"
+
+#: apps/setup/models.py:118
+msgid "building"
+msgstr "المبنى"
+
+#: apps/setup/models.py:119
+msgid "floor"
+msgstr "الطابق"
+
+#: apps/setup/models.py:120
+msgid "type"
+msgstr "النوع"
+
+#: apps/setup/models.py:131 apps/setup/models.py:141 apps/setup/models.py:198
+msgid "clinic"
+msgstr "العيادة"
+
+#: apps/setup/models.py:132
+msgid "clinics"
+msgstr "العيادات"
+
+#: apps/setup/models.py:145
+msgid "status"
+msgstr "الحالة"
+
+#: apps/setup/models.py:153 apps/setup/models.py:168
+msgid "chair"
+msgstr "كرسي"
+
+#: apps/setup/models.py:161
+#, python-format
+msgid "Chair %(number)s"
+msgstr "الكرسي %(number)s"
+
+#: apps/setup/models.py:170
+msgid "from"
+msgstr "من"
+
+#: apps/setup/models.py:171
+msgid "to"
+msgstr "إلى"
+
+#: apps/setup/models.py:172
+msgid "reason"
+msgstr "السبب"
+
+#: apps/setup/models.py:175
+msgid "by"
+msgstr "بواسطة"
+
+#: apps/setup/models.py:184
+msgid "chair status change"
+msgstr "تغيير حالة كرسي"
+
+#: apps/setup/models.py:185
+msgid "chair status history"
+msgstr "سجل حالة الكراسي"
+
+#: apps/setup/models.py:205
+msgid "clinic type"
+msgstr "نوع العيادة"
+
+#: apps/setup/models.py:209
+msgid "starts"
+msgstr "تبدأ"
+
+#: apps/setup/models.py:210
+msgid "ends"
+msgstr "تنتهي"
+
+#: apps/setup/models.py:214
+msgid "session"
+msgstr "جلسة"
+
+#: apps/setup/models.py:215
+msgid "sessions"
+msgstr "الجلسات"
+
+#: apps/setup/models.py:236
+msgid "kind"
+msgstr "النوع"
+
+#: apps/setup/models.py:240
+msgid "case type"
+msgstr "نوع الحالة"
+
+#: apps/setup/models.py:241
+msgid "case types"
+msgstr "أنواع الحالات"
+
+#: apps/setup/models.py:249
+msgid "letter"
+msgstr "الحرف"
+
+#: apps/setup/models.py:250
+msgid "meaning (Arabic)"
+msgstr "المعنى (بالعربية)"
+
+#: apps/setup/models.py:251
+msgid "meaning (English)"
+msgstr "المعنى (بالإنجليزية)"
+
+#: apps/setup/models.py:256
+msgid "tooth code"
+msgstr "رمز سن"
+
+#: apps/setup/models.py:257
+msgid "tooth codes"
+msgstr "رموز الأسنان"
+
+#: apps/setup/models.py:265
+msgid "question (Arabic)"
+msgstr "السؤال (بالعربية)"
+
+#: apps/setup/models.py:266
+msgid "question (English)"
+msgstr "السؤال (بالإنجليزية)"
+
+#: apps/setup/models.py:267
+msgid "answer type"
+msgstr "نوع الإجابة"
+
+#: apps/setup/models.py:269
+msgid "alert"
+msgstr "تنبيه"
+
+#: apps/setup/models.py:271
+msgid "A yes answer shows a red alert on every screen of the patient."
+msgstr "الإجابة بنعم تُظهر تنبيهًا أحمر في كل شاشات المريض."
+
+#: apps/setup/models.py:276
+msgid "medical history item"
+msgstr "بند سوابق مرضية"
+
+#: apps/setup/models.py:277
+msgid "medical history items"
+msgstr "بنود السوابق المرضية"
+
+#: apps/setup/models.py:290
+msgid "soft tissue site"
+msgstr "موقع نسج رخوة"
+
+#: apps/setup/models.py:291
+msgid "soft tissue sites"
+msgstr "مواقع النسج الرخوة"
+
+#: apps/setup/models.py:301
+msgid "index"
+msgstr "المشعر"
+
+#: apps/setup/models.py:302
+msgid "tooth (FDI)"
+msgstr "السن (FDI)"
+
+#: apps/setup/models.py:303
+msgid "surface"
+msgstr "السطح"
+
+#: apps/setup/models.py:304
+msgid "lowest score"
+msgstr "أدنى درجة"
+
+#: apps/setup/models.py:305
+msgid "highest score"
+msgstr "أعلى درجة"
+
+#: apps/setup/models.py:309
+msgid "index definition"
+msgstr "تعريف مشعر"
+
+#: apps/setup/models.py:310
+msgid "index definitions"
+msgstr "تعريفات المشعرات"
+
+#: apps/setup/models.py:333
+msgid "referred to department"
+msgstr "يُحال إلى القسم"
+
+#: apps/setup/models.py:339
+msgid "becomes case type"
+msgstr "يصبح نوع الحالة"
+
+#: apps/setup/models.py:346
+msgid "treatment type"
+msgstr "نوع معالجة"
+
+#: apps/setup/models.py:347
+msgid "treatment types"
+msgstr "أنواع المعالجة"
+
+#: apps/setup/models.py:362
+msgid "checklist item"
+msgstr "بند قائمة التفقد"
+
+#: apps/setup/models.py:363
+msgid "checklist items"
+msgstr "بنود قائمة التفقد"
+
+#: apps/setup/models.py:374
+msgid "takes the chair out of service"
+msgstr "يُخرج الكرسي من الخدمة"
+
+#: apps/setup/models.py:376
+msgid "A ticket in this category takes the chair out of service (BR-12)."
+msgstr "البلاغ في هذه الفئة يُخرج الكرسي من الخدمة (BR-12)."
+
+#: apps/setup/models.py:381
+msgid "fault category"
+msgstr "فئة عطل"
+
+#: apps/setup/models.py:382
+msgid "fault categories"
+msgstr "فئات الأعطال"
+
+#: apps/setup/models.py:392
+msgid "key"
+msgstr "المفتاح"
+
+#: apps/setup/models.py:393
+msgid "value"
+msgstr "القيمة"
+
+#: apps/setup/models.py:396 apps/setup/models.py:397
+msgid "system settings"
+msgstr "إعدادات النظام"
 
 #: apps/workcards/apps.py:8
 msgid "Work cards"
@@ -829,23 +1432,15 @@ msgstr "بطاقات العمل"
 msgid "The student has no work card for this clinic."
 msgstr "ليس للطالب بطاقة عمل في هذه العيادة."
 
-#: config/settings/base.py:179
-msgid "Arabic"
-msgstr "العربية"
-
-#: config/settings/base.py:180
-msgid "English"
-msgstr "الإنجليزية"
-
-#: config/settings/base.py:291
+#: config/settings/base.py:297
 msgid "SPU Dental Clinic System"
 msgstr "نظام عيادات طب الأسنان - الجامعة السورية الخاصة"
 
-#: config/settings/base.py:292
+#: config/settings/base.py:298
 msgid "SPU Dental Clinics"
 msgstr "عيادات طب الأسنان"
 
-#: config/settings/base.py:293
+#: config/settings/base.py:299
 msgid "Faculty of Dentistry"
 msgstr "كلية طب الأسنان"
 

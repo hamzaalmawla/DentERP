@@ -27,7 +27,7 @@ from unfold.sites import UnfoldAdminSite
 from apps.accounts.models import ROLE_CHOICES
 from apps.core.dashboard import DashboardModelAdmin
 
-from .access import choose_role, dashboard_access
+from .access import choose_role, dashboard_access, dashboard_actor
 from .forms import DashboardLoginForm, DashboardPasswordChangeForm
 from .navigation import first_link, model_roles, url_roles
 from .permissions import ReadOnlyForManagement
@@ -63,6 +63,10 @@ class DashboardSite(UnfoldAdminSite):
             and not access.must_change_password
             and access.active_role in model_roles(model)
         )
+
+    def actor(self, request):
+        """The ``Actor`` screens pass to services (``DashboardModelAdmin.actor``)."""
+        return dashboard_actor(request)
 
     def register(self, model_or_iterable, admin_class=None, **options):
         admin_class = admin_class or DashboardModelAdmin

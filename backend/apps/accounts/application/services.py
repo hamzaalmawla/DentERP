@@ -22,6 +22,7 @@ from apps.accounts.domain.errors import (
     PasswordUnchangedError,
     RoleRequiredError,
     UniversityIdTakenError,
+    UnknownDepartmentError,
     UnknownRoleError,
     UserManagementDeniedError,
     UsernameTakenError,
@@ -50,6 +51,7 @@ from .ports import (
     PasswordHasher,
     PasswordPolicy,
     RoleRepository,
+    SetupFacade,
     TemporaryPasswordGenerator,
     TokenIssuer,
 )
@@ -74,6 +76,16 @@ def _ensure_user_manager(actor: Actor, accounts: AccountRepository) -> None:
         actor.user_id
     ):
         raise UserManagementDeniedError()
+
+
+def _valid_department(setup: SetupFacade, department_id: int | None) -> int | None:
+    """A user's department must be an active department of the setup module (DB-02)."""
+    if department_id is None:
+        return None
+    try:
+        return setup.get_department(department_id).id
+    except NotFoundError:
+        raise UnknownDepartmentError() from None
 
 
 def _valid_roles(roles: Iterable[str], known: frozenset[str]) -> frozenset[str]:
@@ -344,16 +356,18 @@ class CreateUserCommand:
     full_name_en: str = ""
     phone: str = ""
     university_id: str = ""
+    department_id: int | None = None
 
 
 class CreateUser:
-    """Creates a user with their roles and a temporary password, which must be changed at the
-    first login."""
+    """Creates a user with their roles, department and a temporary password, which must be
+    changed at the first login."""
 
     def __init__(
         self,
         accounts: AccountRepository,
         roles: RoleRepository,
+        setup: SetupFacade,
         hasher: PasswordHasher,
         passwords: TemporaryPasswordGenerator,
         audit: AuditLogger,
@@ -361,6 +375,7 @@ class CreateUser:
     ) -> None:
         self._accounts = accounts
         self._roles = roles
+        self._setup = setup
         self._hasher = hasher
         self._passwords = passwords
         self._audit = audit
@@ -372,6 +387,7 @@ class CreateUser:
         full_name_ar = validate_full_name(command.full_name_ar)
         roles = _valid_roles(command.roles, self._roles.active_codes())
         university_id = command.university_id.strip() or None
+        department_id = _valid_department(self._setup, command.department_id)
         with self._uow:
             if self._accounts.username_exists(username):
                 raise UsernameTakenError(username)
@@ -384,6 +400,7 @@ class CreateUser:
                 "full_name_en": command.full_name_en.strip(),
                 "phone": command.phone.strip(),
                 "university_id": university_id,
+                "department_id": department_id,
             }
             user_id = self._accounts.create(
                 NewAccount(
@@ -515,14 +532,22 @@ class UpdateUserCommand:
     full_name_en: str = ""
     phone: str = ""
     university_id: str = ""
+    department_id: int | None = None
 
 
 class UpdateUser:
-    """Changes a user's names, phone and university ID (DB-02). The username never changes;
-    roles change through ``AssignRoles``."""
+    """Changes a user's names, phone, university ID and department (DB-02). The username never
+    changes; roles change through ``AssignRoles``."""
 
-    def __init__(self, accounts: AccountRepository, audit: AuditLogger, uow: UnitOfWork) -> None:
+    def __init__(
+        self,
+        accounts: AccountRepository,
+        setup: SetupFacade,
+        audit: AuditLogger,
+        uow: UnitOfWork,
+    ) -> None:
         self._accounts = accounts
+        self._setup = setup
         self._audit = audit
         self._uow = uow
 
@@ -533,10 +558,13 @@ class UpdateUser:
             full_name_en=command.full_name_en.strip(),
             phone=command.phone.strip(),
             university_id=command.university_id.strip() or None,
+            department_id=command.department_id,
         )
         with self._uow:
             _found(self._accounts.get(command.user_id, for_update=True))
             before = _found(self._accounts.details_of(command.user_id))
+            if details.department_id != before.department_id:  # a kept one may be deactivated
+                _valid_department(self._setup, details.department_id)
             if details.university_id and self._accounts.university_id_exists(
                 details.university_id, exclude_user_id=command.user_id
             ):

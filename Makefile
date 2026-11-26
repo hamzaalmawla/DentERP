@@ -9,7 +9,7 @@ COMPOSE := docker compose -f deploy/docker-compose.yml
 RUN     := $(COMPOSE) run --rm --no-deps web
 
 .DEFAULT_GOAL := help
-.PHONY: help env build up down logs ps shell migrate makemigrations test lint format \
+.PHONY: help env build up down logs ps shell migrate seed makemigrations test lint format \
         makemessages compilemessages schema clean
 
 help: ## List the commands
@@ -39,6 +39,9 @@ shell: env ## Open a Django shell
 migrate: env ## Compile translations and apply database migrations
 	$(COMPOSE) run --rm migrate
 
+seed: env ## Load the default setup data (lists, clinics, chairs, sessions); safe to run again
+	$(COMPOSE) run --rm web python manage.py seed_defaults
+
 makemigrations: env ## Create migrations for model changes
 	$(COMPOSE) run --rm web python manage.py makemigrations
 
@@ -55,7 +58,7 @@ format: env ## Fix code style with ruff
 	$(RUN) ruff format .
 
 makemessages: env ## Collect translatable strings into locale/ar
-	$(RUN) python manage.py makemessages --locale ar --ignore ".venv/*"
+	$(RUN) python manage.py makemessages --locale ar --ignore ".venv/*" --ignore "*/tests/*"
 
 compilemessages: env ## Compile the Arabic translations
 	$(RUN) python manage.py compilemessages --ignore ".venv/*"

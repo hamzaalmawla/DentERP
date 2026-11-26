@@ -5,8 +5,22 @@ from datetime import datetime
 from typing import Protocol, runtime_checkable
 
 from apps.accounts.domain.accounts import Account
+from apps.setup.application.facade import SetupFacade
 
 from .dtos import AuthContext, DeviceDTO, NewAccount, TokenPair, UserDetails, UserDTO
+
+# The setup module's facade: a user's department (DB-02) must be an active department.
+__all__ = [
+    "AccountRepository",
+    "AuthContextReader",
+    "DeviceTokenRepository",
+    "PasswordHasher",
+    "PasswordPolicy",
+    "RoleRepository",
+    "SetupFacade",
+    "TemporaryPasswordGenerator",
+    "TokenIssuer",
+]
 
 
 @runtime_checkable

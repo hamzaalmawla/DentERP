@@ -5,7 +5,9 @@ returns ids and DTOs. A missing or inactive row raises ``NotFoundError`` (404 ``
 """
 
 from collections.abc import Sequence
-from typing import Any, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
+
+from apps.core.domain.errors import NotFoundError
 
 from .dtos import (
     CaseTypeDTO,
@@ -14,11 +16,23 @@ from .dtos import (
     ChecklistItemDTO,
     ClinicDTO,
     ClinicType,
+    DepartmentDTO,
     FaultCategoryDTO,
     SessionDTO,
+    SetChairStatusCommand,
     TermDTO,
     TreatmentTypeDTO,
 )
+
+if TYPE_CHECKING:  # the facade file imports only its DTOs and core at run time (P0.5)
+    from .ports import (
+        ChairRepository,
+        ClinicRepository,
+        LookupRepository,
+        SettingRepository,
+        TermRepository,
+    )
+    from .services import SetChairStatus
 
 
 @runtime_checkable
@@ -28,6 +42,12 @@ class SetupFacade(Protocol):
 
         (Setup owns the Term table, so ``current_term`` is here, not in academics.)
         """
+        ...
+
+    def get_department(self, department_id: int) -> DepartmentDTO: ...
+
+    def list_departments(self) -> Sequence[DepartmentDTO]:
+        """Active departments, by Arabic name (the department of a user, DB-02)."""
         ...
 
     def get_clinic(self, clinic_id: int) -> ClinicDTO: ...
@@ -79,45 +99,78 @@ class SetupFacade(Protocol):
 
 
 class SetupFacadeService:
-    """The setup facade the container hands out. Built in P1.1."""
+    """The setup facade the container hands out. Missing and deactivated rows raise
+    ``NotFoundError``."""
+
+    def __init__(
+        self,
+        *,
+        terms: "TermRepository",
+        clinics: "ClinicRepository",
+        chairs: "ChairRepository",
+        lookups: "LookupRepository",
+        settings: "SettingRepository",
+        set_chair_status: "SetChairStatus",
+    ) -> None:
+        self._terms = terms
+        self._clinics = clinics
+        self._chairs = chairs
+        self._lookups = lookups
+        self._settings = settings
+        self._set_chair_status = set_chair_status
 
     def current_term(self) -> TermDTO:
-        raise NotImplementedError
+        return _found(self._terms.current())
+
+    def get_department(self, department_id: int) -> DepartmentDTO:
+        return _found(self._lookups.department(department_id))
+
+    def list_departments(self) -> Sequence[DepartmentDTO]:
+        return tuple(self._lookups.departments())
 
     def get_clinic(self, clinic_id: int) -> ClinicDTO:
-        raise NotImplementedError
+        return _found(self._clinics.get(clinic_id))
 
     def list_clinics(self, *, type: ClinicType | None = None) -> Sequence[ClinicDTO]:
-        raise NotImplementedError
+        return tuple(self._clinics.list(type=type))
 
     def get_chair(self, chair_id: int) -> ChairDTO:
-        raise NotImplementedError
+        return _found(self._chairs.get(chair_id))
 
     def list_chairs(self, clinic_id: int, *, in_service_only: bool = False) -> Sequence[ChairDTO]:
-        raise NotImplementedError
+        return tuple(self._chairs.list_for_clinic([clinic_id], in_service_only=in_service_only))
 
     def set_chair_status(
         self, chair_id: int, status: ChairStatus, *, reason: str, by_user_id: int | None
     ) -> ChairDTO:
-        raise NotImplementedError
+        return self._set_chair_status.execute(
+            SetChairStatusCommand(chair_id, status, reason, by_user_id)
+        )
 
     def list_sessions(self, clinic_id: int) -> Sequence[SessionDTO]:
-        raise NotImplementedError
+        return tuple(self._lookups.sessions_for(self.get_clinic(clinic_id)))
 
     def get_case_type(self, case_type_id: int) -> CaseTypeDTO:
-        raise NotImplementedError
+        return _found(self._lookups.case_type(case_type_id))
 
     def get_treatment_type(self, treatment_type_id: int) -> TreatmentTypeDTO:
-        raise NotImplementedError
+        return _found(self._lookups.treatment_type(treatment_type_id))
 
     def get_fault_category(self, category_id: int) -> FaultCategoryDTO:
-        raise NotImplementedError
+        return _found(self._lookups.fault_category(category_id))
 
     def list_checklist_items(self) -> Sequence[ChecklistItemDTO]:
-        raise NotImplementedError
+        return tuple(self._lookups.checklist_items())
 
     def get_setting(self, key: str, default: Any = None) -> Any:
-        raise NotImplementedError
+        value = self._settings.get(key)
+        return default if value is None else value
 
     def get_lookups_version(self) -> int:
-        raise NotImplementedError
+        return self._settings.lookups_version()
+
+
+def _found[T](item: T | None) -> T:
+    if item is None:
+        raise NotFoundError()
+    return item

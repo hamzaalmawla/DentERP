@@ -25,7 +25,7 @@ def admin(fakes) -> Actor:
 
 def create(f, actor, **values):
     values = {"username": "Sara.Ali", "full_name_ar": "سارة علي", "roles": ["student"], **values}
-    return CreateUser(f.accounts, f.roles, f.hasher, f.passwords, f.audit, f.uow).execute(
+    return CreateUser(f.accounts, f.roles, f.setup, f.hasher, f.passwords, f.audit, f.uow).execute(
         actor, CreateUserCommand(**values)
     )
 

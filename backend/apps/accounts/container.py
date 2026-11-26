@@ -1,8 +1,9 @@
 """Builds the accounts services with their real adapters (design section 5)."""
 
 from apps.core import container as core
+from apps.setup import container as setup
 
-from .application.queries import GetAuthContext, GetProfile
+from .application.queries import GetAuthContext, GetProfile, ListDepartments
 from .application.services import (
     AssignRoles,
     ChangePassword,
@@ -82,6 +83,7 @@ def create_user() -> CreateUser:
     return CreateUser(
         OrmAccountRepository(),
         OrmRoleRepository(),
+        setup.facade(),
         DjangoPasswordHasher(),
         SecretsPasswordGenerator(),
         core.audit_logger(),
@@ -113,7 +115,9 @@ def unlock_account() -> UnlockAccount:
 
 
 def update_user() -> UpdateUser:
-    return UpdateUser(OrmAccountRepository(), core.audit_logger(), core.unit_of_work())
+    return UpdateUser(
+        OrmAccountRepository(), setup.facade(), core.audit_logger(), core.unit_of_work()
+    )
 
 
 def deactivate_user() -> DeactivateUser:
@@ -130,6 +134,10 @@ def create_demo_users() -> CreateDemoUsers:
         core.audit_logger(),
         core.unit_of_work(),
     )
+
+
+def list_departments() -> ListDepartments:
+    return ListDepartments(setup.facade())
 
 
 def get_profile() -> GetProfile:

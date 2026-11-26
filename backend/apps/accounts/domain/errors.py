@@ -110,6 +110,13 @@ class UniversityIdTakenError(ConflictError):
         )
 
 
+class UnknownDepartmentError(DomainError):
+    def __init__(self) -> None:
+        super().__init__(
+            "department_not_found", _("The department was not found or is deactivated.")
+        )
+
+
 class RoleRequiredError(DomainError):
     def __init__(self) -> None:
         super().__init__("role_required", _("Give the user at least one role."))

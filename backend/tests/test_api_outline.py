@@ -64,9 +64,9 @@ def test_every_release1_endpoint_is_planned():
     planned = {(_schema_path(path), method) for path, method, _ in PLANNED}
 
     assert len(planned) == len(PLANNED)
+    # Built endpoints leave this list; their module's tests take over (P1.1: /lookups/,
+    # /clinics/).
     assert {
-        ("/api/v1/lookups/", "get"),
-        ("/api/v1/clinics/", "get"),
         ("/api/v1/patients/", "get"),
         ("/api/v1/diagnosis-queue/{id}/assign/", "post"),
         ("/api/v1/diagnoses/{id}/", "patch"),

@@ -1,0 +1,122 @@
+{
+  "_about": "Defaults loaded by `python manage.py seed_defaults` (SRS section 4 and docs/build-prompts.md section 1). Safe to run again: records already there are left as they are. Items marked in docs/decisions.md as 'to confirm with the clinic' are placeholders the super admin can change in the dashboard.",
+  "settings": {
+    "university_name_ar": "الجامعة السورية الخاصة",
+    "university_name_en": "Syrian Private University",
+    "faculty_name_ar": "كلية طب الأسنان",
+    "faculty_name_en": "Faculty of Dentistry",
+    "default_language": "ar",
+    "photo_max_mb": 2,
+    "push_notifications_enabled": true,
+    "round_morning_start": "08:30",
+    "round_morning_end": "09:30",
+    "round_afternoon_start": "14:00",
+    "round_afternoon_end": "15:00"
+  },
+  "term": [
+    {"name": "2026–2027 الفصل الأول (Fall)", "start_date": "2026-09-14", "end_date": "2027-01-29", "is_current": true}
+  ],
+  "department": [
+    {"name_ar": "التشخيص", "name_en": "Oral Diagnosis"},
+    {"name_ar": "مداواة الأسنان اللبية", "name_en": "Endodontics"}
+  ],
+  "clinic": [
+    {"number": "1", "name_ar": "عيادة التشخيص", "name_en": "Diagnosis clinic", "type": "diagnosis", "department_id@": {"name_en": "Oral Diagnosis"}, "chair_count": 12},
+    {"number": "2", "name_ar": "عيادة المداواة اللبية", "name_en": "Endodontics clinic", "type": "treatment", "department_id@": {"name_en": "Endodontics"}, "chair_count": 12}
+  ],
+  "session": [
+    {"clinic_type": "diagnosis", "name_ar": "الجلسة الأولى", "name_en": "Session 1", "start_time": "08:00", "end_time": "09:30", "order": 1},
+    {"clinic_type": "diagnosis", "name_ar": "الجلسة الثانية", "name_en": "Session 2", "start_time": "09:30", "end_time": "11:00", "order": 2},
+    {"clinic_type": "diagnosis", "name_ar": "الجلسة الثالثة", "name_en": "Session 3", "start_time": "11:00", "end_time": "12:30", "order": 3},
+    {"clinic_type": "diagnosis", "name_ar": "الجلسة الرابعة", "name_en": "Session 4", "start_time": "12:30", "end_time": "14:00", "order": 4},
+    {"clinic_type": "diagnosis", "name_ar": "الجلسة الخامسة", "name_en": "Session 5", "start_time": "14:00", "end_time": "15:30", "order": 5},
+    {"clinic_type": "treatment", "name_ar": "الجلسة الأولى", "name_en": "Session 1", "start_time": "08:00", "end_time": "09:30", "order": 1},
+    {"clinic_type": "treatment", "name_ar": "الجلسة الثانية", "name_en": "Session 2", "start_time": "09:30", "end_time": "11:00", "order": 2},
+    {"clinic_type": "treatment", "name_ar": "الجلسة الثالثة", "name_en": "Session 3", "start_time": "11:00", "end_time": "12:30", "order": 3},
+    {"clinic_type": "treatment", "name_ar": "الجلسة الرابعة", "name_en": "Session 4", "start_time": "12:30", "end_time": "14:00", "order": 4},
+    {"clinic_type": "treatment", "name_ar": "الجلسة الخامسة", "name_en": "Session 5", "start_time": "14:00", "end_time": "15:30", "order": 5}
+  ],
+  "case_type": [
+    {"name_ar": "معالجة لبية أمامية", "name_en": "Anterior root canal", "kind": "clinical", "order": 1},
+    {"name_ar": "معالجة لبية ضاحك", "name_en": "Premolar root canal", "kind": "clinical", "order": 2},
+    {"name_ar": "معالجة لبية رحى", "name_en": "Molar root canal", "kind": "clinical", "order": 3},
+    {"name_ar": "إعادة معالجة", "name_en": "Retreatment", "kind": "clinical", "order": 4}
+  ],
+  "treatment_type": [
+    {"name_ar": "معالجة لبية أمامية", "name_en": "Anterior root canal", "department_id@": {"name_en": "Endodontics"}, "case_type_id@": {"name_en": "Anterior root canal"}, "order": 1},
+    {"name_ar": "معالجة لبية ضاحك", "name_en": "Premolar root canal", "department_id@": {"name_en": "Endodontics"}, "case_type_id@": {"name_en": "Premolar root canal"}, "order": 2},
+    {"name_ar": "معالجة لبية رحى", "name_en": "Molar root canal", "department_id@": {"name_en": "Endodontics"}, "case_type_id@": {"name_en": "Molar root canal"}, "order": 3},
+    {"name_ar": "إعادة معالجة", "name_en": "Retreatment", "department_id@": {"name_en": "Endodontics"}, "case_type_id@": {"name_en": "Retreatment"}, "order": 4}
+  ],
+  "tooth_code": [
+    {"letter": "D", "meaning_ar": "نخر", "meaning_en": "Decayed", "color": "#d32f2f", "order": 1},
+    {"letter": "M", "meaning_ar": "مفقود", "meaning_en": "Missing", "color": "#616161", "order": 2},
+    {"letter": "F", "meaning_ar": "محشو", "meaning_en": "Filled", "color": "#1976d2", "order": 3},
+    {"letter": "N", "meaning_ar": "متموت", "meaning_en": "Non-vital", "color": "#6d4c41", "order": 4},
+    {"letter": "R", "meaning_ar": "جذر متبقٍ", "meaning_en": "Remaining root", "color": "#f57c00", "order": 5},
+    {"letter": "E", "meaning_ar": "قلع مستطب", "meaning_en": "Extraction indicated", "color": "#c2185b", "order": 6},
+    {"letter": "C", "meaning_ar": "تاج", "meaning_en": "Crown", "color": "#fbc02d", "order": 7},
+    {"letter": "I", "meaning_ar": "زرعة", "meaning_en": "Implant", "color": "#00897b", "order": 8},
+    {"letter": "U", "meaning_ar": "غير بازغ", "meaning_en": "Unerupted", "color": "#7b1fa2", "order": 9},
+    {"letter": "P", "meaning_ar": "دعامة جسر (دمية)", "meaning_en": "Pontic", "color": "#388e3c", "order": 10}
+  ],
+  "medical_history_item": [
+    {"question_ar": "أمراض القلب", "question_en": "Heart disease", "answer_type": "yes_no_details", "is_alert": true, "order": 1},
+    {"question_ar": "ارتفاع ضغط الدم", "question_en": "High blood pressure", "answer_type": "yes_no", "is_alert": true, "order": 2},
+    {"question_ar": "الداء السكري", "question_en": "Diabetes", "answer_type": "yes_no_details", "is_alert": true, "order": 3},
+    {"question_ar": "الربو أو أمراض تنفسية", "question_en": "Asthma or lung disease", "answer_type": "yes_no", "is_alert": true, "order": 4},
+    {"question_ar": "اضطرابات النزف", "question_en": "Bleeding disorder", "answer_type": "yes_no_details", "is_alert": true, "order": 5},
+    {"question_ar": "التهاب الكبد أو أمراض الكبد", "question_en": "Hepatitis or liver disease", "answer_type": "yes_no_details", "is_alert": true, "order": 6},
+    {"question_ar": "أمراض الكلية", "question_en": "Kidney disease", "answer_type": "yes_no", "is_alert": false, "order": 7},
+    {"question_ar": "الصرع", "question_en": "Epilepsy", "answer_type": "yes_no", "is_alert": true, "order": 8},
+    {"question_ar": "الحمى الرثوية", "question_en": "Rheumatic fever", "answer_type": "yes_no", "is_alert": true, "order": 9},
+    {"question_ar": "التحسس (أدوية، مخدر، لاتكس)", "question_en": "Allergy (drugs, anaesthetic, latex)", "answer_type": "yes_no_details", "is_alert": true, "order": 10},
+    {"question_ar": "أمراض الغدة الدرقية", "question_en": "Thyroid disease", "answer_type": "yes_no", "is_alert": false, "order": 11},
+    {"question_ar": "فقر الدم", "question_en": "Anaemia", "answer_type": "yes_no", "is_alert": false, "order": 12},
+    {"question_ar": "السل", "question_en": "Tuberculosis", "answer_type": "yes_no", "is_alert": true, "order": 13},
+    {"question_ar": "الأورام أو العلاج الشعاعي", "question_en": "Cancer or radiotherapy", "answer_type": "yes_no_details", "is_alert": true, "order": 14},
+    {"question_ar": "القرحة الهضمية", "question_en": "Stomach ulcer", "answer_type": "yes_no", "is_alert": false, "order": 15},
+    {"question_ar": "التدخين", "question_en": "Smoking", "answer_type": "yes_no_details", "is_alert": false, "order": 16},
+    {"question_ar": "الحمل", "question_en": "Pregnancy", "answer_type": "yes_no_details", "is_alert": true, "order": 17},
+    {"question_ar": "الأدوية الحالية (مثل مميعات الدم)", "question_en": "Current medications (e.g. anticoagulants)", "answer_type": "yes_no_details", "is_alert": true, "order": 18},
+    {"question_ar": "العمليات الجراحية السابقة", "question_en": "Past surgeries", "answer_type": "yes_no_details", "is_alert": false, "order": 19}
+  ],
+  "soft_tissue_site": [
+    {"name_ar": "الشفتان", "name_en": "Lips", "order": 1},
+    {"name_ar": "مخاطية الخد", "name_en": "Buccal mucosa", "order": 2},
+    {"name_ar": "اللثة", "name_en": "Gingiva", "order": 3},
+    {"name_ar": "اللسان", "name_en": "Tongue", "order": 4},
+    {"name_ar": "قاع الفم", "name_en": "Floor of the mouth", "order": 5},
+    {"name_ar": "قبة الحنك الصلبة", "name_en": "Hard palate", "order": 6},
+    {"name_ar": "قبة الحنك الرخوة", "name_en": "Soft palate", "order": 7},
+    {"name_ar": "البلعوم الفموي واللوزتان", "name_en": "Oropharynx and tonsils", "order": 8}
+  ],
+  "index_definition": [
+    {"kind": "calculus", "tooth": 16, "surface": "buccal", "min_score": 0, "max_score": 3, "order": 1},
+    {"kind": "calculus", "tooth": 11, "surface": "buccal", "min_score": 0, "max_score": 3, "order": 2},
+    {"kind": "calculus", "tooth": 26, "surface": "buccal", "min_score": 0, "max_score": 3, "order": 3},
+    {"kind": "calculus", "tooth": 36, "surface": "lingual", "min_score": 0, "max_score": 3, "order": 4},
+    {"kind": "calculus", "tooth": 31, "surface": "lingual", "min_score": 0, "max_score": 3, "order": 5},
+    {"kind": "calculus", "tooth": 46, "surface": "lingual", "min_score": 0, "max_score": 3, "order": 6},
+    {"kind": "plaque", "tooth": 16, "surface": "buccal", "min_score": 0, "max_score": 3, "order": 7},
+    {"kind": "plaque", "tooth": 11, "surface": "buccal", "min_score": 0, "max_score": 3, "order": 8},
+    {"kind": "plaque", "tooth": 26, "surface": "buccal", "min_score": 0, "max_score": 3, "order": 9},
+    {"kind": "plaque", "tooth": 36, "surface": "lingual", "min_score": 0, "max_score": 3, "order": 10},
+    {"kind": "plaque", "tooth": 31, "surface": "lingual", "min_score": 0, "max_score": 3, "order": 11},
+    {"kind": "plaque", "tooth": 46, "surface": "lingual", "min_score": 0, "max_score": 3, "order": 12}
+  ],
+  "checklist_item": [
+    {"name_ar": "النظافة", "name_en": "Cleanliness", "order": 1},
+    {"name_ar": "توصيلات القبضات", "name_en": "Handpiece connections", "order": 2},
+    {"name_ar": "حركات الكرسي", "name_en": "Chair movements", "order": 3},
+    {"name_ar": "الإنارة", "name_en": "Lighting", "order": 4}
+  ],
+  "fault_category": [
+    {"name_ar": "كهرباء", "name_en": "Electrical", "blocks_chair": true, "order": 1},
+    {"name_ar": "الماء والشفط", "name_en": "Water and suction", "blocks_chair": true, "order": 2},
+    {"name_ar": "حركة الكرسي", "name_en": "Chair movement", "blocks_chair": true, "order": 3},
+    {"name_ar": "القبضات والهواء", "name_en": "Handpieces and air", "blocks_chair": false, "order": 4},
+    {"name_ar": "الإنارة", "name_en": "Lighting", "blocks_chair": false, "order": 5},
+    {"name_ar": "أخرى", "name_en": "Other", "blocks_chair": false, "order": 6}
+  ]
+}

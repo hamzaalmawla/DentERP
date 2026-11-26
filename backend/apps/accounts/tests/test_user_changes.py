@@ -21,7 +21,7 @@ def admin(fakes) -> Actor:
 
 def update(f, actor, user_id, **values):
     values = {"full_name_ar": "سارة علي", **values}
-    return UpdateUser(f.accounts, f.audit, f.uow).execute(
+    return UpdateUser(f.accounts, f.setup, f.audit, f.uow).execute(
         actor, UpdateUserCommand(user_id=user_id, **values)
     )
 
